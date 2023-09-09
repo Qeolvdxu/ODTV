@@ -37,7 +37,7 @@ To install and run the Flight Data Visualization Tool, you have two options:
 
 2. **Use Compiled Binaries:**
 
-   - Compiled binaries are available in the [Releases](https://github.com/qeolvdxu/flight-data-visualization-tool/releases) section. Download the appropriate binary for your platform and follow the installation instructions provided.
+   - Compiled binaries are available in the [Releases](https://github.com/Qeolvdxu/open-drone-trajectory-viewer/releases) section. Download the appropriate binary for your platform and follow the installation instructions provided.
 
 ## Usage
 
@@ -49,4 +49,4 @@ If you'd like to contribute to this project, please open an issue or create a pu
 
 ## License
 
-This project is licensed under the [GNU General Public License (GPL) version 3](LICENSE.md).
+This project is licensed under the [GNU General Public License (GPL) version 3](LICENSE).
