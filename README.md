@@ -20,7 +20,7 @@ To install and run the Flight Data Visualization Tool, you have two options:
    - Clone this repository from GitHub.
 
      ```shell
-     git clone https://github.com/your-username/flight-data-visualization-tool.git
+     git clone https://github.com/Qeolvdxu/open-drone-trajectory-viewer.git
      ```
 
    - Navigate to the project directory.
@@ -37,7 +37,7 @@ To install and run the Flight Data Visualization Tool, you have two options:
 
 2. **Use Compiled Binaries:**
 
-   - Compiled binaries are available in the [Releases](https://github.com/your-username/flight-data-visualization-tool/releases) section. Download the appropriate binary for your platform and follow the installation instructions provided.
+   - Compiled binaries are available in the [Releases](https://github.com/qeolvdxu/flight-data-visualization-tool/releases) section. Download the appropriate binary for your platform and follow the installation instructions provided.
 
 ## Usage
 
