@@ -16,7 +16,7 @@ public class AboutWindow {
     private JButton OKButton;
     private JList list1;
     private JPanel mainPanelA;
-    private JFrame frame;
+    private final JFrame frame;
     private static AboutWindow instance;
 
 

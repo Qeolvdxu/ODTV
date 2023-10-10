@@ -19,7 +19,7 @@ public class FileSelectionWindow {
     private JButton selectCSVButton;
     private JButton OKButton;
     private JPanel mainPanelFS;
-    private JFrame frame;
+    private final JFrame frame;
     private static FileSelectionWindow instance;
 
     private FileSelectionWindow() {
