@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="yourpackage.app.Window">
   <grid id="27dc6" binding="mainPanelW" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="683" height="486"/>
+      <xy x="48" y="6" width="675" height="531"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -12,7 +12,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="9d420" class="javax.swing.JMenuBar" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+          <grid id="9d420" class="javax.swing.JMenuBar" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="0">
             <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>
@@ -33,6 +33,24 @@
                     <border type="none"/>
                     <children/>
                   </grid>
+                  <grid id="6cf5b" class="javax.swing.JMenuItem" binding="loadConfiguration" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Load Saved Configuration"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
+                  <grid id="7edfc" class="javax.swing.JMenuItem" binding="saveConfiguration" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Save Configuration"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
                   <grid id="425e6" class="javax.swing.JMenuItem" binding="exitButton" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
                     <constraints/>
                     <properties>
@@ -43,23 +61,59 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="cfc11" class="javax.swing.JMenu" binding="editButton" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <grid id="cfc11" class="javax.swing.JMenu" binding="editButton" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
                 <constraints/>
                 <properties>
                   <text value="Edit"/>
                 </properties>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <grid id="79b25" class="javax.swing.JMenuItem" binding="gaugeSetup" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Gauge Setup"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
+                  <grid id="8fd1f" class="javax.swing.JMenuItem" binding="visualizerSetup" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Data Visualizer Setup"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
+                </children>
               </grid>
-              <grid id="90ebe" class="javax.swing.JMenu" binding="viewButton" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <grid id="90ebe" class="javax.swing.JMenu" binding="viewButton" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
                 <constraints/>
                 <properties>
                   <text value="View"/>
                 </properties>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <grid id="ad461" class="javax.swing.JMenuItem" binding="viewGaugesButton" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Gauges"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
+                  <grid id="d52a6" class="javax.swing.JMenuItem" binding="viewDataVisualization" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints/>
+                    <properties>
+                      <text value="Data Visualization"/>
+                    </properties>
+                    <border type="none"/>
+                    <children/>
+                  </grid>
+                </children>
               </grid>
               <grid id="e15e3" class="javax.swing.JMenu" binding="helpButton" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
                 <constraints/>
@@ -92,55 +146,52 @@
         <border type="none"/>
         <children/>
       </grid>
-      <grid id="aca10" layout-manager="GridLayoutManager" row-count="1" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="aca10" layout-manager="GridLayoutManager" row-count="2" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="South"/>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="fa3c3" class="javax.swing.JButton" binding="playButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Play"/>
-            </properties>
-          </component>
           <component id="4da54" class="javax.swing.JButton" binding="pauseButton">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Pause"/>
+              <enabled value="false"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="pause.png"/>
+              <text value=""/>
+              <toolTipText value="Pause"/>
             </properties>
           </component>
           <component id="2dac4" class="javax.swing.JButton" binding="stopButton">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Stop"/>
+              <enabled value="false"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="stop.png"/>
+              <text value=""/>
+              <toolTipText value="Stop"/>
             </properties>
           </component>
           <hspacer id="b73eb">
             <constraints>
-              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
-          <hspacer id="a5756">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <component id="111f0" class="javax.swing.JComboBox" binding="videoSpeedComboBox">
             <constraints>
-              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
           <component id="48dc6" class="javax.swing.JLabel" binding="videoSpeedLabel">
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Video Speed:"/>
@@ -148,20 +199,55 @@
           </component>
           <component id="bd06c" class="javax.swing.JButton" binding="forwardButton">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Forward"/>
+              <enabled value="false"/>
+              <hideActionText value="false"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="fastforward.png"/>
+              <text value=""/>
+              <toolTipText value="Forward"/>
+            </properties>
+          </component>
+          <component id="71bf8" class="javax.swing.JSlider" binding="slider1" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="10" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <value value="0"/>
+            </properties>
+          </component>
+          <component id="fa3c3" class="javax.swing.JButton" binding="playButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="play.png"/>
+              <text value=""/>
+              <toolTipText value="Play"/>
             </properties>
           </component>
           <component id="386bf" class="javax.swing.JButton" binding="backwardButton" default-binding="true">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Backward"/>
+              <enabled value="false"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="rewind.png"/>
+              <text value=""/>
+              <toolTipText value="Rewind"/>
             </properties>
           </component>
+          <hspacer id="b45dc">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
     </children>

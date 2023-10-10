@@ -5,13 +5,15 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+
 public class FileSelectionWindow {
-    private JFormattedTextField formattedTextField1;
+    private JFormattedTextField videoFileTextfield;
     private JFormattedTextField formattedTextField2;
     private JButton selectVideoButton;
     private JButton selectCSVButton;
@@ -22,6 +24,9 @@ public class FileSelectionWindow {
 
     private FileSelectionWindow() {
         frame = new JFrame();
+        String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
+        ImageIcon img = new ImageIcon(iconPath);
+        frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
         frame.setContentPane(mainPanelFS);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
@@ -35,21 +40,14 @@ public class FileSelectionWindow {
         selectVideoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Create a JFileChooser instance
-                JFileChooser fileChooser = new JFileChooser();
-
+                JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
-
-                // Show the file chooser dialog and capture the user's choice
-                int returnValue = fileChooser.showOpenDialog(null);
-
-                // Check if the user selected a file
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    // Get the selected file
-                    File selectedFile = fileChooser.getSelectedFile();
-
-                    // Handle the selected file, e.g., display its path
-                    JOptionPane.showMessageDialog(null, "You selected: " + selectedFile.getAbsolutePath());
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Quicktime Movie (*.MOV)", "MOV");
+                fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
+                int returnValue = fileChooser.showOpenDialog(null); // Show the file chooser dialog and capture the user's choice
+                if (returnValue == JFileChooser.APPROVE_OPTION) { // Check if the user selected a file
+                    File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
+                    videoFileTextfield.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
                 }
             }
         });
@@ -113,9 +111,9 @@ public class FileSelectionWindow {
         OKButton = new JButton();
         OKButton.setText("OK");
         mainPanelFS.add(OKButton, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        formattedTextField1 = new JFormattedTextField();
-        formattedTextField1.setEditable(false);
-        mainPanelFS.add(formattedTextField1, new GridConstraints(2, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        videoFileTextfield = new JFormattedTextField();
+        videoFileTextfield.setEditable(false);
+        mainPanelFS.add(videoFileTextfield, new GridConstraints(2, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**
