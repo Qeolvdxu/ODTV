@@ -18,6 +18,9 @@ dependencies {
     // XChart
     implementation 'org.knowm.xchart:xchart:3.8.0' 
     
+    // JFoenix
+    implementation 'com.jfoenix:jfoenix:9.0.10'
+    
     // SteelSeries
     implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
     

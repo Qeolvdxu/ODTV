@@ -219,5 +219,4 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
-
 }
