@@ -4,11 +4,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import yourpackage.visualization.Gauge;
 
 public class Window {
     private JPanel mainPanelW;
@@ -17,7 +18,6 @@ public class Window {
     private JButton stopButton;
     private JComboBox videoSpeedComboBox;
     private JLabel videoSpeedLabel;
-    private JPanel videoPanel;
     private JButton forwardButton;
     private JButton backwardButton;
     private JMenuItem exitButton;
@@ -34,6 +34,7 @@ public class Window {
     private JMenuItem viewDataVisualization;
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
+    private JMenuItem createGauge;
 
     public Window() {
         JFrame frame = new JFrame();
@@ -73,6 +74,13 @@ public class Window {
             public void actionPerformed(ActionEvent e) {
                 AboutWindow w = AboutWindow.getInstance();
                 w.show();
+            }
+        });
+        createGauge.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Gauge gauge = new Gauge();
+                System.out.println("New gauge created!");
             }
         });
     }
@@ -133,6 +141,9 @@ public class Window {
         visualizerSetup.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         visualizerSetup.setText("Data Visualizer Setup");
         editButton.add(visualizerSetup);
+        createGauge = new JMenuItem();
+        createGauge.setText("Create Gauge (TEMPORARY BUTTON)");
+        editButton.add(createGauge);
         viewButton = new JMenu();
         viewButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         viewButton.setText("View");
@@ -153,11 +164,6 @@ public class Window {
         aboutButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         aboutButton.setText("About");
         helpButton.add(aboutButton);
-        videoPanel = new JPanel();
-        videoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        videoPanel.setBackground(new Color(-16777216));
-        videoPanel.setEnabled(false);
-        mainPanelW.add(videoPanel, BorderLayout.CENTER);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(2, 10, new Insets(0, 0, 0, 0), -1, -1));
         mainPanelW.add(panel2, BorderLayout.SOUTH);
@@ -219,4 +225,5 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
+
 }
