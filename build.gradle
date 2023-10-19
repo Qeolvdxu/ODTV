@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    // Add project dependencies here
+    implementation'org.apache.commons:commons-csv:+'
 
     //intellij forms
     implementation 'com.intellij:forms_rt:7.0.3'
@@ -52,4 +54,8 @@ tasks.register('run', JavaExec) {
 
 tasks.withType(Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+repositories {
+    mavenCentral()
 }
