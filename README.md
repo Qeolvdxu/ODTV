@@ -29,10 +29,10 @@ To install and run the Flight Data Visualization Tool, you have two options:
      cd flight-data-visualization-tool
      ```
 
-   - Build and run the application using Gradle.
+   - Build and run the application using the Gradlew script in the root directory.
 
      ```shell
-     gradle run
+     ./gradlew run
      ```
 
 2. **Use Compiled Binaries:**
