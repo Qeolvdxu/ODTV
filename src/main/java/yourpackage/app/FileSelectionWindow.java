@@ -1,3 +1,4 @@
+
 package yourpackage.app;
 
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -24,8 +25,14 @@ public class FileSelectionWindow {
     private static FileSelectionWindow instance;
     private File selectedCSVFile;
 
-    private FileSelectionWindow() {
+    private String selectedVideoFilePath;
 
+    private String selectedCSVFilePath;
+
+    private final boolean Send = false;
+
+    private FileSelectionWindow() {
+        File selectedCSVFile;
 
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
@@ -36,11 +43,17 @@ public class FileSelectionWindow {
         frame.pack();
         frame.setResizable(false);
         OKButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
+                selectedVideoFilePath = videoFileTextfield.getText();
+                selectedCSVFilePath = csvTextField.getText();
                 frame.setVisible(false);
+                frame.dispose(); // Close the JFrame associated with the FileSelectionWindow
             }
         });
+
+
+
+
         selectVideoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,6 +77,38 @@ public class FileSelectionWindow {
                 fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
                 int returnValue = fileChooser.showOpenDialog(null); // Show the file chooser dialog and capture the user's choice
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
+                    csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
+                }
+            }
+        });
+    }
+
+
+    public interface FileSelectionListener {
+        void onFilesSelected(String videoFilePath, String csvFilePath);
+    }
+
+    public void show(FileSelectionListener listener) {
+        frame.setVisible(true);
+        OKButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedVideoFilePath = videoFileTextfield.getText();
+                selectedCSVFilePath = csvTextField.getText();
+                frame.setVisible(false);
+                frame.dispose();
+                listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
+            }
+        });
+    }
+
+    public String getSelectedVideoFilePath() {
+        return selectedVideoFilePath;
+    }
+
+    public String getSelectedCSVFilePath() {
+        return selectedCSVFilePath;
                     selectedCSVFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedCSVFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
@@ -82,6 +127,9 @@ public class FileSelectionWindow {
         return instance;
     }
 
+    public boolean isVisible() {
+        return frame.isVisible();
+    }
     public void show() {
         frame.setVisible(true);
     }
@@ -144,5 +192,11 @@ public class FileSelectionWindow {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelFS;
     }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
+
+
 
 }

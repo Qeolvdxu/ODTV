@@ -1,9 +1,17 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
-group 'yourpackage'
+group 'yourpackage.app'
 version '1.0'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_21)) // Use the desired Java version here
+    }
+}
 
 repositories {
 	mavenCentral()
@@ -15,25 +23,40 @@ dependencies {
     implementation'org.apache.commons:commons-csv:+'
 
     //intellij forms
+    implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
     implementation 'com.intellij:forms_rt:7.0.3'
-
+    implementation 'com.intellij:forms_rt:7.0.3'
+    implementation("com.intellij:forms_rt:7.0.3")
     // XChart
-    implementation 'org.knowm.xchart:xchart:3.8.0' 
-    
+    implementation 'org.knowm.xchart:xchart:3.8.0'
+
     // JFoenix
     implementation 'com.jfoenix:jfoenix:9.0.10'
-    
+
     // SteelSeries
     implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
-    
+
     // Apache Commons CSV
     implementation 'org.apache.commons:commons-csv:1.10.0'
-    
+
     // OpenCV
     implementation 'opencv:opencv:4.0.0-0'
+3
+    // FX
+    implementation 'org.openjfx:javafx-controls:22-ea+11'
+    implementation 'org.openjfx:javafx-graphics:22-ea+11'
+    implementation 'org.openjfx:javafx-media:22-ea+11'
+    implementation 'org.openjfx:javafx-web:22-ea+11'
+    implementation 'org.openjfx:javafx-swing:22-ea+11'
 
     // Flatlaf
     implementation 'com.formdev:flatlaf:3.2.1'
+
+    // VLCJ
+    implementation group: 'uk.co.caprica', name: 'vlcj', version: '4.8.1'
+    implementation 'org.jetbrains.intellij.plugins:structure-intellij:3.259'
+    implementation 'org.jetbrains.intellij.plugins:structure-intellij:3.259'// Use the latest version available
+
 }
 
 sourceSets {
@@ -45,11 +68,6 @@ sourceSets {
             srcDirs 'src/main/resources'
         }
     }
-}
-
-tasks.register('run', JavaExec) {
-    mainClass = 'yourpackage.app.Main'
-    classpath = sourceSets.main.runtimeClasspath
 }
 
 tasks.withType(Copy) {
