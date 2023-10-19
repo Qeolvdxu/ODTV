@@ -9,7 +9,7 @@ version '1.0'
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_21)) // Use the desired Java version here
+        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_15)) // Use the desired Java version here
     }
 }
 
@@ -30,9 +30,6 @@ dependencies {
     // XChart
     implementation 'org.knowm.xchart:xchart:3.8.0'
 
-    // JFoenix
-    implementation 'com.jfoenix:jfoenix:9.0.10'
-
     // SteelSeries
     implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
 
@@ -41,13 +38,13 @@ dependencies {
 
     // OpenCV
     implementation 'opencv:opencv:4.0.0-0'
-3
+
     // FX
-    implementation 'org.openjfx:javafx-controls:22-ea+11'
-    implementation 'org.openjfx:javafx-graphics:22-ea+11'
-    implementation 'org.openjfx:javafx-media:22-ea+11'
-    implementation 'org.openjfx:javafx-web:22-ea+11'
-    implementation 'org.openjfx:javafx-swing:22-ea+11'
+    implementation 'org.openjfx:javafx-controls:21'
+    implementation 'org.openjfx:javafx-graphics:21'
+    implementation 'org.openjfx:javafx-media:21'
+    implementation 'org.openjfx:javafx-web:21'
+    implementation 'org.openjfx:javafx-swing:21'
 
     // Flatlaf
     implementation 'com.formdev:flatlaf:3.2.1'
