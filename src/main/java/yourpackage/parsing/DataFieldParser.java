@@ -37,7 +37,7 @@ public class DataFieldParser {
      * through each record at a given index to append data to the DataField's list of elements.
      * (Assumes that first row contains the name of each column).
      */
-    public void ParseData() {
+    public void parseData() {
         int i = 0;
         int j = 0;
         for (String s : this.foundRecords.get(1)) {

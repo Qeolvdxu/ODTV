@@ -11,18 +11,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import yourpackage.parsing.DataFieldParser;
 
 public class FileSelectionWindow {
     private JFormattedTextField videoFileTextfield;
-    private JFormattedTextField formattedTextField2;
+    private JFormattedTextField csvTextField;
     private JButton selectVideoButton;
     private JButton selectCSVButton;
     private JButton OKButton;
     private JPanel mainPanelFS;
     private final JFrame frame;
     private static FileSelectionWindow instance;
+    private File selectedCSVFile;
 
     private FileSelectionWindow() {
+
+
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -48,6 +52,24 @@ public class FileSelectionWindow {
                 if (returnValue == JFileChooser.APPROVE_OPTION) { // Check if the user selected a file
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     videoFileTextfield.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
+                }
+            }
+        });
+        selectCSVButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
+                // Configure file chooser settings if needed (e.g., set initial directory, file filters)
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Column-separated Values (*.csv)", "csv");
+                fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
+                int returnValue = fileChooser.showOpenDialog(null); // Show the file chooser dialog and capture the user's choice
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    selectedCSVFile = fileChooser.getSelectedFile(); // Get the selected file
+                    csvTextField.setText(selectedCSVFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
+
+                    DataFieldParser parser = new DataFieldParser(selectedCSVFile);
+                    parser.parseData();
+                    System.out.println(parser.getFoundFields());
                 }
             }
         });
@@ -87,9 +109,9 @@ public class FileSelectionWindow {
         mainPanelFS.add(spacer2, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         mainPanelFS.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        formattedTextField2 = new JFormattedTextField();
-        formattedTextField2.setEditable(false);
-        mainPanelFS.add(formattedTextField2, new GridConstraints(5, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        csvTextField = new JFormattedTextField();
+        csvTextField.setEditable(false);
+        mainPanelFS.add(csvTextField, new GridConstraints(5, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer4 = new Spacer();
         mainPanelFS.add(spacer4, new GridConstraints(0, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         selectVideoButton = new JButton();
