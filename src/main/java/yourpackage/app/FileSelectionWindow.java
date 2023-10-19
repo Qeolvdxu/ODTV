@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import yourpackage.parsing.DataFieldParser;
+
 public class FileSelectionWindow {
     private JFormattedTextField videoFileTextfield;
     private JFormattedTextField csvTextField;
@@ -21,6 +23,7 @@ public class FileSelectionWindow {
     private JPanel mainPanelFS;
     private final JFrame frame;
     private static FileSelectionWindow instance;
+    private File selectedCSVFile;
 
     private String selectedVideoFilePath;
 
@@ -106,6 +109,15 @@ public class FileSelectionWindow {
 
     public String getSelectedCSVFilePath() {
         return selectedCSVFilePath;
+                    selectedCSVFile = fileChooser.getSelectedFile(); // Get the selected file
+                    csvTextField.setText(selectedCSVFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
+
+                    DataFieldParser parser = new DataFieldParser(selectedCSVFile);
+                    parser.parseData();
+                    System.out.println(parser.getFoundFields());
+                }
+            }
+        });
     }
 
     public static FileSelectionWindow getInstance() {

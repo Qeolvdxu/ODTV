@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    // Add project dependencies here
+    implementation'org.apache.commons:commons-csv:+'
 
     //intellij forms
     implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
@@ -70,4 +72,8 @@ sourceSets {
 
 tasks.withType(Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+repositories {
+    mavenCentral()
 }

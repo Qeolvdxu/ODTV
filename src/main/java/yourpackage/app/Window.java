@@ -11,7 +11,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 import yourpackage.visualization.VideoPlayerSwingIntegration;
+import yourpackage.visualization.Gauge;
 
 public class Window {
     private JPanel mainPanelW;
@@ -37,9 +39,7 @@ public class Window {
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
-
     private VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
-
 
     public Window() {
         JFrame frame = new JFrame();
@@ -168,6 +168,13 @@ public class Window {
                                     }
         );
 
+        createGauge.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Gauge gauge = new Gauge();
+                System.out.println("New gauge created!");
+            }
+        });
     }
 
 
@@ -311,4 +318,6 @@ public class Window {
         return mainPanelW;
     }
 
+
+}
 }
