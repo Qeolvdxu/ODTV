@@ -5,9 +5,35 @@ plugins {
 group 'yourpackage'
 version '1.0'
 
+repositories {
+	mavenCentral()
+	maven { url 'https://clojars.org/repo/' }
+}
+
 dependencies {
     // Add project dependencies here
     implementation'org.apache.commons:commons-csv:+'
+
+    //intellij forms
+    implementation 'com.intellij:forms_rt:7.0.3'
+
+    // XChart
+    implementation 'org.knowm.xchart:xchart:3.8.0' 
+    
+    // JFoenix
+    implementation 'com.jfoenix:jfoenix:9.0.10'
+    
+    // SteelSeries
+    implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
+    
+    // Apache Commons CSV
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+    
+    // OpenCV
+    implementation 'opencv:opencv:4.0.0-0'
+
+    // Flatlaf
+    implementation 'com.formdev:flatlaf:3.2.1'
 }
 
 sourceSets {
@@ -21,9 +47,13 @@ sourceSets {
     }
 }
 
-task run(type: JavaExec) {
-	mainClass = 'yourpackage.app.Main'
-	classpath = sourceSets.main.runtimeClasspath
+tasks.register('run', JavaExec) {
+    mainClass = 'yourpackage.app.Main'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.withType(Copy) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 repositories {
