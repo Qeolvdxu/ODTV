@@ -7,6 +7,12 @@ plugins {
 group 'yourpackage.app'
 version '1.0'
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_21)) // Use the desired Java version here
+    }
+}
+
 repositories {
 	mavenCentral()
 	maven { url 'https://clojars.org/repo/' }
