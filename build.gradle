@@ -35,12 +35,11 @@ dependencies {
     implementation 'opencv:opencv:4.0.0-0'
 3
     // FX
-    implementation group: 'org.openjfx', name: 'javafx-controls', version: '22-ea+11'
-    implementation 'org.openjfx:javafx-fxml:17.0.1'
-    implementation 'org.openjfx:javafx-graphics:17.0.1'
-    implementation 'org.openjfx:javafx-media:17.0.1'
-    implementation 'org.openjfx:javafx-web:17.0.1'
-    implementation group: 'org.openjfx', name: 'javafx-swing', version: '11-ea+24'
+    implementation 'org.openjfx:javafx-controls:22-ea+11'
+    implementation 'org.openjfx:javafx-graphics:22-ea+11'
+    implementation 'org.openjfx:javafx-media:22-ea+11'
+    implementation 'org.openjfx:javafx-web:22-ea+11'
+    implementation 'org.openjfx:javafx-swing:22-ea+11'
 
     // Flatlaf
     implementation 'com.formdev:flatlaf:3.2.1'
