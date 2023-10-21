@@ -1,12 +1,53 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
-group 'yourpackage'
+group 'yourpackage.app'
 version '1.0'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://clojars.org/repo/' }
+}
 
 dependencies {
     // Add project dependencies here
+    implementation'org.apache.commons:commons-csv:+'
+
+    //intellij forms
+    implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
+    implementation 'com.intellij:forms_rt:7.0.3'
+    implementation 'com.intellij:forms_rt:7.0.3'
+    implementation("com.intellij:forms_rt:7.0.3")
+    // XChart
+    implementation 'org.knowm.xchart:xchart:3.8.0'
+
+    // SteelSeries
+    implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
+
+    // Apache Commons CSV
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+
+    // OpenCV
+    implementation 'opencv:opencv:4.0.0-0'
+
+    // FX
+    implementation 'org.openjfx:javafx-controls:21'
+    implementation 'org.openjfx:javafx-graphics:21'
+    implementation 'org.openjfx:javafx-media:21'
+    implementation 'org.openjfx:javafx-web:21'
+    implementation 'org.openjfx:javafx-swing:21'
+
+    // Flatlaf
+    implementation 'com.formdev:flatlaf:3.2.1'
+
+    // VLCJ
+    implementation group: 'uk.co.caprica', name: 'vlcj', version: '4.8.1'
+    implementation 'org.jetbrains.intellij.plugins:structure-intellij:3.259'
+    implementation 'org.jetbrains.intellij.plugins:structure-intellij:3.259'// Use the latest version available
+
 }
 
 sourceSets {
@@ -20,7 +61,10 @@ sourceSets {
     }
 }
 
-task run(type: JavaExec) {
-	mainClass = 'yourpackage.app.Main'
-	classpath = sourceSets.main.runtimeClasspath
+tasks.withType(Copy) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+repositories {
+    mavenCentral()
 }
