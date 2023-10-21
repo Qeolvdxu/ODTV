@@ -52,15 +52,13 @@ public class FileSelectionWindow {
         });
 
 
-
-
         selectVideoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Quicktime Movie (*.MOV)", "MOV");
-                fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
+                // fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
                 int returnValue = fileChooser.showOpenDialog(null); // Show the file chooser dialog and capture the user's choice
                 if (returnValue == JFileChooser.APPROVE_OPTION) { // Check if the user selected a file
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
@@ -79,46 +77,23 @@ public class FileSelectionWindow {
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
-                }
-            }
-        });
-    }
 
-
-    public interface FileSelectionListener {
-        void onFilesSelected(String videoFilePath, String csvFilePath);
-    }
-
-    public void show(FileSelectionListener listener) {
-        frame.setVisible(true);
-        OKButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectedVideoFilePath = videoFileTextfield.getText();
-                selectedCSVFilePath = csvTextField.getText();
-                frame.setVisible(false);
-                frame.dispose();
-                listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
-            }
-        });
-    }
-
-    public String getSelectedVideoFilePath() {
-        return selectedVideoFilePath;
-    }
-
-    public String getSelectedCSVFilePath() {
-        return selectedCSVFilePath;
-                    selectedCSVFile = fileChooser.getSelectedFile(); // Get the selected file
-                    csvTextField.setText(selectedCSVFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
-
-                    DataFieldParser parser = new DataFieldParser(selectedCSVFile);
+                    DataFieldParser parser = new DataFieldParser(selectedFile);
                     parser.parseData();
                     System.out.println(parser.getFoundFields());
                 }
             }
+
+            public String getSelectedVideoFilePath() {
+                return selectedVideoFilePath;
+            }
+
+            public String getSelectedCSVFilePath() {
+                return selectedCSVFilePath;
+            }
         });
     }
+
 
     public static FileSelectionWindow getInstance() {
         if (instance == null) {
@@ -130,6 +105,7 @@ public class FileSelectionWindow {
     public boolean isVisible() {
         return frame.isVisible();
     }
+
     public void show() {
         frame.setVisible(true);
     }
@@ -193,10 +169,32 @@ public class FileSelectionWindow {
         return mainPanelFS;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    public interface FileSelectionListener {
+        void onFilesSelected(String videoFilePath, String csvFilePath);
     }
 
-
+    public void show(FileSelectionListener listener) {
+        frame.setVisible(true);
+        OKButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedVideoFilePath = videoFileTextfield.getText();
+                selectedCSVFilePath = csvTextField.getText();
+                frame.setVisible(false);
+                frame.dispose();
+                listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
+            }
+        });
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
