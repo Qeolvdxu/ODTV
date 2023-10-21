@@ -9,7 +9,7 @@ version '1.0'
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_15)) // Use the desired Java version here
+        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_20)) // Use the desired Java version here
     }
 }
 
