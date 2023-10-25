@@ -69,12 +69,13 @@ public class AboutWindow {
         label1.setText("Open Drone Trajectory Viewer");
         mainPanelA.add(label1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         list1 = new JList();
+        list1.setEnabled(false);
         final DefaultListModel defaultListModel1 = new DefaultListModel();
         defaultListModel1.addElement("Created by:");
         defaultListModel1.addElement("Hayden Estes");
         defaultListModel1.addElement("Malachi Vasquez");
         defaultListModel1.addElement("James Sterling");
-        defaultListModel1.addElement("Barret Brewer");
+        defaultListModel1.addElement("Barrett Brewer");
         list1.setModel(defaultListModel1);
         mainPanelA.add(list1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         final JLabel label2 = new JLabel();

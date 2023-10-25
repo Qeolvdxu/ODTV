@@ -23,17 +23,15 @@ public class FileSelectionWindow {
     private JPanel mainPanelFS;
     private final JFrame frame;
     private static FileSelectionWindow instance;
-    private File selectedCSVFile;
+    private DataFieldParser parser;
 
     private String selectedVideoFilePath;
 
     private String selectedCSVFilePath;
 
-    private final boolean Send = false;
+    private FieldChooser Fc;
 
     private FileSelectionWindow() {
-        File selectedCSVFile;
-
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -78,9 +76,8 @@ public class FileSelectionWindow {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
-                    DataFieldParser parser = new DataFieldParser(selectedFile);
+                    parser = new DataFieldParser(selectedFile);
                     parser.parseData();
-                    System.out.println(parser.getFoundFields());
                 }
             }
 
@@ -95,7 +92,8 @@ public class FileSelectionWindow {
     }
 
 
-    public static FileSelectionWindow getInstance() {
+    public static FileSelectionWindow getInstance() { // This function will enforce that only one file selection window
+                                                      // will exist throughout the lifespan of the program.
         if (instance == null) {
             instance = new FileSelectionWindow();
         }
@@ -183,6 +181,9 @@ public class FileSelectionWindow {
                 frame.setVisible(false);
                 frame.dispose();
                 listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
+                FieldChooser Fc = new FieldChooser();
+                Fc.setFoundFields(parser.getFoundFields());
+                parser.clearFields(); // Clear the fields in the parser in case if another file gets opened.
             }
         });
     }
