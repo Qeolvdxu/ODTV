@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 
 
 import yourpackage.visualization.VideoPlayerSwingIntegration;
-import yourpackage.visualization.Gauge;
+import yourpackage.gauges.Gauge;
 
 public class Window {
     private JPanel mainPanelW;

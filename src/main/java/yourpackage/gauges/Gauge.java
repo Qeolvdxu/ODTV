@@ -1,4 +1,4 @@
-package yourpackage.visualization;
+package yourpackage.gauges;
 
 import javax.swing.*;
 import java.awt.*;
