@@ -67,6 +67,33 @@ public class Window {
                 System.exit(0);
             }
         });
+        videoSpeedComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedSpeed = (String) videoSpeedComboBox.getSelectedItem();
+                double speedMultiplier;
+                switch (selectedSpeed) {
+                    case "1X":
+                        speedMultiplier = 1.0;
+                        break;
+                    case "5X":
+                        speedMultiplier = 5.0;
+                        break;
+                    case "10X":
+                        speedMultiplier = 10.0;
+                        break;
+                    case "1X Reverse":
+                        speedMultiplier = -1.0;
+                        break;
+                    default:
+                        speedMultiplier = 1.0; // Default to normal speed
+                        break;
+                }
+                videoPlayer.setVideoSpeed(speedMultiplier);
+            }
+        });
+
+
 
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
@@ -81,6 +108,7 @@ public class Window {
                         forwardButton.setEnabled(true);
                         backwardButton.setEnabled(true);
                         slider1.setEnabled(true);
+                        videoSpeedComboBox.setEnabled(true);
                     }
                 });
             }

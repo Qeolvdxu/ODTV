@@ -112,6 +112,12 @@ public class VideoPlayerSwingIntegration {
         return 0.0;
     }
 
+    public void setVideoSpeed(double speedMultiplier) {
+        if (player != null) {
+            player.setRate(speedMultiplier);
+        }
+    }
+
     public void skipToTime(double timeInSeconds) {
         if (player != null) {
             player.seek(Duration.seconds(timeInSeconds));
