@@ -12,5 +12,7 @@ public class Gauge {
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
+
+        
     }
 }
