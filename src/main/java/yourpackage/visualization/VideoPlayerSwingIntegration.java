@@ -5,17 +5,30 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.util.Duration;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.util.Duration;
+
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.io.File;
 
 public class VideoPlayerSwingIntegration {
 
-    private static MediaPlayer player;
+    public static MediaPlayer player;
+
+    private ReadOnlyObjectProperty<Duration> currentTimeProperty;
 
     private static JFXPanel fxPanel;
 
@@ -23,8 +36,6 @@ public class VideoPlayerSwingIntegration {
         fxPanel = new JFXPanel();
         frame.add(fxPanel);
     }
-
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -134,10 +145,28 @@ public class VideoPlayerSwingIntegration {
         }
     }
 
-    // Method to add a time listener to update the slider position
-    public void addTimeListener(ChangeListener listener) {
-        if (player != null) {
-            player.currentTimeProperty().addListener((javafx.beans.value.ChangeListener<? super Duration>) listener);
-        }
+    public void startUpdatingUIEverySecond(JLabel videoTimeLabel, JSlider slider) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (player != null && player.getStatus() == MediaPlayer.Status.PLAYING) {
+                    double totalDuration = player.getTotalDuration().toSeconds();
+                    double currentTime = player.getCurrentTime().toSeconds();
+
+                    // Calculate the slider position as a percentage of the total duration
+                    double sliderPosition = (currentTime / totalDuration) * 100;
+
+                    // Update the slider's value
+                    slider.setValue((int) sliderPosition);
+
+                    // Update the video time in the JLabel (videoTimeLabel)
+                    videoTimeLabel.setText(String.format("%.2f seconds", currentTime)); // Display time in seconds with two decimal places
+                }
+            }
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
+
+
 }
