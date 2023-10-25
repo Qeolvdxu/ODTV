@@ -22,7 +22,6 @@ public class FileSelectionWindow {
     private JButton OKButton;
     private JPanel mainPanelFS;
     private final JFrame frame;
-    private static FileSelectionWindow instance;
     private DataFieldParser parser;
 
     private String selectedVideoFilePath;
@@ -31,7 +30,7 @@ public class FileSelectionWindow {
 
     private FieldChooser Fc;
 
-    private FileSelectionWindow() {
+    public FileSelectionWindow() {
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -89,15 +88,6 @@ public class FileSelectionWindow {
                 return selectedCSVFilePath;
             }
         });
-    }
-
-
-    public static FileSelectionWindow getInstance() { // This function will enforce that only one file selection window
-                                                      // will exist throughout the lifespan of the program.
-        if (instance == null) {
-            instance = new FileSelectionWindow();
-        }
-        return instance;
     }
 
     public boolean isVisible() {
