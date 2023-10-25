@@ -29,6 +29,17 @@ public class DataFieldParser {
     }
 
     public ArrayList<DataField> getFoundFields() {
+
+    /**
+     * Method to parse through a CSV (Comma-Separated Value) file and retrieve data for each column.
+     * Begins by iterating through the second record (row) of the CSV file to determine data typing
+     * for each column. If the particular cell is empty, the loop iterates through each record at
+     * that index to find a non-empty cell, or until it reaches the last record. Constructs a new
+     * DataField object depending upon the regular expression found within the cell, and loops
+     * through each record at a given index to append data to the DataField's list of elements.
+     * (Assumes that first row contains the name of each column).
+     */
+    public void parseData() {
         int i = 0;
         int j = 0;
         for (String s : this.foundRecords.get(1)) {

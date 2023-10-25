@@ -5,10 +5,14 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import yourpackage.visualization.Gauge;
 
 public class Window {
@@ -35,6 +39,7 @@ public class Window {
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
+    private VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
         JFrame frame = new JFrame();
@@ -62,13 +67,38 @@ public class Window {
                 System.exit(0);
             }
         });
+
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow w = FileSelectionWindow.getInstance();
-                w.show();
+                FileSelectionWindow.getInstance().show(new FileSelectionWindow.FileSelectionListener() {
+                    @Override
+                    public void onFilesSelected(String videoFilePath, String csvFilePath) {
+                        videoPlayer.embedVideoIntoJFrame(frame, videoFilePath);
+                        playButton.setEnabled(true);
+                        pauseButton.setEnabled(true);
+                        stopButton.setEnabled(true);
+                        forwardButton.setEnabled(true);
+                        backwardButton.setEnabled(true);
+                        slider1.setEnabled(true);
+                    }
+                });
             }
         });
+
+        slider1.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                int value = slider1.getValue();
+                if (videoPlayer != null && videoPlayer.getTotalDurationInSeconds() > 0) {
+                    double newTime = (value / 100.0) * videoPlayer.getTotalDurationInSeconds();
+                    videoPlayer.skipToTime(newTime);
+                }
+            }
+        });
+
+
+
         aboutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,6 +106,68 @@ public class Window {
                 w.show();
             }
         });
+
+
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (videoPlayer != null) {
+                    videoPlayer.play();
+                }
+            }
+        });
+
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (videoPlayer != null) {
+                    videoPlayer.pause();
+                }
+            }
+        });
+
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (videoPlayer != null) {
+                    videoPlayer.stop();
+                }
+            }
+        });
+
+        forwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (videoPlayer != null) {
+                    videoPlayer.forward();
+                }
+            }
+        });
+
+        backwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (videoPlayer != null) {
+                    videoPlayer.rewind();
+                }
+            }
+        });
+
+        videoPlayer.addTimeListener(new ChangeListener() {
+                                        @Override
+                                        public void stateChanged(ChangeEvent changeEvent) {
+                                            double totalDuration = videoPlayer.getTotalDurationInSeconds();
+                                            double currentTime = videoPlayer.getCurrentTimeInSeconds();
+
+                                            // Calculate the slider position as a percentage of the total duration
+                                            double sliderPosition = (currentTime / totalDuration) * 100;
+
+                                            // Update the slider's value
+                                            slider1.setValue((int) sliderPosition);
+                                        }
+                                    }
+        );
+
         createGauge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -225,5 +317,6 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
+
 
 }
