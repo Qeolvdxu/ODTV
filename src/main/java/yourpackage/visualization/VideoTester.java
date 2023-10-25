@@ -33,7 +33,8 @@ public class VideoTester {
 
         // Check if the entered file path is not empty
         if (!videoFilePath.isEmpty()) {
-            VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame, videoFilePath);
+            VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
+            VideoPlayerSwingIntegration.changeVideo(videoFilePath);
         } else {
             System.out.println("Invalid video file path. Please provide a valid path.");
         }

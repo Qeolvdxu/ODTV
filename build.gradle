@@ -24,6 +24,9 @@ dependencies {
     // XChart
     implementation 'org.knowm.xchart:xchart:3.8.0'
 
+    //ffmpeg
+    implementation 'com.arthenica:mobile-ffmpeg-full:5.0.LTS'
+
     // SteelSeries
     implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
 

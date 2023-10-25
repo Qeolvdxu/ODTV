@@ -17,33 +17,14 @@ public class VideoPlayerSwingIntegration {
 
     private static MediaPlayer player;
 
-    public static void embedVideoIntoJFrame(JFrame frame, String videoFilePath) {
-        File videoFile = new File(videoFilePath);
+    private static JFXPanel fxPanel;
 
-        if (!videoFile.exists()) {
-            System.out.println("File not found: " + videoFilePath);
-            return;
-        }
-
-        JFXPanel fxPanel = new JFXPanel();
+    public static void embedVideoIntoJFrame(JFrame frame) {
+        fxPanel = new JFXPanel();
         frame.add(fxPanel);
-
-        Platform.runLater(() -> {
-            Media media = new Media(videoFile.toURI().toString());
-            player = new MediaPlayer(media);
-            MediaView viewer = new MediaView(player);
-
-            viewer.setPreserveRatio(true);
-
-            StackPane root = new StackPane();
-            root.getChildren().add(viewer);
-
-            Scene scene = new Scene(root, 800, 600);
-            fxPanel.setScene(scene);
-
-            player.play();
-        });
     }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -54,12 +35,41 @@ public class VideoPlayerSwingIntegration {
             // Provide the path to the video file as a command-line argument
             if (args.length > 0) {
                 String videoFilePath = args[0];
-                embedVideoIntoJFrame(frame, videoFilePath);
+                embedVideoIntoJFrame(frame);
             } else {
                 System.out.println("Please provide the path to the video file as a command-line argument.");
             }
 
             frame.setVisible(true);
+        });
+    }
+
+    public static void changeVideo(String newVideoFilePath) {
+        File newVideoFile = new File(newVideoFilePath);
+
+        if (!newVideoFile.exists()) {
+            System.out.println("File not found: " + newVideoFilePath);
+            return;
+        }
+
+        Platform.runLater(() -> {
+            Media newMedia = new Media(newVideoFile.toURI().toString());
+
+            if (player != null) {
+                player.stop(); // Stop the existing player if there is one
+            }
+
+            player = new MediaPlayer(newMedia);
+            MediaView viewer = new MediaView(player);
+            viewer.setPreserveRatio(true);
+
+            StackPane root = new StackPane();
+            root.getChildren().add(viewer);
+
+            Scene scene = new Scene(root, 800, 600);
+            fxPanel.setScene(scene);
+
+            player.play();
         });
     }
 

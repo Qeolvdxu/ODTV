@@ -53,6 +53,7 @@ public class Window {
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("ODTV");
         frame.setVisible(true);
+        videoPlayer.embedVideoIntoJFrame(frame);
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
@@ -101,7 +102,7 @@ public class Window {
                 FileSelectionWindow.getInstance().show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
-                        videoPlayer.embedVideoIntoJFrame(frame, videoFilePath);
+                        videoPlayer.changeVideo(videoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
                         stopButton.setEnabled(true);
