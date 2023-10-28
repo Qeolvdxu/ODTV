@@ -92,7 +92,13 @@ public class Window {
                     case "1X Reverse" -> -1.0;
                     default -> 1.0; // Default to normal speed
                 };
-                videoPlayer.setVideoSpeed(speedMultiplier);
+                if (speedMultiplier > 0) {
+                    videoPlayer.setVideoSpeed(speedMultiplier);
+                }
+                else
+                {
+                    videoPlayer.setPlayInReverse();
+                }
             }
         });
 
