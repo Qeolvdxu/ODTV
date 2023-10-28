@@ -63,8 +63,20 @@ public class VideoPlayerSwingIntegration {
             return;
         }
 
+        String originalFileName = newVideoFile.getName();
+        String newFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) + ".mp4";
+        File renamedFile = new File(newVideoFile.getParent(), newFileName);
+
+        try {
+            if (newVideoFile.renameTo(renamedFile)) {
+                System.out.println("File Read.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+
         Platform.runLater(() -> {
-            Media newMedia = new Media(newVideoFile.toURI().toString());
+            Media newMedia = new Media(renamedFile.toURI().toString());
 
             if (player != null) {
                 player.stop(); // Stop the existing player if there is one
