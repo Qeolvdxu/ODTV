@@ -18,6 +18,8 @@ import javafx.event.EventHandler;
 import javax.swing.*;
 import java.io.*;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -75,79 +77,162 @@ public class VideoPlayerSwingIntegration {
             tempFolder.mkdir();
         }
 
+        // Delete existing temp video files if they exist
+        File[] existingTempFiles = tempFolder.listFiles();
+        if (existingTempFiles != null) {
+            for (File file : existingTempFiles) {
+                file.delete();
+            }
+        }
+
+        // Rename the new video file to temp.mp4 inside the temp folder
+        File tempVideoFile = new File(tempFolder, "temp.mp4");
         try {
-            // Split the original video into segments (e.g., 10 segments)
-            int numSegments = 10;
-            long totalDuration = getVideoDuration(newVideoFile);
-            long segmentDuration = totalDuration / numSegments;
+            Files.copy(newVideoFile.toPath(), tempVideoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("Error occurred while copying video file: " + e.getMessage());
+            return;
+        }
 
-            List<Future<File>> segmentFutures = new ArrayList<>();
-
-            for (int i = 0; i < numSegments; i++) {
-                long startTime = i * segmentDuration;
-                long endTime = (i == numSegments - 1) ? totalDuration : (i + 1) * segmentDuration;
-
-                File segmentFile = new File(tempFolder, "segment_" + i + ".mp4");
-
-                Future<File> future = executorService.submit(() -> {
+        executorService.execute(() -> {
                     try {
-                        // Extract the segment from the original video
-                        ProcessBuilder extractProcessBuilder = new ProcessBuilder("ffmpeg", "-i", newVideoFilePath,
-                                "-ss", String.valueOf(startTime), "-to", String.valueOf(endTime),
-                                "-c", "copy", segmentFile.getAbsolutePath());
-                        Process extractProcess = extractProcessBuilder.start();
-                        extractProcess.waitFor();
-                        return segmentFile;
+                        // Split the original video into segments (e.g., 10 segments)
+                        int numSegments = 10;
+                        long totalDuration = getVideoDuration(tempVideoFile);
+                        long segmentDuration = totalDuration / numSegments;
+
+                        List<Future<File>> segmentFutures = new ArrayList<>();
+
+                        for (int i = 0; i < numSegments; i++) {
+                            long startTime = i * segmentDuration;
+                            long endTime = (i == numSegments - 1) ? totalDuration : (i + 1) * segmentDuration;
+
+                            File segmentFile = new File(tempFolder, "segment_" + i + ".mp4");
+
+                            int finalI = i;
+                            Future<File> future = executorService.submit(() -> {
+                                try {
+                                    // Extract the segment from the original video
+                                    ProcessBuilder extractProcessBuilder = new ProcessBuilder("ffmpeg", "-i", newVideoFilePath,
+                                            "-ss", String.valueOf(startTime), "-to", String.valueOf(endTime),
+                                            "-c", "copy", segmentFile.getAbsolutePath());
+
+                                    extractProcessBuilder.redirectErrorStream(true);
+
+                                    Process process = extractProcessBuilder.start();
+                                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                                    String line;
+                                    while ((line = reader.readLine()) != null) {
+                                        System.out.println(line);
+                                    }
+
+                                    int exitCode = process.waitFor();
+
+                                    if (exitCode != 0) {
+                                        System.out.println("Error occurred while extracting segment " + finalI);
+                                        return null;
+                                    }
+
+                                    return segmentFile;
+                                } catch (Exception e) {
+                                    System.out.println("Error occurred while extracting segment: " + e.getMessage());
+                                    return null;
+                                }
+                            });
+                            segmentFutures.add(future);
+                        }
+
+                        // Wait for all segment processing tasks to complete and collect the segment files
+                        List<File> segmentFiles = new ArrayList<>();
+                        for (Future<File> future : segmentFutures) {
+                            try {
+                                File segmentFile = future.get();
+                                if (segmentFile != null) {
+                                    segmentFiles.add(segmentFile);
+                                }
+                            } catch (InterruptedException | ExecutionException e) {
+                                System.out.println("Error occurred while getting segment file: " + e.getMessage());
+                            }
+                        }
+
+// Concatenate segments into a single video file
+                        File concatenatedVideoFile = new File(tempFolder, "concatenated_temp.mp4");
+                        String concatCommand = "ffmpeg -f concat -safe 0 -i " + tempFolder.getAbsolutePath() + "concat.txt -c copy " + concatenatedVideoFile.getAbsolutePath();
+
+                        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(tempFolder.getAbsolutePath() + "concat.txt")))) {
+                            for (File segmentFile : segmentFiles) {
+                                writer.println("file '" + segmentFile.getAbsolutePath() + "'");
+                            }
+
+                            //Delete the concat.txt file after writing to it
+                            new File(tempFolder, "concat.txt").delete();
+                        } catch (IOException e) {
+                            System.out.println("Error occurred while creating or deleting concat.txt: " + e.getMessage());
+                            return;
+                        }
+
+
+                        try {
+                            ProcessBuilder concatProcessBuilder = new ProcessBuilder(concatCommand.split(" "));
+                            concatProcessBuilder.redirectErrorStream(true);
+                            Process concatProcess = concatProcessBuilder.start();
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(concatProcess.getInputStream()));
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                System.out.println(line);
+                            }
+
+                            int exitCode = concatProcess.waitFor();
+
+                            if (exitCode != 0) {
+                                System.out.println("Error occurred while concatenating segments.");
+                                return;
+                            }
+
+                            System.out.println("Segments successfully concatenated into: " + concatenatedVideoFile.getAbsolutePath());
+                        } catch (IOException | InterruptedException e) {
+                            System.out.println("Error occurred while concatenating segments: " + e.getMessage());
+                        }
+                        // Generate backward version of the concatenated video
+                        String outputReverseFilePath = tempFolder.getAbsolutePath() + File.separator + "backward_temp.mp4";
+                        ProcessBuilder reverseProcessBuilder = new ProcessBuilder("ffmpeg", "-i", concatenatedVideoFile.getAbsolutePath(),
+                                "-vf", "reverse", outputReverseFilePath);
+
+                        reverseProcessBuilder.redirectErrorStream(true);
+
+                        try {
+                            Process reverseProcess = reverseProcessBuilder.start();
+
+                            BufferedReader reverseReader = new BufferedReader(new InputStreamReader(reverseProcess.getInputStream()));
+                            String line;
+                            while ((line = reverseReader.readLine()) != null) {
+                                System.out.println(line);
+                            }
+
+                            int reverseExitCode = reverseProcess.waitFor();
+
+                            if (reverseExitCode == 0) {
+                                System.out.println("Reverse video generation completed successfully.");
+                            } else {
+                                System.out.println("Error occurred during reverse video generation.");
+                            }
+                        } catch (IOException | InterruptedException e) {
+                            System.out.println("Error occurred during reverse video generation: " + e.getMessage());
+                        }
+
+                        // Clean up: delete segment files and concat.txt
+                        for (File segmentFile : segmentFiles) {
+                            segmentFile.delete();
+                        }
+                        new File(tempFolder, "concat.txt").delete();
+
+                        System.out.println("Backward video generation completed.");
                     } catch (Exception e) {
-                        System.out.println("Error occurred during segment processing: " + e.getMessage());
-                        return null;
+                        System.out.println("Error occurred: " + e.getMessage());
                     }
                 });
 
-                segmentFutures.add(future);
-            }
-
-            // Wait for all segment processing tasks to complete and collect the segment files
-            List<File> segmentFiles = new ArrayList<>();
-            for (Future<File> future : segmentFutures) {
-                File segmentFile = future.get();
-                if (segmentFile != null) {
-                    segmentFiles.add(segmentFile);
-                }
-            }
-
-            // Concatenate segments into a single video file
-            File concatenatedVideoFile = new File(tempFolder, "concatenated_temp.mp4");
-            String concatCommand = "ffmpeg -f concat -i concat.txt -c copy " + concatenatedVideoFile.getAbsolutePath();
-            try (PrintWriter writer = new PrintWriter(new FileWriter(new File(tempFolder, "concat.txt")))) {
-                for (File segmentFile : segmentFiles) {
-                    writer.println("file '" + segmentFile.getAbsolutePath() + "'");
-                }
-            }
-
-            ProcessBuilder concatProcessBuilder = new ProcessBuilder("bash", "-c", concatCommand);
-            Process concatProcess = concatProcessBuilder.start();
-            concatProcess.waitFor();
-
-            // Generate backward version of the concatenated video
-            ProcessBuilder reverseProcessBuilder = new ProcessBuilder("ffmpeg", "-i", concatenatedVideoFile.getAbsolutePath(),
-                    "-vf", "reverse", tempFolder.getAbsolutePath() + File.separator + "backward_temp.mp4");
-            Process reverseProcess = reverseProcessBuilder.start();
-            reverseProcess.waitFor();
-
-            // Clean up: delete segment files and concat.txt
-            for (File segmentFile : segmentFiles) {
-                segmentFile.delete();
-            }
-            new File(tempFolder, "concat.txt").delete();
-
-            System.out.println("Backward video generation completed.");
-        } catch (Exception e) {
-            System.out.println("Error occurred: " + e.getMessage());
-        }
-
-
-        Platform.runLater(() -> {
+       Platform.runLater(() -> {
             Media newMedia = new Media(new File(tempFolder, "temp.mp4").toURI().toString());
 
             if (player != null) {
