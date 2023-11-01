@@ -21,25 +21,22 @@ public class DataFieldParser {
             this.foundFields = new ArrayList<>();
             this.foundRecords = fileParser.getRecords();
             fileParser.close();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             System.err.println(ex);
             return;
         }
     }
 
+        /**
+         * Method to parse through a CSV (Comma-Separated Value) file and retrieve data for each column.
+         * Begins by iterating through the second record (row) of the CSV file to determine data typing
+         * for each column. If the particular cell is empty, the loop iterates through each record at
+         * that index to find a non-empty cell, or until it reaches the last record. Constructs a new
+         * DataField object depending upon the regular expression found within the cell, and loops
+         * through each record at a given index to append data to the DataField's list of elements.
+         * (Assumes that first row contains the name of each column).
+         */
     public ArrayList<DataField> getFoundFields() {
-
-    /**
-     * Method to parse through a CSV (Comma-Separated Value) file and retrieve data for each column.
-     * Begins by iterating through the second record (row) of the CSV file to determine data typing
-     * for each column. If the particular cell is empty, the loop iterates through each record at
-     * that index to find a non-empty cell, or until it reaches the last record. Constructs a new
-     * DataField object depending upon the regular expression found within the cell, and loops
-     * through each record at a given index to append data to the DataField's list of elements.
-     * (Assumes that first row contains the name of each column).
-     */
-    public void parseData() {
         int i = 0;
         int j = 0;
         for (String s : this.foundRecords.get(1)) {
@@ -54,13 +51,29 @@ public class DataFieldParser {
                 i++;
             }
             DataField df = getDataFieldType(s, j);
+            for (CSVRecord r: this.foundRecords) {
+                if (r.getRecordNumber() > 1) {
+                    if (r.get(j).isEmpty())
+                        df.addDataRow(" ");
+                    else
+                        df.addDataRow(r.get(j));
+                }
+            }
             this.foundFields.add(df);   // Add new data field to list of found fields
             j++;
         }
+
         return this.foundFields;
     }
 
-    private DataField getDataFieldType(String s, int j) {
+    /**
+     * Private method used by getFoundFields() to return the specific type of DataField based on a
+     * regular expression found within a data cell
+     * @param s string found within data cell, passed to detect if it matches a numerical value, date, or string
+     * @param j integer passed for the current index in the record, used to get the name of the corresponding data field
+     * @return DataField either of subtype TimeDataField, NumericalDataField, or just DataField
+     */
+    private DataField getDataFieldType(String s,int j){
         DataField df;
         if (s.matches("\\d{4}[/]\\d{1,2}[/]\\d{1,2} \\d{1,2}[:]\\d{2}[:]\\d{2}[.]\\d{3}"))  // If the string matches the regex for yyyy/mm/dd 00:00:00.000
             df = new TimeDataField(this.foundRecords.get(0).get(j));
@@ -69,19 +82,5 @@ public class DataFieldParser {
         else
             df = new DataField(this.foundRecords.get(0).get(j));    // Else the field will be read as a string
         return df;
-    }
-
-    public ArrayList<String> getData(int index) {
-        if (this.foundFields == null || this.foundFields.isEmpty())
-            this.getFoundFields();
-        for (CSVRecord r: this.foundRecords) {
-            if (r.getRecordNumber() > 1) {
-                if (r.get(index).isEmpty())
-                    this.foundFields.get(index).addDataRow(" ");
-                else
-                    this.foundFields.get(index).addDataRow(r.get(index));
-            }
-        }
-        return this.foundFields.get(index).getDataRows();
     }
 }

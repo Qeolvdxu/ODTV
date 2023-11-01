@@ -49,7 +49,6 @@ public class NumericDataField extends DataField{
         }
     }
 
-    // Evaluation is currently close, but not close enough.
     public double getStandardDeviation () {
         if (this.dataRows == null || this.dataRows.isEmpty())
             return 0.0;
@@ -58,7 +57,7 @@ public class NumericDataField extends DataField{
             for (Double dataRow : this.dataRows) {
                 temp += Math.pow(dataRow - this.getAverage(), 2);
             }
-            return this.average = Math.sqrt((temp)/(this.dataRows.size()));
+            return this.average = Math.sqrt((temp)/(this.dataRows.size()-1));
         }
     }
 
