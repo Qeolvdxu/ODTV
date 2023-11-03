@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 
 public class NumericDataField extends DataField{
 
+    private String unit;
     private double minimum;
     private double maximum;
     private double average;
     private double standardDeviation;
+    private boolean isMetric;
     private ArrayList<Double> dataRows;
     public NumericDataField(String name) {
         super(name);
@@ -19,6 +21,14 @@ public class NumericDataField extends DataField{
         this.minimum = 0.0;
         this.maximum = 0.0;
         this.standardDeviation = 0.0;
+        this.isMetric = true;
+        if (name.contains(" ")) {
+            String[] strings = name.split(" ", 2);
+            if (strings[1].contains("["))
+            {
+                this.unit = strings[1];
+            }
+        }
     }
 
     public double getMinimum() {
@@ -61,6 +71,41 @@ public class NumericDataField extends DataField{
         }
     }
 
+    public void changeUnit() {
+        if (isMetric) {
+            if (this.unit.equals("[m/s]")) {
+                for (double d : this.dataRows) {
+                    //compute to mph
+                    d = (d*3600)/1609.3;
+                }
+                this.unit = "[mph]";
+            }
+            else if (this.unit.equals("[m]")) {
+                for (double d : this.dataRows) {
+                    //compute to ft
+                    d = d*3.28084;
+                }
+                this.unit = "[ft]";
+            }
+        }
+        else {
+            if (this.unit.equals("[mph]")) {
+                for (double d : this.dataRows) {
+                    //compute to m/s
+                    d = (d*1609.3)/3600;
+                }
+                this.unit = "[m/s]";
+            }
+            else if (this.unit.equals("[ft]")) {
+                for (double d : this.dataRows) {
+                    //compute to m
+                    d = d/3.28084;
+                }
+                this.unit = "[m]";
+            }
+        }
+    }
+
     @Override
     public void addDataRow(String dataRow) {
         this.dataRows.add(Double.valueOf(dataRow));
@@ -73,5 +118,10 @@ public class NumericDataField extends DataField{
             data.add(Double.toString(d));
         }
         return data;
+    }
+
+    @Override
+    public String toString() {
+        return this.getFieldName() + this.unit;
     }
 }
