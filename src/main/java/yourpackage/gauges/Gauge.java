@@ -38,6 +38,10 @@ public class Gauge {
     }
     public enum GaugeType {
         Circle,
+        Circle90,
+        Circle180,
+        Circle270,
+        Circle360,
         Bar,
         XPlot,
         XByYPLOT,
@@ -46,6 +50,7 @@ public class Gauge {
         Stopwatch,
         OnOffLight,
     }
+    public GaugeType gauge;
     public void resize(){
 
     }
