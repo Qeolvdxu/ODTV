@@ -11,16 +11,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.event.ChangeListener;
+
 
 import yourpackage.visualization.VideoPlayerSwingIntegration;
+
+import yourpackage.visualization.Gauge;
+import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
+
 
 public class Window {
     private JPanel mainPanelW;
     private JButton playButton;
     private JButton pauseButton;
+
+
     private JButton stopButton;
-    private JComboBox videoSpeedComboBox;
+    private JComboBox<String> videoSpeedComboBox;
     private JLabel videoSpeedLabel;
     private JButton forwardButton;
     private JButton backwardButton;
@@ -30,6 +40,7 @@ public class Window {
     private JMenu editButton;
     private JMenu viewButton;
     private JMenu helpButton;
+    private boolean userInitiated;
     private JMenuItem aboutButton;
     private JMenuItem loadConfiguration;
     private JMenuItem saveConfiguration;
@@ -39,9 +50,12 @@ public class Window {
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
-    private VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
+    private JLabel videoTimeLabel;
+
+    private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
+
         JFrame frame = new JFrame();
         System.out.println(System.getProperty("user.dir"));
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
@@ -53,6 +67,8 @@ public class Window {
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("ODTV");
         frame.setVisible(true);
+        VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
+
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
@@ -67,6 +83,29 @@ public class Window {
                 System.exit(0);
             }
         });
+        videoSpeedComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedSpeed = (String) videoSpeedComboBox.getSelectedItem();
+                assert selectedSpeed != null;
+                double speedMultiplier = switch (selectedSpeed) {
+                    case "1X" -> 1.0;
+                    case "5X" -> 5.0;
+                    case "10X" -> 10.0;
+                    case "1X Reverse" -> -1.0;
+                    default -> 1.0; // Default to normal speed
+                };
+                if (speedMultiplier > 0) {
+                    videoPlayer.setVideoSpeed(speedMultiplier);
+                }
+                else
+                {
+                    videoPlayer.setPlayInReverse();
+                }
+            }
+        });
+
+
 
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
@@ -74,29 +113,55 @@ public class Window {
                 FileSelectionWindow.getInstance().show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
-                        videoPlayer.embedVideoIntoJFrame(frame, videoFilePath);
+                        VideoPlayerSwingIntegration.changeVideo(videoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
                         stopButton.setEnabled(true);
                         forwardButton.setEnabled(true);
                         backwardButton.setEnabled(true);
                         slider1.setEnabled(true);
+                        videoSpeedComboBox.setEnabled(true);
+                        videoTimeLabel.setEnabled(true);
                     }
                 });
             }
         });
 
-        slider1.addChangeListener(new ChangeListener() {
+        // Adding change listener for slider
+        slider1.getModel().addChangeListener(new ChangeListener() {
+
             @Override
             public void stateChanged(ChangeEvent changeEvent) {
-                int value = slider1.getValue();
-                if (videoPlayer != null && videoPlayer.getTotalDurationInSeconds() > 0) {
-                    double newTime = (value / 100.0) * videoPlayer.getTotalDurationInSeconds();
-                    videoPlayer.skipToTime(newTime);
+                if (userInitiated) {
+                    int value = slider1.getValue();
+                    if (videoPlayer.getTotalDurationInSeconds() > 0) {
+                        double newTime = (value / 100.0) * videoPlayer.getTotalDurationInSeconds();
+                        videoPlayer.skipToTime(newTime);
+                    }
                 }
+                userInitiated = true;
             }
         });
 
+// Add a MouseListener to detect user interactions
+        slider1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                userInitiated = true;
+            }
+        });
+
+// Add a ChangeListener to detect programmatic changes
+        slider1.getModel().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (slider1.getModel().getValueIsAdjusting()) {
+                    userInitiated = true;
+                } else {
+                    userInitiated = false;
+                }
+            }
+        });
 
 
         aboutButton.addActionListener(new ActionListener() {
@@ -111,70 +176,47 @@ public class Window {
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (videoPlayer != null) {
-                    videoPlayer.play();
-                }
+                videoPlayer.play();
             }
         });
 
         pauseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (videoPlayer != null) {
-                    videoPlayer.pause();
-                }
+                videoPlayer.pause();
             }
         });
 
         stopButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (videoPlayer != null) {
-                    videoPlayer.stop();
-                }
+                videoPlayer.stop();
             }
         });
 
         forwardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (videoPlayer != null) {
-                    videoPlayer.forward();
-                }
+                videoPlayer.forward();
             }
         });
 
         backwardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (videoPlayer != null) {
-                    videoPlayer.rewind();
-                }
+                videoPlayer.rewind();
             }
         });
 
-        videoPlayer.addTimeListener(new ChangeListener() {
-                                        @Override
-                                        public void stateChanged(ChangeEvent changeEvent) {
-                                            double totalDuration = videoPlayer.getTotalDurationInSeconds();
-                                            double currentTime = videoPlayer.getCurrentTimeInSeconds();
-
-                                            // Calculate the slider position as a percentage of the total duration
-                                            double sliderPosition = (currentTime / totalDuration) * 100;
-
-                                            // Update the slider's value
-                                            slider1.setValue((int) sliderPosition);
-                                        }
-                                    }
-        );
-
         createGauge.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                Gauge gauge = new Gauge();
+                new Gauge();
                 System.out.println("New gauge created!");
             }
         });
+
+        videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
+
     }
 
 
@@ -275,12 +317,15 @@ public class Window {
         panel2.add(stopButton, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel2.add(spacer1, new GridConstraints(1, 9, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        videoSpeedComboBox = new JComboBox();
+        videoSpeedComboBox = new JComboBox<String>();
         videoSpeedComboBox.setEnabled(false);
         panel2.add(videoSpeedComboBox, new GridConstraints(1, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         videoSpeedLabel = new JLabel();
         videoSpeedLabel.setText("Video Speed:");
         panel2.add(videoSpeedLabel, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        videoTimeLabel = new JLabel();
+        videoTimeLabel.setText("0:00");
+        panel2.add(videoTimeLabel, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         forwardButton = new JButton();
         forwardButton.setEnabled(false);
         forwardButton.setHideActionText(false);
