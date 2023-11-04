@@ -19,6 +19,11 @@ public class CircleGauge extends Gauge {
     private transient GradientLookup gradient;
     private transient Media alarm;
     private double redError;
+    public static MediaPlayer player = null;
+
+    public static Tile tile = null;
+
+
 
     public CircleGauge(int angle) {
         super();
@@ -51,8 +56,8 @@ public class CircleGauge extends Gauge {
         tile.setGradientStops(gradient.getStops());
         tile.setStrokeWithGradient(true);
 
+
         alarm = null;
-        mediaPlayer = null;
     }
 
     public GradientLookup getGradient()
