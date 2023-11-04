@@ -19,7 +19,7 @@ public class CircleGauge extends Gauge {
     private transient GradientLookup gradient;
     private transient Media alarm;
     private double redError;
-    public static MediaPlayer player = null;
+    public static MediaPlayer mediaPlayer = null;
 
     public static Tile tile = null;
 
@@ -38,13 +38,12 @@ public class CircleGauge extends Gauge {
         }
         field = null;
 
-        tile.setSkinType(Tile.SkinType.GAUGE2);
+        tile.setSkinType(Tile.SkinType.GAUGE);
         tile.setUnit("d");
         tile.setAngleRange(angle);
         tile.setMinValue(0);
         tile.setMaxValue(angle);
         tile.setValue(angle);
-        tile.setMinValueVisible(false); tile.setMaxValueVisible(false);
         tile.setUnit("MPH");
         tile.setAnimated(true);
 
@@ -112,13 +111,7 @@ public class CircleGauge extends Gauge {
         alarmIndex = i;
         switch(i)
         {
-            case 1: //criticalAlarm
-                soundFile = "";
-                alarm = new Media(new File(soundFile).toURI().toString());
-                mediaPlayer = new MediaPlayer(alarm);
-                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                break;
-            case 2: //warningAlarm
+            case 1, 2: //criticalAlarm
                 soundFile = "";
                 alarm = new Media(new File(soundFile).toURI().toString());
                 mediaPlayer = new MediaPlayer(alarm);
