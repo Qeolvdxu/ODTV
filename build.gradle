@@ -29,8 +29,14 @@ dependencies {
     implementation 'org.knowm.xchart:xchart:3.8.0'
 
     // SteelSeries
-    implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
-    implementation 'eu.hansolo:SteelSeries:3.9.31.2'
+
+    implementation files('lib/SteelSeries-3.9.31.2.jar')   
+    implementation files('lib/trident-6.3.jar')   
+    implementation files('lib/toolbox-4.1.2.jar')   
+    implementation files('lib/tilesfx-1.5.2.jar')   
+    implementation files('lib/hamcrest-core-1.1.jar')   
+    implementation files('lib/json-simple-1.1.1.jar')   
+    implementation files('lib/junit-4.10.jar')   
     implementation 'eu.hansolo:tilesfx:17.1.31'
 
     // Apache Commons CSV
