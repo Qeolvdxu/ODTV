@@ -33,11 +33,11 @@ dependencies {
     implementation files('lib/SteelSeries-3.9.31.2.jar')   
     implementation files('lib/trident-6.3.jar')   
     implementation files('lib/toolbox-4.1.2.jar')   
-    implementation files('lib/tilesfx-1.5.2.jar')   
+    implementation files('lib/toolboxfx-17.0.23.jar')
+    implementation files('lib/tilesfx-1.5.2.jar')
     implementation files('lib/hamcrest-core-1.1.jar')   
     implementation files('lib/json-simple-1.1.1.jar')   
     implementation files('lib/junit-4.10.jar')   
-    implementation 'eu.hansolo:tilesfx:17.1.31'
 
     // Apache Commons CSV
     implementation 'org.apache.commons:commons-csv:1.10.0'

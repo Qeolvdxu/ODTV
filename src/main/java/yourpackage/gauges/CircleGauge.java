@@ -1,5 +1,6 @@
 package yourpackage.gauges;
-import eu.hansolo.toolboxfx.GradientLookup;
+import eu.hansolo.tilesfx.tools.GradientLookup;
+//import eu.hansolo.toolboxfx.GradientLookup;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.colors.Bright;
 import yourpackage.parsing.DataField;
