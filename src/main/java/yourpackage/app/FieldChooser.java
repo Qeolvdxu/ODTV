@@ -23,26 +23,28 @@ public class FieldChooser {
     private static FieldChooser instance;
     private final JFrame frame;
     private static ArrayList<DataField> foundFields; // Fields found by the parser
+    private ArrayList<DataField> visibleFoundFields; // Found fields currently visible to the user
     private ArrayList<DataField> selectedFields; // Fields selected by the user
 
     public FieldChooser() {
         frame = new JFrame();
         foundFields = new ArrayList<>();
+        visibleFoundFields = new ArrayList<>();
         selectedFields = new ArrayList<>();
-        String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
+        String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
         frame.setContentPane(mainPanelFC);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setResizable(false);
+        frame.setTitle("Choose Data Fields");
         frame.setVisible(true);
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int selectedFieldIndex = foundFieldsJList.getSelectedIndex();
-                DataField selectedField;
-                selectedField = foundFields.get(selectedFieldIndex);
+                DataField selectedField = visibleFoundFields.get(selectedFieldIndex);
                 if (selectedFields.size() < 10 && !fieldExists(selectedField)) {
                     addSelectedField(selectedField);
                 } else {
@@ -60,10 +62,18 @@ public class FieldChooser {
                 removeSelectedField(selectedFieldIndex);
             }
         });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String searchText = searchTextField.getText();
+                searchFields(searchText);
+            }
+        });
     }
 
     public void setFoundFields(ArrayList<DataField> fields) {
         foundFields.addAll(fields);
+        visibleFoundFields.addAll(fields);
         System.out.println(foundFields);
         populateFoundFieldsJList();
     }
@@ -72,7 +82,6 @@ public class FieldChooser {
         boolean exists = false;
         for (DataField i : selectedFields) {
             if (i.getFieldName() == field.getFieldName()) {
-                System.out.println("iT lOoKS liEk dA fIeLD Ex1Sts!");
                 exists = true;
             }
         }
@@ -105,6 +114,23 @@ public class FieldChooser {
             listModel.addElement(String.valueOf(item));
         }
         selectedFieldsJList.setModel(listModel);
+    }
+
+    private void searchFields(String text) {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        String searchQuery = text.toLowerCase();
+        visibleFoundFields.clear();
+        for (DataField item : foundFields) {
+            String fieldName = item.getFieldName().toLowerCase();
+            if (fieldName.contains(searchQuery)) {
+                listModel.addElement(String.valueOf(item));
+                visibleFoundFields.add(item);
+            } else if (text == null) {
+            populateFoundFieldsJList();
+            visibleFoundFields.addAll(foundFields);
+        }
+    }
+        foundFieldsJList.setModel(listModel);
     }
 
     {
