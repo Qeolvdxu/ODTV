@@ -35,6 +35,12 @@ public class NumericDataField extends DataField{
             return this.maximum = Collections.max(this.dataRows);
     }
 
+    // Retrieves next Double field in the index
+    public Double getNext() {
+        //Needed for the update function
+        return 0.0;
+    }
+
     public OptionalDouble getAverage() {
         return this.average = this.dataRows.stream().mapToDouble(a -> a).average();
     }

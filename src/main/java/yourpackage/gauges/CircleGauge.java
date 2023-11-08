@@ -1,6 +1,5 @@
 package yourpackage.gauges;
 import eu.hansolo.tilesfx.tools.GradientLookup;
-//import eu.hansolo.toolboxfx.GradientLookup;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.colors.Bright;
 import yourpackage.parsing.DataField;
@@ -37,6 +36,8 @@ public class CircleGauge extends Gauge {
         } else if (angle == 360) {
             this.gauge = GaugeType.Circle360;
         }
+
+
         field = null;
 
         tile.setSkinType(Tile.SkinType.GAUGE);
@@ -47,6 +48,9 @@ public class CircleGauge extends Gauge {
         tile.setValue(angle);
         tile.setUnit("MPH");
         tile.setAnimated(true);
+
+        //tile.setMinValueVisible(false);
+        //tile.setMaxValueVisible(false);
 
         gradient = new GradientLookup(Arrays.asList(new Stop(0.25, Bright.BLUE),
                 new Stop(0.50, Bright.GREEN),
@@ -74,9 +78,7 @@ public class CircleGauge extends Gauge {
 
 
     public void update(){
-        //Double value = field.getNext();
-        //Not written yet ^
-        Double value = 0.0;
+        Double value = field.getNext();
 
         if (value == null) {
             return;
@@ -106,14 +108,20 @@ public class CircleGauge extends Gauge {
             }
         }
     }
+
+    public static double map (double fValue, double start, double stop, double fStart, double fStop)
+    {
+        return fStart + (fStop - fStart) * ((fValue - start) / (stop - start));
+    }
+
     public void setAlarm(int i){
         String soundFile;
-        //redError
+        redError = map(gradient.getStops().get(3).getOffset(), 0, 1, tile.getMinValue(),tile.getMaxValue());
         alarmIndex = i;
         switch(i)
         {
             case 1, 2: //criticalAlarm
-                soundFile = "";
+                soundFile = "src/main/resources/criticalAlarm.wav";
                 alarm = new Media(new File(soundFile).toURI().toString());
                 mediaPlayer = new MediaPlayer(alarm);
                 mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
@@ -122,5 +130,17 @@ public class CircleGauge extends Gauge {
                 //no alarm
                 break;
         }
+    }
+
+    public DataField getField() {
+        return field;
+    }
+
+    public void setField(NumericDataField field) {
+        this.field = field;
+    }
+
+    public int getAlarmIndex() {
+        return alarmIndex;
     }
 }

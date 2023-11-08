@@ -1,27 +1,24 @@
 package yourpackage.gauges;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.BorderLayout;
+
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import eu.hansolo.steelseries.gauges.Radial;
+import yourpackage.parsing.DataField;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Gauge {
     private String name;
     private float size;
     private float xpos;
     private float ypos;
-    //private Datafield correspondingField;
+    private DataField correspondingField;
     private float blueLimit;
     private float greenLimit;
     private float yellowLimit;
@@ -51,6 +48,7 @@ public class Gauge {
         OnOffLight,
     }
     public GaugeType gauge;
+
     public void resize(){
 
     }
