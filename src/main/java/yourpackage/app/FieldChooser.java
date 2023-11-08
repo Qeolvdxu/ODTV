@@ -20,6 +20,7 @@ public class FieldChooser {
     private JList foundFieldsJList;
     private JTextField searchTextField;
     private JButton searchButton;
+    private JButton doneButton;
     private static FieldChooser instance;
     private final JFrame frame;
     private static ArrayList<DataField> foundFields; // Fields found by the parser
@@ -35,7 +36,7 @@ public class FieldChooser {
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
         frame.setContentPane(mainPanelFC);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(0); // Window shouldn't be closeable, or else it will mess up the rest of the program's execution.
         frame.pack();
         frame.setResizable(false);
         frame.setTitle("Choose Data Fields");
@@ -56,9 +57,7 @@ public class FieldChooser {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int selectedFieldIndex = selectedFieldsJList.getSelectedIndex();
-                DataField selectedField;
                 System.out.println(selectedFieldIndex);
-                selectedField = selectedFields.get(selectedFieldIndex);
                 removeSelectedField(selectedFieldIndex);
             }
         });
@@ -69,9 +68,17 @@ public class FieldChooser {
                 searchFields(searchText);
             }
         });
+        doneButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                // TODO Pass the selected fields and timestamp field to a gauge/visualization setup window.
+                frame.dispose(); // Close the window when the user is done.
+            }
+        });
     }
 
     public void setFoundFields(ArrayList<DataField> fields) {
+        // TODO find the timestamp field and remove it, then isolate it into its own DataField variable.
         foundFields.addAll(fields);
         visibleFoundFields.addAll(fields);
         System.out.println(foundFields);
@@ -126,10 +133,10 @@ public class FieldChooser {
                 listModel.addElement(String.valueOf(item));
                 visibleFoundFields.add(item);
             } else if (text == null) {
-            populateFoundFieldsJList();
-            visibleFoundFields.addAll(foundFields);
+                populateFoundFieldsJList();
+                visibleFoundFields.addAll(foundFields);
+            }
         }
-    }
         foundFieldsJList.setModel(listModel);
     }
 
@@ -149,7 +156,7 @@ public class FieldChooser {
      */
     private void $$$setupUI$$$() {
         mainPanelFC = new JPanel();
-        mainPanelFC.setLayout(new GridLayoutManager(7, 4, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanelFC.setLayout(new GridLayoutManager(8, 4, new Insets(0, 0, 0, 0), -1, -1));
         final Spacer spacer1 = new Spacer();
         mainPanelFC.add(spacer1, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
@@ -180,6 +187,9 @@ public class FieldChooser {
         final JLabel label2 = new JLabel();
         label2.setText("Add Fields");
         mainPanelFC.add(label2, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        doneButton = new JButton();
+        doneButton.setText("Done");
+        mainPanelFC.add(doneButton, new GridConstraints(7, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
