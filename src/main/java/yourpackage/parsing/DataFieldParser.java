@@ -74,4 +74,6 @@ public class DataFieldParser {
     public ArrayList<DataField> getFoundFields() {
         return this.foundFields;
     }
+
+    public void clearFields() { this.foundFields.clear(); }
 }
