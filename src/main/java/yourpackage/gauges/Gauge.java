@@ -23,6 +23,7 @@ public class Gauge {
     private float greenLimit;
     private float yellowLimit;
     private float redLimit;
+    public static Tile tile = null;
 
     public Gauge()
     {
@@ -55,4 +56,9 @@ public class Gauge {
     public void playAlarm(){
 
     }
+    public void setTitle(String title)
+    {
+        tile.setTitle(title);
+    }
+
 }
