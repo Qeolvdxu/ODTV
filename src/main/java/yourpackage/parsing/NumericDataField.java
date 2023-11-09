@@ -1,5 +1,6 @@
 package yourpackage.parsing;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.OptionalDouble;
@@ -11,6 +12,11 @@ public class NumericDataField extends DataField{
     private OptionalDouble average;
     private float standardDeviation;
     private ArrayList<Float> dataRows;
+    public String pickedUnit="";
+    public String ogUnit="";
+    public String unitType="";
+    public UnitConvert uc = new UnitConvert();
+
     public NumericDataField(String name) {
         super(name);
         this.dataRows = new ArrayList<>();
@@ -35,10 +41,26 @@ public class NumericDataField extends DataField{
             return this.maximum = Collections.max(this.dataRows);
     }
 
+    // Retrieves next Double field in the index
+    public Double getNext() {
+        //Needed for the update function
+        return 0.0;
+    }
+
+    public void convert(String type, String from, String to) {
+        this.unitType = type;
+        this.ogUnit = from;
+        this.pickedUnit = to;
+        //this.dataRows = this.uc.convert(this.unitType, this.pickedUnit, this.ogUnit, this.dataRows);
+    }
+
     public OptionalDouble getAverage() {
         return this.average = this.dataRows.stream().mapToDouble(a -> a).average();
     }
+    /*public Float getStdDev(){
 
+    }
+    */
     @Override
     public void addDataRow(String dataRow) {
         this.dataRows.add(Float.valueOf(dataRow));
