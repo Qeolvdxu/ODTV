@@ -43,12 +43,13 @@
           </grid>
         </constraints>
         <properties>
+          <enabled value="false"/>
           <model>
             <item value="Created by:"/>
             <item value="Hayden Estes"/>
             <item value="Malachi Vasquez"/>
             <item value="James Sterling"/>
-            <item value="Barret Brewer"/>
+            <item value="Barrett Brewer"/>
           </model>
         </properties>
       </component>

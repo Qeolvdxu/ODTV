@@ -17,8 +17,11 @@ import javax.swing.event.ChangeListener;
 
 
 import yourpackage.visualization.VideoPlayerSwingIntegration;
+
 import yourpackage.visualization.Gauge;
 import javafx.util.Duration;
+import yourpackage.gauges.Gauge;
+
 
 public class Window {
     private JPanel mainPanelW;
@@ -107,7 +110,8 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow.getInstance().show(new FileSelectionWindow.FileSelectionListener() {
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
                         VideoPlayerSwingIntegration.changeVideo(videoFilePath);

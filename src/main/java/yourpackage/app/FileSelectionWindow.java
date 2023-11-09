@@ -22,18 +22,15 @@ public class FileSelectionWindow {
     private JButton OKButton;
     private JPanel mainPanelFS;
     private final JFrame frame;
-    private static FileSelectionWindow instance;
-    private File selectedCSVFile;
+    private DataFieldParser parser;
 
     private String selectedVideoFilePath;
 
     private String selectedCSVFilePath;
 
-    private final boolean Send = false;
+    private FieldChooser Fc;
 
-    private FileSelectionWindow() {
-        File selectedCSVFile;
-
+    public FileSelectionWindow() {
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -78,9 +75,8 @@ public class FileSelectionWindow {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
-                    DataFieldParser parser = new DataFieldParser(selectedFile);
+                    parser = new DataFieldParser(selectedFile);
                     parser.parseData();
-                    System.out.println(parser.getFoundFields());
                 }
             }
 
@@ -92,14 +88,6 @@ public class FileSelectionWindow {
                 return selectedCSVFilePath;
             }
         });
-    }
-
-
-    public static FileSelectionWindow getInstance() {
-        if (instance == null) {
-            instance = new FileSelectionWindow();
-        }
-        return instance;
     }
 
     public boolean isVisible() {
@@ -183,6 +171,9 @@ public class FileSelectionWindow {
                 frame.setVisible(false);
                 frame.dispose();
                 listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
+                FieldChooser Fc = new FieldChooser();
+                Fc.setFoundFields(parser.getFoundFields());
+                parser.clearFields(); // Clear the fields in the parser in case if another file gets opened.
             }
         });
     }
