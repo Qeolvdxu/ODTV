@@ -32,12 +32,13 @@ public class FileSelectionWindow {
 
     public FileSelectionWindow() {
         frame = new JFrame();
-        String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
+        String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
         frame.setContentPane(mainPanelFS);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
+        frame.setTitle("File Selection");
         frame.setResizable(false);
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -53,6 +54,7 @@ public class FileSelectionWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
+                fileChooser.showOpenDialog(frame); // Hopefully it gets rid of that stupid duke icon.
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Quicktime Movie (*.MOV)", "MOV");
                 // fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
@@ -67,6 +69,7 @@ public class FileSelectionWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
+                fileChooser.showOpenDialog(frame);
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Column-separated Values (*.csv)", "csv");
                 fileChooser.setFileFilter(filter); // Set the file filter for the file chooser

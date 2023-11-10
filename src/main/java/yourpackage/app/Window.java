@@ -18,7 +18,9 @@ import javax.swing.event.ChangeListener;
 
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
+
 import yourpackage.gauges.Gauge;
+
 import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
 
