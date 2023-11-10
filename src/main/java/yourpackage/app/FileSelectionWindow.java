@@ -22,25 +22,23 @@ public class FileSelectionWindow {
     private JButton OKButton;
     private JPanel mainPanelFS;
     private final JFrame frame;
-    private static FileSelectionWindow instance;
-    private File selectedCSVFile;
+    private DataFieldParser parser;
 
     private String selectedVideoFilePath;
 
     private String selectedCSVFilePath;
 
-    private final boolean Send = false;
+    private FieldChooser Fc;
 
-    private FileSelectionWindow() {
-        File selectedCSVFile;
-
+    public FileSelectionWindow() {
         frame = new JFrame();
-        String iconPath = System.getProperty("user.dir") + "/resources/icon.png";
+        String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
         frame.setContentPane(mainPanelFS);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
+        frame.setTitle("File Selection");
         frame.setResizable(false);
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -56,6 +54,7 @@ public class FileSelectionWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
+                fileChooser.showOpenDialog(frame); // Hopefully it gets rid of that stupid duke icon.
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Quicktime Movie (*.MOV)", "MOV");
                 // fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
@@ -70,6 +69,7 @@ public class FileSelectionWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(); // Create a JFileChooser instance
+                fileChooser.showOpenDialog(frame);
                 // Configure file chooser settings if needed (e.g., set initial directory, file filters)
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Column-separated Values (*.csv)", "csv");
                 fileChooser.setFileFilter(filter); // Set the file filter for the file chooser
@@ -80,7 +80,6 @@ public class FileSelectionWindow {
 
                     DataFieldParser parser = new DataFieldParser(selectedFile);
                     parser.getFoundFields();
-                    System.out.println(parser.getFoundFields());
                 }
             }
 
@@ -92,14 +91,6 @@ public class FileSelectionWindow {
                 return selectedCSVFilePath;
             }
         });
-    }
-
-
-    public static FileSelectionWindow getInstance() {
-        if (instance == null) {
-            instance = new FileSelectionWindow();
-        }
-        return instance;
     }
 
     public boolean isVisible() {
@@ -183,6 +174,9 @@ public class FileSelectionWindow {
                 frame.setVisible(false);
                 frame.dispose();
                 listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
+                FieldChooser Fc = new FieldChooser();
+                Fc.setFoundFields(parser.getFoundFields());
+                parser.clearFields(); // Clear the fields in the parser in case if another file gets opened.
             }
         });
     }

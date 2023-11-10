@@ -83,4 +83,6 @@ public class DataFieldParser {
             df = new DataField(this.foundRecords.get(0).get(j));    // Else the field will be read as a string
         return df;
     }
+
+    public void clearFields() { this.foundFields.clear(); }
 }
