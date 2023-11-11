@@ -78,8 +78,8 @@ public class FileSelectionWindow {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
-                    parser = new DataFieldParser(selectedFile);
-                    parser.parseData();
+                    DataFieldParser parser = new DataFieldParser(selectedFile);
+                    parser.getFoundFields();
                 }
             }
 
