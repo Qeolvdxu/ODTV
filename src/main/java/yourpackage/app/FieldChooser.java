@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import yourpackage.parsing.DataField;
+import yourpackage.visualization.Gauge;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,8 +72,8 @@ public class FieldChooser {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 selectedFields.addAll(timeStampField); // Add the timestamp field before disposing.
-                // TODO ADD CODE HERE TO PASS THE FIELDS TO ANY OTHER CLASS THAT NEEDS IT.
                 frame.dispose(); // Close the window when the user is done.
+                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields);
             }
         });
     }
