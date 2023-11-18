@@ -49,9 +49,6 @@ public class CircleGauge extends Gauge {
         tile.setUnit("MPH");
         tile.setAnimated(true);
 
-        //tile.setMinValueVisible(false);
-        //tile.setMaxValueVisible(false);
-
         gradient = new GradientLookup(Arrays.asList(new Stop(0.25, Bright.BLUE),
                 new Stop(0.50, Bright.GREEN),
                 new Stop(0.75, Bright.YELLOW),

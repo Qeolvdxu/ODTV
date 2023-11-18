@@ -1,8 +1,9 @@
 package yourpackage.parsing;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DataField {
+public class DataField implements Serializable {
     private String fieldName;
     protected ArrayList<String> dataRows;
 
@@ -55,5 +56,5 @@ public class DataField {
     public String toString() {
         return this.fieldName;
     }
-
+    public Object getNext() { return getNext();}
 }
