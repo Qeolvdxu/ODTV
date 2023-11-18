@@ -26,12 +26,14 @@ public class FieldChooser {
     private static ArrayList<DataField> foundFields; // Fields found by the parser
     private ArrayList<DataField> visibleFoundFields; // Found fields currently visible to the user
     private ArrayList<DataField> selectedFields; // Fields selected by the user
+    private ArrayList<DataField> timeStampField; // ArrayList to hold the timestamp field
 
     public FieldChooser() {
         frame = new JFrame();
         foundFields = new ArrayList<>();
         visibleFoundFields = new ArrayList<>();
         selectedFields = new ArrayList<>();
+        timeStampField = new ArrayList<>();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
@@ -48,8 +50,6 @@ public class FieldChooser {
                 DataField selectedField = visibleFoundFields.get(selectedFieldIndex);
                 if (selectedFields.size() < 10 && !fieldExists(selectedField)) {
                     addSelectedField(selectedField);
-                } else {
-                    System.out.println("Could not add field!");
                 }
             }
         });
@@ -57,7 +57,6 @@ public class FieldChooser {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int selectedFieldIndex = selectedFieldsJList.getSelectedIndex();
-                System.out.println(selectedFieldIndex);
                 removeSelectedField(selectedFieldIndex);
             }
         });
@@ -71,17 +70,17 @@ public class FieldChooser {
         doneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                // TODO Pass the selected fields and timestamp field to a gauge/visualization setup window.
+                selectedFields.addAll(timeStampField); // Add the timestamp field before disposing.
+                // TODO ADD CODE HERE TO PASS THE FIELDS TO ANY OTHER CLASS THAT NEEDS IT.
                 frame.dispose(); // Close the window when the user is done.
             }
         });
     }
 
     public void setFoundFields(ArrayList<DataField> fields) {
-        // TODO find the timestamp field and remove it, then isolate it into its own DataField variable.
         foundFields.addAll(fields);
-        visibleFoundFields.addAll(fields);
-        System.out.println(foundFields);
+        isolateTimeStampField();
+        visibleFoundFields.addAll(foundFields);
         populateFoundFieldsJList();
     }
 
@@ -97,13 +96,11 @@ public class FieldChooser {
 
     private void addSelectedField(DataField field) {
         selectedFields.add(field);
-        System.out.println(selectedFields);
         populateSelectedFieldsJList();
     }
 
     private void removeSelectedField(int index) {
         selectedFields.remove(index);
-        System.out.println(selectedFields);
         populateSelectedFieldsJList();
     }
 
@@ -138,6 +135,16 @@ public class FieldChooser {
             }
         }
         foundFieldsJList.setModel(listModel);
+    }
+
+    private void isolateTimeStampField() {
+        for (DataField item : foundFields) {
+            if (item.getFieldName().equals("DETAILS.timestamp")) {
+                timeStampField.add(item);
+                foundFields.remove(item);
+                break;
+            }
+        }
     }
 
     {
