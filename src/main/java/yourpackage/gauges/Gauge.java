@@ -3,6 +3,9 @@ package yourpackage.gauges;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
+
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import yourpackage.parsing.DataField;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -25,15 +28,23 @@ public class Gauge {
     private float redLimit;
     public static Tile tile = null;
 
+    public JFrame frame;
+
     public Gauge()
     {
-        JFrame frame = new JFrame();
+        System.out.println("Creating a new Gauge instance."); // <-- Added print statement
+
+        frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         frame.pack();
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
     }
+
+
+
     public enum GaugeType {
         Circle,
         Circle90,
@@ -61,4 +72,5 @@ public class Gauge {
         tile.setTitle(title);
     }
 
+    public Tile getTile() { return tile; }
 }

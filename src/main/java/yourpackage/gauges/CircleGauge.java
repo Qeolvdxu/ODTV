@@ -1,7 +1,12 @@
 package yourpackage.gauges;
 import eu.hansolo.tilesfx.tools.GradientLookup;
 import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.colors.Bright;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import javafx.scene.media.Media;
@@ -12,6 +17,8 @@ import javafx.scene.paint.Stop;
 import java.io.File;
 import java.util.Arrays;
 
+
+
 public class CircleGauge extends Gauge {
 
     private NumericDataField field;
@@ -21,12 +28,31 @@ public class CircleGauge extends Gauge {
     private double redError;
     public static MediaPlayer mediaPlayer = null;
 
-    public static Tile tile = null;
-
-
-
     public CircleGauge(int angle) {
         super();
+
+        // Create a JFXPanel for embedding JavaFX content
+        JFXPanel jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
+        // Initialize the tile
+        tile = TileBuilder.create()
+                .skinType(Tile.SkinType.GAUGE)
+                .unit("d")
+                .angleRange(angle)
+                .minValue(0)
+                .maxValue(angle)
+                .value(angle)
+                .unit("MPH")
+                .animated(true)
+                .build();
+
+        gradient = new GradientLookup(Arrays.asList(
+                new Stop(0.25, Bright.BLUE),
+                new Stop(0.50, Bright.GREEN),
+                new Stop(0.75, Bright.YELLOW),
+                new Stop(1, Bright.RED)));
+
         if (angle == 90) {
             this.gauge = GaugeType.Circle90;
         } else if (angle == 180) {
@@ -37,28 +63,22 @@ public class CircleGauge extends Gauge {
             this.gauge = GaugeType.Circle360;
         }
 
-
-        field = null;
-
-        tile.setSkinType(Tile.SkinType.GAUGE);
-        tile.setUnit("d");
-        tile.setAngleRange(angle);
-        tile.setMinValue(0);
-        tile.setMaxValue(angle);
-        tile.setValue(angle);
-        tile.setUnit("MPH");
-        tile.setAnimated(true);
-
-        gradient = new GradientLookup(Arrays.asList(new Stop(0.25, Bright.BLUE),
-                new Stop(0.50, Bright.GREEN),
-                new Stop(0.75, Bright.YELLOW),
-                new Stop(1, Bright.RED)));
-
-        tile.setGradientStops(gradient.getStops());
-        tile.setStrokeWithGradient(true);
-
+        Platform.runLater(() -> initFX(jfxPanel));
 
         alarm = null;
+        field = null;
+    }
+
+    private void initFX(JFXPanel jfxPanel) {
+        // Create JavaFX content (TilesFX tile in this case)
+        tile = this.getTile();
+
+        if (tile != null) {
+            // Create a JavaFX Scene
+            System.out.println("Creating a new gauge.");
+            Scene scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
     }
 
     public GradientLookup getGradient()

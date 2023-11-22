@@ -1,5 +1,10 @@
 package yourpackage.gauges;
 
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import javafx.scene.chart.NumberAxis;
@@ -20,27 +25,42 @@ public class XByYPlotGauge extends Gauge {
     public XByYPlotGauge(double xMin, double xMax, double xTick, double yMin, double yMax, double yTick)
     {
         super();
+
+        JFXPanel jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
         this.gauge = GaugeType.XByYPLOT;
+
+        scatterChart = new ScatterChart<Number,Number>(xAxis,yAxis);
+        scatterChart.getData().addAll(series);
 
         // LineChart Data
         series = new XYChart.Series();
 
-        tile.setTitle("XYPlot Gauge");
-
-        tile.setAnimated(true);
-        tile.setRunning(true);
-        tile.setActive(true);
+        tile = TileBuilder.create()
+                .title("XYPlot Gauge")
+                .animated(true)
+                .running(true)
+                //.active(true)
+                .graphic(scatterChart)
+                .build();
 
         xAxis = new NumberAxis(xMin, xMax, xTick);
         yAxis = new NumberAxis(yMin, yMax, yTick);
         xAxis.setLabel("X");
         yAxis.setLabel("Y");
 
-        scatterChart = new ScatterChart<Number,Number>(xAxis,yAxis);
-        scatterChart.getData().addAll(series);
+        Platform.runLater(() -> initFX(jfxPanel));
+    }
 
-        tile.setGraphic(scatterChart);
+    private void initFX(JFXPanel jfxPanel) {
+        tile = this.getTile();
 
+        if (tile != null) {
+            System.out.println("Creating a new gauge.");
+            Scene scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
     }
 
     public DataField getField() {

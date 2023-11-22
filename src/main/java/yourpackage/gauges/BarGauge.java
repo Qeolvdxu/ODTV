@@ -1,5 +1,10 @@
 package yourpackage.gauges;
 
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 //import dronetelemetrytool.skins.SingleBarTileSkin;
@@ -29,13 +34,20 @@ public class BarGauge extends Gauge{
     public BarGauge(String title, double min, double max, double green, double yellow, double red, String unit)
     {
         super();
+
+        JFXPanel jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
         this.gauge = GaugeType.Bar;
         field = null;
-        //tile.setPrefSize(TILE_SIZE*2, TILE_SIZE);
-        tile.setTitle(title);
-        tile.setMaxValue(max);
-        tile.setMinValue(min);
-        tile.setFillWithGradient(true);
+
+        tile = TileBuilder.create()
+            .prefSize(150*2, 150)
+            .title(title)
+            .maxValue(max)
+            .minValue(min)
+            .strokeWithGradient(true)
+            .build();
 
         data = new ChartData("");
         //data.setFormatString("%.1f " + unit);
@@ -52,6 +64,18 @@ public class BarGauge extends Gauge{
         redError = 0.9 * tile.getMaxValue();
         alarm = null;
         mediaPlayer = null;
+
+        Platform.runLater(() -> initFX(jfxPanel));
+    }
+
+    private void initFX(JFXPanel jfxPanel) {
+        tile = this.getTile();
+
+        if (tile != null) {
+            System.out.println("Creating a new gauge.");
+            Scene scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
     }
 
     public static double map (double fValue, double start, double stop, double fStart, double fStop)

@@ -1,9 +1,14 @@
 package yourpackage.gauges;
 
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import yourpackage.app.Main;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.StringField;
-import eu.hansolo.tilesfx.Tile;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Random;
@@ -15,13 +20,31 @@ public class NumOrSingleCharGauge extends Gauge{
     public NumOrSingleCharGauge()
     {
         super();
+
+        JFXPanel jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
         this.gauge = GaugeType.NumOrSingleChar;
         field = null;
-        tile.setSkinType(Tile.SkinType.CHARACTER);
-        tile.setTitle("Character Gauge");
-        tile.setTitleAlignment(TextAlignment.CENTER);
-        tile.setDescription("C");
 
+        tile = TileBuilder.create()
+            .skinType(Tile.SkinType.CHARACTER)
+            .title("Character Gauge")
+            .titleAlignment(TextAlignment.CENTER)
+            .description("C")
+            .build();
+
+        Platform.runLater(() -> initFX(jfxPanel));
+    }
+
+    private void initFX(JFXPanel jfxPanel) {
+        tile = this.getTile();
+
+        if (tile != null) {
+            System.out.println("Creating a new gauge.");
+            Scene scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
     }
 
     public void update() {

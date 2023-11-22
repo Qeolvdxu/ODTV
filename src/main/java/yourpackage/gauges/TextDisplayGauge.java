@@ -1,5 +1,8 @@
 package yourpackage.gauges;
 
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.embed.swing.JFXPanel;
+import javafx.geometry.Pos;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.StringField;
 import eu.hansolo.tilesfx.Tile;
@@ -13,10 +16,21 @@ public class TextDisplayGauge extends Gauge{
     public TextDisplayGauge()
     {
         super();
+
+        JFXPanel jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
         this.gauge = GaugeType.TextDisplay;
-        tile.setTitle("TextDisplay Gauge");
-        tile.setDescription("String");
-        //tile.setSkinType(Tile.SkinType.CENTER_TEXT);
+
+        tile = TileBuilder.create()
+            .skinType(Tile.SkinType.TEXT)
+            .prefSize(150, 150)
+            .title("Text Tile")
+            .text("Whatever text")
+            .description("May the force be with you\n...always")
+            .descriptionAlignment(Pos.TOP_LEFT)
+            .textVisible(true)
+            .build();
     }
     public void update() {
         Object newValue = field.getNext();
