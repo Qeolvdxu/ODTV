@@ -1,4 +1,3 @@
-
 package yourpackage.app;
 
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -78,8 +77,8 @@ public class FileSelectionWindow {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
-                    DataFieldParser parser = new DataFieldParser(selectedFile);
-                    parser.getFoundFields();
+                    parser = new DataFieldParser(selectedFile);
+                    parser.parseData();
                 }
             }
 

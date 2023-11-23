@@ -32,8 +32,6 @@ public class Gauge {
 
     public Gauge()
     {
-        System.out.println("Creating a new Gauge instance."); // <-- Added print statement
-
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -41,6 +39,11 @@ public class Gauge {
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
+    }
+
+    public void setGaugeTitle(String title)
+    {
+        frame.setTitle(title);
     }
 
 

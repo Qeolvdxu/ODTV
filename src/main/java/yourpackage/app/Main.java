@@ -13,7 +13,7 @@ public class Main {
 
     public static void main (String[] args)
     { FlatDarkLaf.setup(); // Initialize Flatlaf, the look and feel we are using for Swing.
-        Gauge test = new CircleGauge(270);
+        // Gauge test = new CircleGauge(90);
         Window window = new Window();
     }
 }

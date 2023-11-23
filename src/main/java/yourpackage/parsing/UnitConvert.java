@@ -36,9 +36,9 @@ public class UnitConvert implements java.io.Serializable {
             tmpName = u.getName();
             unit_names.add(tmpName);
             subunits.put(tmpName, u.getSubunits());
-            System.out.print("Added unit '"+tmpName);
-            System.out.print("' with subunits: ");
-            System.out.println(u.getSubunits());
+            // System.out.print("Added unit '"+tmpName);
+            // System.out.print("' with subunits: ");
+            // System.out.println(u.getSubunits());
         }
     }
 

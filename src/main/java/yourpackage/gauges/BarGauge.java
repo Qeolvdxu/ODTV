@@ -11,7 +11,7 @@ import yourpackage.parsing.NumericDataField;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.colors.Bright;
-import eu.hansolo.toolboxfx.GradientLookup;
+// import eu.hansolo.toolboxfx.GradientLookup;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
