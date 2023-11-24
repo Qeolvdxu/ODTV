@@ -147,7 +147,10 @@ public class NumericDataField extends DataField{
      */
     @Override
     public void addDataRow(String dataRow) {
-        this.dataRows.add(Double.valueOf(dataRow));
+        if (dataRow.isEmpty() || dataRow.isBlank())
+            this.dataRows.add(0.0);
+        else
+            this.dataRows.add(Double.valueOf(dataRow));
     }
 
     /**
