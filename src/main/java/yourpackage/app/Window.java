@@ -70,7 +70,7 @@ public class Window {
         frame.setTitle("ODTV");
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
-
+        System.out.println("videoPlaying() called from Window. Value: " + videoPlayer.isPlaying());
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
@@ -109,7 +109,7 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {

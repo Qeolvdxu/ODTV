@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import yourpackage.parsing.DataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,9 @@ public class FieldChooser {
     private ArrayList<DataField> selectedFields; // Fields selected by the user
     private ArrayList<DataField> timeStampField; // ArrayList to hold the timestamp field
 
-    public FieldChooser() {
+    VideoPlayerSwingIntegration videoPlayer;
+
+    public FieldChooser(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();
         foundFields = new ArrayList<>();
         visibleFoundFields = new ArrayList<>();
@@ -43,6 +46,8 @@ public class FieldChooser {
         frame.setResizable(false);
         frame.setTitle("Choose Data Fields");
         frame.setVisible(true);
+        videoPlayer = vp;
+        System.out.println("videoPlaying() called from FieldChooser. Value: " + videoPlayer.isPlaying());
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -72,7 +77,7 @@ public class FieldChooser {
             public void actionPerformed(ActionEvent actionEvent) {
                 selectedFields.addAll(timeStampField); // Add the timestamp field before disposing.
                 frame.dispose(); // Close the window when the user is done.
-                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields);
+                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields, videoPlayer);
             }
         });
     }
@@ -180,10 +185,12 @@ public class FieldChooser {
         foundFieldsScrollPane = new JScrollPane();
         mainPanelFC.add(foundFieldsScrollPane, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         foundFieldsJList = new JList();
+        foundFieldsJList.setSelectionMode(0);
         foundFieldsScrollPane.setViewportView(foundFieldsJList);
         final JScrollPane scrollPane1 = new JScrollPane();
         mainPanelFC.add(scrollPane1, new GridConstraints(5, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         selectedFieldsJList = new JList();
+        selectedFieldsJList.setSelectionMode(0);
         scrollPane1.setViewportView(selectedFieldsJList);
         searchTextField = new JTextField();
         searchTextField.setText("");

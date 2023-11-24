@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import yourpackage.parsing.DataFieldParser;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 public class FileSelectionWindow {
     private JFormattedTextField videoFileTextfield;
@@ -29,7 +30,9 @@ public class FileSelectionWindow {
 
     private FieldChooser Fc;
 
-    public FileSelectionWindow() {
+    VideoPlayerSwingIntegration videoPlayer;
+
+    public FileSelectionWindow(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -39,6 +42,8 @@ public class FileSelectionWindow {
         frame.pack();
         frame.setTitle("File Selection");
         frame.setResizable(false);
+        videoPlayer = vp;
+        System.out.println("videoPlaying() called from FileSelectionWindow. Value: " + videoPlayer.isPlaying());
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 selectedVideoFilePath = videoFileTextfield.getText();
@@ -173,7 +178,7 @@ public class FileSelectionWindow {
                 frame.setVisible(false);
                 frame.dispose();
                 listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
-                FieldChooser Fc = new FieldChooser();
+                FieldChooser Fc = new FieldChooser(videoPlayer);
                 Fc.setFoundFields(parser.getFoundFields());
                 parser.clearFields(); // Clear the fields in the parser in case if another file gets opened.
             }

@@ -141,33 +141,51 @@ public class NumericDataField extends DataField {
     public void changeUnit() {
         if (this.isMetric) {
             if (this.unit.equals("[m/s]")) {
-                for (double d : this.dataRows) {
-                    //compute to mph
-                    d = (d * 3600) / 1609.3;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 3600) / 1609.3; //compute to mph
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[mph]";
             } else if (this.unit.equals("[m]")) {
-                for (double d : this.dataRows) {
-                    //compute to ft
-                    d = d * 3.28084;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d * 3.28084; //compute to ft
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[ft]";
             }
         } else {
             if (this.unit.equals("[mph]")) {
-                for (double d : this.dataRows) {
-                    //compute to m/s
-                    d = (d * 1609.3) / 3600;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 1609.3) / 3600; //compute to m/s
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m/s]";
             } else if (this.unit.equals("[ft]")) {
-                for (double d : this.dataRows) {
-                    //compute to m
-                    d = d / 3.28084;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d / 3.28084; //compute to m
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m]";
             }
         }
+    }
+
+    public NumericDataField copyDataField()
+    {
+        NumericDataField newField = new NumericDataField(this.getFieldName());
+        for (int i = 0; i < this.dataRows.size(); i++) {
+            double d = this.dataRows.get(i);
+            newField.dataRows.add(d);
+        }
+        return newField;
     }
 
         public ArrayList<String> getDataRows() {
