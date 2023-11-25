@@ -26,8 +26,7 @@ public class Gauge {
     private float greenLimit;
     private float yellowLimit;
     private float redLimit;
-    public static Tile tile = null;
-
+    public Tile tile = null;
     public JFrame frame;
 
     protected double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
@@ -42,7 +41,8 @@ public class Gauge {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.pack();
-        frame.setMinimumSize(new Dimension(250, 250));
+        frame.setMinimumSize(50);
+        frame.setSize(new Dimension(100, 100));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
 
@@ -53,8 +53,6 @@ public class Gauge {
     {
         frame.setTitle(title);
     }
-
-
 
     public enum GaugeType {
         Circle,
@@ -71,19 +69,6 @@ public class Gauge {
         OnOffLight,
     }
     public GaugeType gauge;
-
-    public void resize(){
-
-    }
-    public void playAlarm(){
-
-    }
-    public void setTitle(String title)
-    {
-        tile.setTitle(title);
-    }
-
-    public Tile getTile() { return tile; }
 
     public void setBlueRange(double min, double max)
     {

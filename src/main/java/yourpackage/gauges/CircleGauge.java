@@ -3,7 +3,6 @@ package yourpackage.gauges;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.Section;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -13,12 +12,9 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Stop;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.opencv.video.Video;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
-import java.lang.Math;
 
 
 
@@ -26,7 +22,6 @@ import java.lang.Math;
 
 public class CircleGauge extends Gauge {
     private AnimationTimer timer;
-
     VideoPlayerSwingIntegration videoPlayer;
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp) {
         super();
@@ -44,8 +39,9 @@ public class CircleGauge extends Gauge {
         // Initialize the tile
         tile = TileBuilder.create()
                 .skinType(SkinType.GAUGE2)
-                .minSize(250, 250)
+                .prefSize(50, 50)
                 .unit("Unit")
+                .title(title)
                 .textVisible(true)
                 .value(0)
                 .gradientStops(new Stop(0, Tile.GRAY))
@@ -54,17 +50,16 @@ public class CircleGauge extends Gauge {
                 .angleRange(angle)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
                 .unit(gaugeData.getUnit())
-                //value(100) // temp
                 .build();
 
 
 
-        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData));
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField) {
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
         // Create JavaFX content (TilesFX tile in this case)
-        tile = this.getTile();
+        tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
         NumericDataField gaugeData = dataField;
 
@@ -74,24 +69,17 @@ public class CircleGauge extends Gauge {
             jfxPanel.setScene(scene);
         }
 
-        // Once the data uses a certain threshold, we'll change the color of the gauge by doing this
-        // tile.setGradientStops(new Stop(0, Tile.BLUE));
-        // tile.setGradientStops(new Stop(0, Tile.RED));
-
         double interval = 0.1; // temporary, user will later be able to provide own value.
         double rate = 1 / interval;
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             if(videoPlayer.isPlaying()) {
-                //System.out.print("Current Time: " + videoPlayer.getCurrentTimeInSeconds());
                 double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/interval);
                 int mapIndexToInt = (int) Math.round(mapIndex);
                 if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
                 {
                     mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
-                //System.out.print("Current index: " + mapIndexToInt + " \n");
-                //System.out.println(dataField.getIndexOfDouble(mapIndexToInt));
                 double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
                 if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
@@ -108,4 +96,6 @@ public class CircleGauge extends Gauge {
 
         timeline.setRate(rate);
     }
+
+    public Tile getTile() { return tile; }
 }
