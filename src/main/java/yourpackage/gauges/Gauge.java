@@ -30,6 +30,12 @@ public class Gauge {
 
     public JFrame frame;
 
+    protected double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
+    protected boolean blueRangeProvided = false;
+    protected boolean greenRangeProvided = false;
+    protected boolean yellowRangeProvided = false;
+    protected boolean redRangeProvided = false;
+
     public Gauge()
     {
         frame = new JFrame();
@@ -39,6 +45,8 @@ public class Gauge {
         frame.setMinimumSize(new Dimension(250, 250));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
+
+
     }
 
     public void setGaugeTitle(String title)
@@ -76,4 +84,32 @@ public class Gauge {
     }
 
     public Tile getTile() { return tile; }
+
+    public void setBlueRange(double min, double max)
+    {
+        blueRangeProvided = true;
+        minBlueRange = min;
+        maxBlueRange = max;
+    }
+
+    public void setGreenRange(double min, double max)
+    {
+        greenRangeProvided = true;
+        minGreenRange = min;
+        maxGreenRange = max;
+    }
+
+    public void setYellowRange(double min, double max)
+    {
+        yellowRangeProvided = true;
+        minYellowRange = min;
+        maxYellowRange = max;
+    }
+
+    public void setRedRange(double min, double max)
+    {
+        redRangeProvided = true;
+        minRedRange = min;
+        maxRedRange = max;
+    }
 }

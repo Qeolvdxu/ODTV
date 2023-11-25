@@ -21,10 +21,10 @@ import java.util.ArrayList;
 public class GaugeCreator {
     private JPanel mainPanelGC;
     private JComboBox gaugeTypeComboBox;
-    private JTextField blueRangeTextField;
-    private JTextField greenRangeTextField;
-    private JTextField yellowRangeTextField;
-    private JTextField redRangeTextField;
+    private JTextField blueMinRangeTextField;
+    private JTextField greenMinRangeTextField;
+    private JTextField yellowMinRangeTextField;
+    private JTextField redMinRangeTextField;
     private JTextField gaugeNameTextField;
     private JList fieldsJList;
     private JButton doneButton;
@@ -32,16 +32,19 @@ public class GaugeCreator {
     private JButton createGaugeButton;
     private JCheckBox unitsCheckBox;
     private JLabel maxValueJLabel;
+    private JTextField blueMaxRangeTextField;
+    private JTextField greenMaxRangeTextField;
+    private JTextField yellowMaxRangeTextField;
+    private JTextField redMaxRangeTextField;
     private JComboBox unitComboBox;
 
     private final JFrame frame;
 
     private ArrayList<DataField> Fields;
 
-    int blueRange;
-    int greenRange;
-    int yellowRange;
-    int redRange;
+    private double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
+    private boolean minBlueRangeSet, maxBlueRangeSet, minGreenRangeSet, maxGreenRangeSet, minYellowRangeSet, maxYellowRangeSet, minRedRangeSet, maxRedRangeSet = false;
+
     String gaugeName;
     String gaugeType;
     String unit;
@@ -73,7 +76,6 @@ public class GaugeCreator {
         Fields.addAll(inputFields);
         populateFieldsJList();
         videoPlayer = vp;
-        System.out.println("videoPlaying() called from GaugeCreator. Value: " + videoPlayer.isPlaying());
 
         doneButton.addActionListener(new ActionListener() {
             @Override
@@ -87,36 +89,56 @@ public class GaugeCreator {
                 int selectedFieldIndex = fieldsJList.getSelectedIndex();
                 selectedField = Fields.get(selectedFieldIndex);
 
-                String temp = blueRangeTextField.getText();
-                if (temp.length() > 1) {
-                    blueRange = Integer.parseInt(temp);
-                } else {
-                    blueRange = 0;
+                String temp = blueMinRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    minBlueRange = Double.parseDouble(temp);
+                    minBlueRangeSet = true;
                 }
 
-                temp = greenRangeTextField.getText();
-                if (temp.length() > 1) {
-                    greenRange = Integer.parseInt(temp);
-                } else {
-                    greenRange = 0;
+                temp = blueMaxRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    maxBlueRange = Double.parseDouble(temp);
+                    maxBlueRangeSet = true;
                 }
 
-                temp = yellowRangeTextField.getText();
-                if (temp.length() > 1) {
-                    yellowRange = Integer.parseInt(temp);
-                } else {
-                    yellowRange = 0;
+                temp = greenMinRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    minGreenRange = Double.parseDouble(temp);
+                    minGreenRangeSet = true;
                 }
 
-                temp = redRangeTextField.getText();
-                if (temp.length() > 1) {
-                    redRange = Integer.parseInt(temp);
-                } else {
-                    redRange = 0;
+                temp = greenMaxRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    maxGreenRange = Double.parseDouble(temp);
+                    maxGreenRangeSet = true;
+                }
+
+                temp = yellowMinRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    minYellowRange = Double.parseDouble(temp);
+                    minYellowRangeSet = true;
+                }
+
+                temp = yellowMaxRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    maxYellowRange = Double.parseDouble(temp);
+                    maxYellowRangeSet = true;
+                }
+
+                temp = redMinRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    minRedRange = Double.parseDouble(temp);
+                    minRedRangeSet = true;
+                }
+
+                temp = redMaxRangeTextField.getText();
+                if (temp.length() >= 1) {
+                    maxRedRange = Double.parseDouble(temp);
+                    maxRedRangeSet = true;
                 }
 
                 temp = gaugeNameTextField.getText();
-                if (temp.length() > 1) {
+                if (temp.length() >= 1) {
                     gaugeName = temp;
                 } else {
                     gaugeName = fieldsJList.getSelectedValue().toString();
@@ -201,42 +223,59 @@ public class GaugeCreator {
         if (gaugeType.equals("Circle 90")) {
             if (switchUnits == true) {
                 Gauge circle90 = new CircleGauge(90, gaugeName, convertedNumericField, videoPlayer);
+                setGaugeRanges(circle90);
             } else {
                 Gauge circle90 = new CircleGauge(90, gaugeName, selectedNumericField, videoPlayer);
+                setGaugeRanges(circle90);
             }
         } else if (gaugeType.equals("Circle 180")) {
             if (switchUnits == true) {
                 Gauge circle180 = new CircleGauge(180, gaugeName, convertedNumericField, videoPlayer);
+                setGaugeRanges(circle180);
             } else {
                 Gauge circle180 = new CircleGauge(180, gaugeName, selectedNumericField, videoPlayer);
+                setGaugeRanges(circle180);
             }
         } else if (gaugeType.equals("Circle 270")) {
             if (switchUnits == true) {
-                Gauge circle180 = new CircleGauge(270, gaugeName, convertedNumericField, videoPlayer);
+                Gauge circle270 = new CircleGauge(270, gaugeName, convertedNumericField, videoPlayer);
+                setGaugeRanges(circle270);
             } else {
-                Gauge circle180 = new CircleGauge(270, gaugeName, selectedNumericField, videoPlayer);
+                Gauge circle270 = new CircleGauge(270, gaugeName, selectedNumericField, videoPlayer);
+                setGaugeRanges(circle270);
             }
         } else if (gaugeType.equals("Circle 360")) {
             if (switchUnits == true) {
-                Gauge circle180 = new CircleGauge(360, gaugeName, convertedNumericField, videoPlayer);
+                Gauge circle360 = new CircleGauge(360, gaugeName, convertedNumericField, videoPlayer);
+                setGaugeRanges(circle360);
             } else {
-                Gauge circle180 = new CircleGauge(360, gaugeName, selectedNumericField, videoPlayer);
+                Gauge circle360 = new CircleGauge(360, gaugeName, selectedNumericField, videoPlayer);
+                setGaugeRanges(circle360);
             }
         }
+        resetRangeBooleans();
     }
 
     private void enableRangeTextFields() {
-        blueRangeTextField.setEnabled(true);
-        greenRangeTextField.setEnabled(true);
-        yellowRangeTextField.setEnabled(true);
-        redRangeTextField.setEnabled(true);
+        blueMinRangeTextField.setEnabled(true);
+        blueMaxRangeTextField.setEnabled(true);
+        greenMinRangeTextField.setEnabled(true);
+        greenMaxRangeTextField.setEnabled(true);
+        yellowMinRangeTextField.setEnabled(true);
+        yellowMaxRangeTextField.setEnabled(true);
+        redMinRangeTextField.setEnabled(true);
+        redMaxRangeTextField.setEnabled(true);
     }
 
     private void disableRangeTextFields() {
-        blueRangeTextField.setEnabled(false);
-        greenRangeTextField.setEnabled(false);
-        yellowRangeTextField.setEnabled(false);
-        redRangeTextField.setEnabled(false);
+        blueMinRangeTextField.setEnabled(false);
+        blueMaxRangeTextField.setEnabled(false);
+        greenMinRangeTextField.setEnabled(false);
+        greenMaxRangeTextField.setEnabled(false);
+        yellowMinRangeTextField.setEnabled(false);
+        yellowMaxRangeTextField.setEnabled(false);
+        redMinRangeTextField.setEnabled(false);
+        redMaxRangeTextField.setEnabled(false);
     }
 
     private void disableUnitsCheckbox() {
@@ -245,10 +284,14 @@ public class GaugeCreator {
     }
 
     private void clearTextFields() {
-        blueRangeTextField.setText("");
-        greenRangeTextField.setText("");
-        yellowRangeTextField.setText("");
-        redRangeTextField.setText("");
+        blueMinRangeTextField.setText("");
+        blueMaxRangeTextField.setText("");
+        greenMinRangeTextField.setText("");
+        greenMaxRangeTextField.setText("");
+        yellowMinRangeTextField.setText("");
+        yellowMaxRangeTextField.setText("");
+        redMinRangeTextField.setText("");
+        redMaxRangeTextField.setText("");
         gaugeNameTextField.setText("");
     }
 
@@ -299,6 +342,24 @@ public class GaugeCreator {
         maxValueJLabel.setText("Max Value of Field: " + selectedNumericFieldMaxValue);
     }
 
+    private void setGaugeRanges(Gauge gauge) {
+        if (minBlueRangeSet && maxBlueRangeSet) { gauge.setBlueRange(minBlueRange, maxBlueRange); }
+        if (minGreenRangeSet && maxGreenRangeSet) { gauge.setGreenRange(minGreenRange, maxGreenRange); }
+        if (minYellowRangeSet && maxYellowRangeSet) { gauge.setYellowRange(minYellowRange, maxYellowRange); }
+        if (minRedRangeSet && maxRedRangeSet) { gauge.setRedRange(minRedRange, maxRedRange); }
+    }
+
+    private void resetRangeBooleans() {
+        minBlueRangeSet = false;
+        maxBlueRangeSet = false;
+        minGreenRangeSet = false;
+        maxGreenRangeSet = false;
+        minYellowRangeSet = false;
+        maxYellowRangeSet = false;
+        minRedRangeSet = false;
+        maxRedRangeSet = false;
+    }
+
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -308,69 +369,97 @@ public class GaugeCreator {
      */
     private void $$$setupUI$$$() {
         mainPanelGC = new JPanel();
-        mainPanelGC.setLayout(new GridLayoutManager(9, 3, new Insets(0, 0, 0, 60), -1, -1));
+        mainPanelGC.setLayout(new GridLayoutManager(10, 6, new Insets(0, 0, 0, 60), -1, -1));
         mainPanelGC.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JLabel label1 = new JLabel();
-        label1.setText("Yellow Range");
-        mainPanelGC.add(label1, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label1.setText("Yellow Min Range");
+        mainPanelGC.add(label1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
-        label2.setText("Green Range");
-        mainPanelGC.add(label2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label2.setText("Green Min Range");
+        mainPanelGC.add(label2, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
-        label3.setText("Blue Range");
-        mainPanelGC.add(label3, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label3.setText("Blue Min Range");
+        mainPanelGC.add(label3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("Red Range");
-        mainPanelGC.add(label4, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label4.setText("Red Min Range");
+        mainPanelGC.add(label4, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText("Name (Optional)");
-        mainPanelGC.add(label5, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(label5, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
         label6.setText("Gauge Type");
-        mainPanelGC.add(label6, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(label6, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText("Data Fields");
-        mainPanelGC.add(label7, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        createGaugeButton = new JButton();
-        createGaugeButton.setEnabled(false);
-        createGaugeButton.setText("Create Gauge");
-        mainPanelGC.add(createGaugeButton, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        redRangeTextField = new JTextField();
-        redRangeTextField.setEnabled(false);
-        mainPanelGC.add(redRangeTextField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        yellowRangeTextField = new JTextField();
-        yellowRangeTextField.setEnabled(false);
-        mainPanelGC.add(yellowRangeTextField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        greenRangeTextField = new JTextField();
-        greenRangeTextField.setEnabled(false);
-        mainPanelGC.add(greenRangeTextField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        doneButton = new JButton();
-        doneButton.setText("Done");
-        mainPanelGC.add(doneButton, new GridConstraints(8, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(label7, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        redMinRangeTextField = new JTextField();
+        redMinRangeTextField.setEnabled(false);
+        mainPanelGC.add(redMinRangeTextField, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        yellowMinRangeTextField = new JTextField();
+        yellowMinRangeTextField.setEnabled(false);
+        mainPanelGC.add(yellowMinRangeTextField, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        greenMinRangeTextField = new JTextField();
+        greenMinRangeTextField.setEnabled(false);
+        mainPanelGC.add(greenMinRangeTextField, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         gaugeNameTextField = new JTextField();
         gaugeNameTextField.setEnabled(false);
-        mainPanelGC.add(gaugeNameTextField, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        blueRangeTextField = new JTextField();
-        blueRangeTextField.setEnabled(false);
-        mainPanelGC.add(blueRangeTextField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        mainPanelGC.add(gaugeNameTextField, new GridConstraints(6, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        blueMinRangeTextField = new JTextField();
+        blueMinRangeTextField.setEnabled(false);
+        mainPanelGC.add(blueMinRangeTextField, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         gaugeTypeComboBox = new JComboBox();
         gaugeTypeComboBox.setEnabled(false);
-        mainPanelGC.add(gaugeTypeComboBox, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(gaugeTypeComboBox, new GridConstraints(7, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("Switch Units");
-        mainPanelGC.add(label8, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(label8, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        mainPanelGC.add(scrollPane1, new GridConstraints(1, 0, 7, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        mainPanelGC.add(scrollPane1, new GridConstraints(2, 0, 7, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         fieldsJList = new JList();
         fieldsJList.setSelectionMode(0);
         scrollPane1.setViewportView(fieldsJList);
         unitsCheckBox = new JCheckBox();
         unitsCheckBox.setEnabled(false);
         unitsCheckBox.setText("");
-        mainPanelGC.add(unitsCheckBox, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(unitsCheckBox, new GridConstraints(8, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         maxValueJLabel = new JLabel();
         maxValueJLabel.setText("Max Value of Field: NumericField not selected. ");
-        mainPanelGC.add(maxValueJLabel, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelGC.add(maxValueJLabel, new GridConstraints(0, 1, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label9 = new JLabel();
+        label9.setText("Blue Max Range");
+        mainPanelGC.add(label9, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        label10.setText("Green Max Range");
+        mainPanelGC.add(label10, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label11 = new JLabel();
+        label11.setText("Yellow Max Range");
+        mainPanelGC.add(label11, new GridConstraints(4, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label12 = new JLabel();
+        label12.setText("Red Max Range");
+        mainPanelGC.add(label12, new GridConstraints(5, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        blueMaxRangeTextField = new JTextField();
+        blueMaxRangeTextField.setEnabled(false);
+        mainPanelGC.add(blueMaxRangeTextField, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        greenMaxRangeTextField = new JTextField();
+        greenMaxRangeTextField.setEnabled(false);
+        greenMaxRangeTextField.setText("");
+        mainPanelGC.add(greenMaxRangeTextField, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        yellowMaxRangeTextField = new JTextField();
+        yellowMaxRangeTextField.setEnabled(false);
+        mainPanelGC.add(yellowMaxRangeTextField, new GridConstraints(4, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        redMaxRangeTextField = new JTextField();
+        redMaxRangeTextField.setEnabled(false);
+        mainPanelGC.add(redMaxRangeTextField, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        doneButton = new JButton();
+        doneButton.setText("Done");
+        mainPanelGC.add(doneButton, new GridConstraints(9, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        createGaugeButton = new JButton();
+        createGaugeButton.setEnabled(false);
+        createGaugeButton.setText("Create Gauge");
+        mainPanelGC.add(createGaugeButton, new GridConstraints(9, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label13 = new JLabel();
+        label13.setText("You MUST enter a min and max for the color ranges.");
+        mainPanelGC.add(label13, new GridConstraints(1, 1, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

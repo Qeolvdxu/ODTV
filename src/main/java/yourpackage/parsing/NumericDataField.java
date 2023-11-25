@@ -204,4 +204,10 @@ public class NumericDataField extends DataField {
             return this.getFieldName() + this.getUnit();
         }
 
+        public int getDataRowsLength() { return this.dataRows.size(); }
+
+        public double getIndexOfDouble(int index) {
+            return this.dataRows.get(index);
+        }
+
 }

@@ -47,7 +47,6 @@ public class FieldChooser {
         frame.setTitle("Choose Data Fields");
         frame.setVisible(true);
         videoPlayer = vp;
-        System.out.println("videoPlaying() called from FieldChooser. Value: " + videoPlayer.isPlaying());
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

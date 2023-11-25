@@ -4,24 +4,29 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.Section;
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Stop;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.opencv.video.Video;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
+import java.lang.Math;
 
-import java.util.Random;
 
 
 
 
 public class CircleGauge extends Gauge {
     private AnimationTimer timer;
+
     VideoPlayerSwingIntegration videoPlayer;
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp) {
         super();
@@ -34,7 +39,7 @@ public class CircleGauge extends Gauge {
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
-        System.out.println("videoPlaying() called from CircleGauge. Value: " + videoPlayer.isPlaying());
+        NumericDataField gaugeData = dataField;
 
         // Initialize the tile
         tile = TileBuilder.create()
@@ -47,18 +52,21 @@ public class CircleGauge extends Gauge {
                 .strokeWithGradient(true)
                 .animated(true)
                 .angleRange(angle)
-                .maxValue(Math.ceil(dataField.getMaximum()))
-                .unit(dataField.getUnit())
+                .maxValue(Math.ceil(gaugeData.getMaximum()))
+                .unit(gaugeData.getUnit())
                 //value(100) // temp
                 .build();
 
-        Platform.runLater(() -> initFX(jfxPanel, videoPlayer));
+
+
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData));
     }
 
-    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp) {
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField) {
         // Create JavaFX content (TilesFX tile in this case)
         tile = this.getTile();
         VideoPlayerSwingIntegration videoPlayer = vp;
+        NumericDataField gaugeData = dataField;
 
         if (tile != null) {
             // Create a JavaFX Scene
@@ -70,23 +78,34 @@ public class CircleGauge extends Gauge {
         // tile.setGradientStops(new Stop(0, Tile.BLUE));
         // tile.setGradientStops(new Stop(0, Tile.RED));
 
-        long lastTimerCall = System.currentTimeMillis();
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (now > lastTimerCall + 3_500_000_000L) {
-                    // tile.setValue(RND.nextDouble() * tile.getRange() + tile.getMinValue());
-                    // This will be were we retrieve the field
-                    if(videoPlayer.isPlaying())
-                    {
-                        System.out.println("CircleGauge can detect that the video is playing!");
-                    }
-                };
+        double interval = 0.1; // temporary, user will later be able to provide own value.
+        double rate = 1 / interval;
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if(videoPlayer.isPlaying()) {
+                //System.out.print("Current Time: " + videoPlayer.getCurrentTimeInSeconds());
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/interval);
+                int mapIndexToInt = (int) Math.round(mapIndex);
+                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
+                {
+                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
+                }
+                //System.out.print("Current index: " + mapIndexToInt + " \n");
+                //System.out.println(dataField.getIndexOfDouble(mapIndexToInt));
+                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+
+                if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
+                else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
+                else if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) { tile.setGradientStops(new Stop(0, Tile.RED)); }
+                else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
+
+                tile.setValue(currentFieldValue);
             }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
 
-
-        };
-
-        timer.start();
+        timeline.setRate(rate);
     }
 }

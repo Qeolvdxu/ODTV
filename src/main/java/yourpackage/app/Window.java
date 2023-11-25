@@ -70,7 +70,6 @@ public class Window {
         frame.setTitle("ODTV");
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
-        System.out.println("videoPlaying() called from Window. Value: " + videoPlayer.isPlaying());
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");

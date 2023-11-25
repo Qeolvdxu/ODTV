@@ -43,7 +43,6 @@ public class FileSelectionWindow {
         frame.setTitle("File Selection");
         frame.setResizable(false);
         videoPlayer = vp;
-        System.out.println("videoPlaying() called from FileSelectionWindow. Value: " + videoPlayer.isPlaying());
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 selectedVideoFilePath = videoFileTextfield.getText();
