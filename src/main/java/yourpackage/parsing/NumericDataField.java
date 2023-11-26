@@ -1,12 +1,10 @@
 package yourpackage.parsing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.OptionalDouble;
-import java.util.stream.Collectors;
 
-public class NumericDataField extends DataField{
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class NumericDataField extends DataField {
 
     private String unit;
     private double minimum;
@@ -15,6 +13,17 @@ public class NumericDataField extends DataField{
     private double stdDev;
     private boolean isMetric;
     private ArrayList<Double> dataRows;
+
+    /**
+     * Construct NumericDataField with default statistical values of 0 and defaulted to metric units.
+     * If the field is found to be parsed with a space and a set of brackets containing a string, it
+     * will be interpreted as its unit.
+     * */
+
+    public String pickedUnit = "";
+    public String ogUnit = "";
+    public String unitType = "";
+    public UnitConvert uc = new UnitConvert();
 
     /**
      * Construct NumericDataField with default statistical values of 0 and defaulted to metric units.
@@ -41,11 +50,11 @@ public class NumericDataField extends DataField{
      * Get the minimum value of this field's data rows
      * @return 0 if dataRows are empty or null, else return the minimum element
      */
+
     public double getMinimum() {
         if (this.dataRows == null || this.dataRows.isEmpty()) {
             return 0;
-        }
-        else
+        } else
             return this.minimum = Collections.min(this.dataRows);
     }
 
@@ -56,11 +65,22 @@ public class NumericDataField extends DataField{
     public double getMaximum() {
         if (this.dataRows == null || this.dataRows.isEmpty()) {
             return 0;
-        }
-        else
+        } else
             return this.maximum = Collections.max(this.dataRows);
     }
 
+    public Double getNext() {
+        //Needed for the update function
+        return 0.0;
+    }
+
+    public double convert(String type, String from, String to) {
+        this.unitType = type;
+        this.ogUnit = from;
+        this.pickedUnit = to;
+        //this.dataRows = this.uc.convert(this.unitType, this.pickedUnit, this.ogUnit, this.dataRows);
+        return 0.0;
+    }
     /**
      * Compute the average of the numerical values within the dataRows of this field
      * @return 0 if dataRows are empty or null, else calculate and return average
@@ -73,12 +93,23 @@ public class NumericDataField extends DataField{
             for (double d : this.dataRows) {
                 sum += d;
             }
-            return this.average = (sum)/(this.dataRows.size());
+            return this.average = (sum) / (this.dataRows.size());
         }
     }
 
+
+
+    /**
+     * Method to append a value of type double to the ArrayList of dataRows.
+     */
+    public void addDataRow(String dataRow){
+        this.dataRows.add(Double.valueOf(dataRow));
+    }
+
+
     /**
      * Compute the standard deviation of the numerical values within the dataRows of this field
+     *
      * @return 0 if dataRows are empty or null, else calculate and return standard deviation
      */
     public double getStdDev() {
@@ -89,7 +120,7 @@ public class NumericDataField extends DataField{
             for (Double dataRow : this.dataRows) {
                 temp += Math.pow(dataRow - this.getAverage(), 2);
             }
-            return this.stdDev = Math.sqrt((temp)/(this.dataRows.size()-1));
+            return this.stdDev = Math.sqrt((temp) / (this.dataRows.size() - 1));
         }
     }
 
@@ -106,36 +137,41 @@ public class NumericDataField extends DataField{
     /**
      * Method to convert the unit of the dataRows between metric and imperial. Data is assumed
      * metric by default, and either m/s or m (converted to mph or ft).
-     * */
+     */
     public void changeUnit() {
         if (this.isMetric) {
             if (this.unit.equals("[m/s]")) {
-                for (double d : this.dataRows) {
-                    //compute to mph
-                    d = (d*3600)/1609.3;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 3600) / 1609.3; //compute to mph
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[mph]";
-            }
-            else if (this.unit.equals("[m]")) {
-                for (double d : this.dataRows) {
-                    //compute to ft
-                    d = d*3.28084;
+            } else if (this.unit.equals("[m]")) {
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d * 3.28084; //compute to ft
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[ft]";
             }
-        }
-        else {
+        } else {
             if (this.unit.equals("[mph]")) {
-                for (double d : this.dataRows) {
-                    //compute to m/s
-                    d = (d*1609.3)/3600;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 1609.3) / 3600; //compute to m/s
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m/s]";
-            }
-            else if (this.unit.equals("[ft]")) {
-                for (double d : this.dataRows) {
-                    //compute to m
-                    d = d/3.28084;
+            } else if (this.unit.equals("[ft]")) {
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d / 3.28084; //compute to m
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m]";
             }
@@ -151,26 +187,37 @@ public class NumericDataField extends DataField{
             this.dataRows.add(0.0);
         else
             this.dataRows.add(Double.valueOf(dataRow));
-    }
 
-    /**
-     * Method to return ArrayList of dataRows in String format
-     * @return data, a temporary ArrayList to convert the contents of dataRows to String
-     */
-    @Override
-    public ArrayList<String> getDataRows() {
-        ArrayList<String> data = new ArrayList<>();
-        for (double d : this.dataRows) {
-            data.add(Double.toString(d));
+    public NumericDataField copyDataField()
+    {
+        NumericDataField newField = new NumericDataField(this.getFieldName());
+        for (int i = 0; i < this.dataRows.size(); i++) {
+            double d = this.dataRows.get(i);
+            newField.dataRows.add(d);
         }
-        return data;
+        return newField;
     }
 
-    /**
-     * @return the name of this field plus its unit
-     */
-    @Override
-    public String toString() {
-        return this.getFieldName() + this.getUnit();
-    }
+        public ArrayList<String> getDataRows() {
+            ArrayList<String> data = new ArrayList<>();
+            for (double d : this.dataRows) {
+                data.add(Double.toString(d));
+            }
+            return data;
+        }
+
+        /**
+         * @return the name of this field plus its unit
+         */
+        @Override
+        public String toString() {
+            return this.getFieldName() + this.getUnit();
+        }
+
+        public int getDataRowsLength() { return this.dataRows.size(); }
+
+        public double getIndexOfDouble(int index) {
+            return this.dataRows.get(index);
+        }
+
 }

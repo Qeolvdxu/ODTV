@@ -1,55 +1,82 @@
 package yourpackage.gauges;
 
+
+import eu.hansolo.tilesfx.Tile;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
+
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import eu.hansolo.steelseries.gauges.Radial;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Gauge {
-    private String name;
-    private float size;
-    private float xpos;
-    private float ypos;
-    //private Datafield correspondingField;
-    private float blueLimit;
-    private float greenLimit;
-    private float yellowLimit;
-    private float redLimit;
+    public Tile tile = null;
+    public JFrame frame;
+    protected double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
+    protected boolean blueRangeProvided = false;
+    protected boolean greenRangeProvided = false;
+    protected boolean yellowRangeProvided = false;
+    protected boolean redRangeProvided = false;
+    JFXPanel jfxPanel;
+    String audioFile = "src/main/resources/criticalAlarm.wav";
 
-    public Gauge()
-    {
-        JFrame frame = new JFrame();
+    MediaPlayer soundPlayer;
+    boolean soundPlaying = false;
+
+    public Gauge() {
+        frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         frame.pack();
-        frame.setMinimumSize(new Dimension(250, 250));
+        frame.setMinimumSize(new Dimension(50, 50));
+        frame.setSize(new Dimension(100, 100));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
-    }
-    public enum GaugeType {
-        Circle,
-        Bar,
-        XPlot,
-        XByYPLOT,
-        NumOrSingleChar,
-        TextDisplay,
-        Stopwatch,
-        OnOffLight,
-    }
-    public void resize(){
 
+        frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent componentEvent) {
+                tile.setPrefSize(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
+                jfxPanel.setScene(null);
+                Scene scene = new Scene(new Pane(tile));
+                jfxPanel.setScene(scene);
+            }
+        });
     }
-    public void playAlarm(){
 
+
+    public void setGaugeTitle(String title)
+    {
+        frame.setTitle(title);
+    }
+
+    public void setBlueRange(double min, double max)
+    {
+        blueRangeProvided = true;
+        minBlueRange = min;
+        maxBlueRange = max;
+    }
+
+    public void setGreenRange(double min, double max)
+    {
+        greenRangeProvided = true;
+        minGreenRange = min;
+        maxGreenRange = max;
+    }
+
+    public void setYellowRange(double min, double max)
+    {
+        yellowRangeProvided = true;
+        minYellowRange = min;
+        maxYellowRange = max;
+    }
+
+    public void setRedRange(double min, double max)
+    {
+        redRangeProvided = true;
+        minRedRange = min;
+        maxRedRange = max;
     }
 }

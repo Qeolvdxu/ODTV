@@ -51,7 +51,9 @@
         <children>
           <component id="59b7d" class="javax.swing.JList" binding="foundFieldsJList">
             <constraints/>
-            <properties/>
+            <properties>
+              <selectionMode value="0"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -64,7 +66,9 @@
         <children>
           <component id="887af" class="javax.swing.JList" binding="selectedFieldsJList">
             <constraints/>
-            <properties/>
+            <properties>
+              <selectionMode value="0"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
