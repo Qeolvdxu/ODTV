@@ -30,7 +30,7 @@ public class CircleGauge extends Gauge {
         setGaugeTitle(title);
 
         // Create a JFXPanel for embedding JavaFX content
-        JFXPanel jfxPanel = new JFXPanel();
+        jfxPanel = new JFXPanel();
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
@@ -67,7 +67,10 @@ public class CircleGauge extends Gauge {
             // Create a JavaFX Scene
             Scene scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
+            fxInitialized = true;
         }
+
+
 
         double interval = 0.1; // temporary, user will later be able to provide own value.
         double rate = 1 / interval;
