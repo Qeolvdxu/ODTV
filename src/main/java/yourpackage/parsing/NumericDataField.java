@@ -97,16 +97,6 @@ public class NumericDataField extends DataField {
         }
     }
 
-
-
-    /**
-     * Method to append a value of type double to the ArrayList of dataRows.
-     */
-    public void addDataRow(String dataRow){
-        this.dataRows.add(Double.valueOf(dataRow));
-    }
-
-
     /**
      * Compute the standard deviation of the numerical values within the dataRows of this field
      *
@@ -187,6 +177,7 @@ public class NumericDataField extends DataField {
             this.dataRows.add(0.0);
         else
             this.dataRows.add(Double.valueOf(dataRow));
+    }
 
     public NumericDataField copyDataField()
     {

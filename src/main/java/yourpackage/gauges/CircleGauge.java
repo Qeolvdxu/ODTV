@@ -24,10 +24,12 @@ import java.io.File;
 public class CircleGauge extends Gauge {
     private AnimationTimer timer;
     VideoPlayerSwingIntegration videoPlayer;
-    public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp) {
+    double updateFrequency;
+    public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
         System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
         // Create a JFXPanel for embedding JavaFX content
@@ -70,14 +72,11 @@ public class CircleGauge extends Gauge {
             jfxPanel.setScene(scene);
         }
 
-
-
-        double interval = 0.1; // temporary, user will later be able to provide own value.
-        double rate = 1 / interval;
+        double rate = 1 / updateFrequency;
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             if(videoPlayer.isPlaying()) {
-                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/interval);
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
                 if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
                 {
@@ -94,13 +93,15 @@ public class CircleGauge extends Gauge {
                     soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
                 }
 
-                if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
-                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
-                else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
-                else if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+
+
+
+                if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
                     tile.setGradientStops(new Stop(0, Tile.RED));
                     soundPlayer.play();
-                }
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
                 else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
 
                 tile.setValue(currentFieldValue);

@@ -22,7 +22,6 @@ public class Gauge {
     protected boolean redRangeProvided = false;
     JFXPanel jfxPanel;
     String audioFile = "src/main/resources/criticalAlarm.wav";
-
     MediaPlayer soundPlayer;
     boolean soundPlaying = false;
 

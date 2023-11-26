@@ -58,9 +58,11 @@ public class GaugeCreator {
     double selectedNumericFieldMaxValue;
     double maxValueMetric;
 
+    double frequency;
+
     VideoPlayerSwingIntegration videoPlayer;
 
-    public GaugeCreator(ArrayList<DataField> inputFields, VideoPlayerSwingIntegration vp) {
+    public GaugeCreator(ArrayList<DataField> inputFields, VideoPlayerSwingIntegration vp, double dataFrequency) {
         frame = new JFrame();
         $$$setupUI$$$();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
@@ -76,6 +78,7 @@ public class GaugeCreator {
         Fields.addAll(inputFields);
         populateFieldsJList();
         videoPlayer = vp;
+        frequency = dataFrequency;
 
         doneButton.addActionListener(new ActionListener() {
             @Override
@@ -220,38 +223,25 @@ public class GaugeCreator {
     }
 
     private void createGauge() {
+        DataField inputField;
+        if (switchUnits == true) {
+            inputField = convertedNumericField;
+        } else {
+            inputField = selectedNumericField;
+        }
+
         if (gaugeType.equals("Circle 90")) {
-            if (switchUnits == true) {
-                Gauge circle90 = new CircleGauge(90, gaugeName, convertedNumericField, videoPlayer);
-                setGaugeRanges(circle90);
-            } else {
-                Gauge circle90 = new CircleGauge(90, gaugeName, selectedNumericField, videoPlayer);
-                setGaugeRanges(circle90);
-            }
+            Gauge circle90 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(circle90);
         } else if (gaugeType.equals("Circle 180")) {
-            if (switchUnits == true) {
-                Gauge circle180 = new CircleGauge(180, gaugeName, convertedNumericField, videoPlayer);
-                setGaugeRanges(circle180);
-            } else {
-                Gauge circle180 = new CircleGauge(180, gaugeName, selectedNumericField, videoPlayer);
-                setGaugeRanges(circle180);
-            }
+            Gauge circle180 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(circle180);
         } else if (gaugeType.equals("Circle 270")) {
-            if (switchUnits == true) {
-                Gauge circle270 = new CircleGauge(270, gaugeName, convertedNumericField, videoPlayer);
-                setGaugeRanges(circle270);
-            } else {
-                Gauge circle270 = new CircleGauge(270, gaugeName, selectedNumericField, videoPlayer);
-                setGaugeRanges(circle270);
-            }
+            Gauge circle270 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(circle270);
         } else if (gaugeType.equals("Circle 360")) {
-            if (switchUnits == true) {
-                Gauge circle360 = new CircleGauge(360, gaugeName, convertedNumericField, videoPlayer);
-                setGaugeRanges(circle360);
-            } else {
-                Gauge circle360 = new CircleGauge(360, gaugeName, selectedNumericField, videoPlayer);
-                setGaugeRanges(circle360);
-            }
+            Gauge circle360 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(circle360);
         }
         resetRangeBooleans();
     }
