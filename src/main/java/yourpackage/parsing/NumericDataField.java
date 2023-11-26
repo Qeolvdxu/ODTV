@@ -178,6 +178,16 @@ public class NumericDataField extends DataField {
         }
     }
 
+    /**
+     * Method to append a value of type double to the ArrayList of dataRows.
+     */
+    @Override
+    public void addDataRow(String dataRow) {
+        if (dataRow.isEmpty() || dataRow.isBlank())
+            this.dataRows.add(0.0);
+        else
+            this.dataRows.add(Double.valueOf(dataRow));
+
     public NumericDataField copyDataField()
     {
         NumericDataField newField = new NumericDataField(this.getFieldName());
