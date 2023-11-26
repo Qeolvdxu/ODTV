@@ -11,13 +11,14 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
-
-
+import java.io.File;
 
 
 public class CircleGauge extends Gauge {
@@ -67,7 +68,6 @@ public class CircleGauge extends Gauge {
             // Create a JavaFX Scene
             Scene scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
-            fxInitialized = true;
         }
 
 
@@ -85,10 +85,22 @@ public class CircleGauge extends Gauge {
                 }
                 double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
+
+                if (!soundPlaying)
+                {
+                    soundPlaying = true;
+                    Media sound = new Media(new File(audioFile).toURI().toString());
+                    soundPlayer = new MediaPlayer(sound);
+                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                }
+
                 if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
                 else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
                 else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
-                else if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) { tile.setGradientStops(new Stop(0, Tile.RED)); }
+                else if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+                    tile.setGradientStops(new Stop(0, Tile.RED));
+                    soundPlayer.play();
+                }
                 else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
 
                 tile.setValue(currentFieldValue);
@@ -99,6 +111,4 @@ public class CircleGauge extends Gauge {
 
         timeline.setRate(rate);
     }
-
-    public Tile getTile() { return tile; }
 }

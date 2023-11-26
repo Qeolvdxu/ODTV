@@ -1,22 +1,16 @@
 package yourpackage.gauges;
 
 
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import javax.swing.JFrame;
-
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import yourpackage.parsing.DataField;
 import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
-import javafx.beans.value.ChangeListener;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Gauge {
     public Tile tile = null;
@@ -27,31 +21,31 @@ public class Gauge {
     protected boolean yellowRangeProvided = false;
     protected boolean redRangeProvided = false;
     JFXPanel jfxPanel;
-    boolean fxInitialized = false;
+    String audioFile = "src/main/resources/criticalAlarm.wav";
 
-    public Gauge()
-    {
+    MediaPlayer soundPlayer;
+    boolean soundPlaying = false;
+
+    public Gauge() {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.pack();
-        frame.setMinimumSize(new Dimension(50,50));
+        frame.setMinimumSize(new Dimension(50, 50));
         frame.setSize(new Dimension(100, 100));
         frame.setTitle("gaugeName");
         frame.setVisible(true);
 
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent componentEvent) {
-                if(fxInitialized)
-                {
-                    tile.setPrefSize(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
-                    jfxPanel.setScene(null);
-                    Scene scene = new Scene(new Pane(tile));
-                    jfxPanel.setScene(scene);
-                }
+                tile.setPrefSize(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
+                jfxPanel.setScene(null);
+                Scene scene = new Scene(new Pane(tile));
+                jfxPanel.setScene(scene);
             }
         });
     }
+
 
     public void setGaugeTitle(String title)
     {
