@@ -202,7 +202,7 @@ public class NumericDataField extends DataField {
          */
         @Override
         public String toString() {
-            return this.getFieldName() + this.getUnit();
+            return this.getFieldName();
         }
 
         public int getDataRowsLength() { return this.dataRows.size(); }

@@ -22,9 +22,6 @@ import java.io.File;
 
 
 public class CircleGauge extends Gauge {
-    private AnimationTimer timer;
-    VideoPlayerSwingIntegration videoPlayer;
-    double updateFrequency;
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
@@ -42,8 +39,7 @@ public class CircleGauge extends Gauge {
         // Initialize the tile
         tile = TileBuilder.create()
                 .skinType(SkinType.GAUGE2)
-                .prefSize(50, 50)
-                .unit("Unit")
+                .prefSize(100, 100)
                 .title(title)
                 .textVisible(true)
                 .value(0)
@@ -52,10 +48,16 @@ public class CircleGauge extends Gauge {
                 .animated(true)
                 .angleRange(angle)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
-                .unit(gaugeData.getUnit())
                 .build();
 
+        if (dataField.getUnit() != null) {
+            tile.setUnit(gaugeData.getUnit());
+        } else { tile.setUnit(" "); }
 
+        if (dataField.getMaximum() < 0)
+        {
+            tile.setMinValue(Math.floor(dataField.getMinimum()));
+        }
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }

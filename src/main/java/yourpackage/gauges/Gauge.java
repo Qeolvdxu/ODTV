@@ -25,6 +25,7 @@ public class Gauge {
     protected MediaPlayer soundPlayer;
     protected boolean soundPlaying = false;
     protected boolean visible = true;
+    protected double updateFrequency;
 
     public Gauge() {
         frame = new JFrame();

@@ -2,6 +2,7 @@ package yourpackage.app;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import yourpackage.gauges.BarGauge;
 import yourpackage.gauges.CircleGauge;
 import yourpackage.gauges.Gauge;
 import yourpackage.gauges.StaticGaugeArrayList;
@@ -172,7 +173,7 @@ public class GaugeCreator {
                 if (selectedField instanceof NumericDataField) {
                     System.out.println("Numeric Data Field.");
                     enableRangeTextFields();
-                    unitsCheckBox.setEnabled(true);
+                    enableUnitsCheckbox();
                     setNumericListModel();
                     selectedNumericField = (NumericDataField) selectedField;
                     selectedNumericFieldMaxValue = selectedNumericField.getMaximum();
@@ -238,6 +239,10 @@ public class GaugeCreator {
             Gauge circle360 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle360);
             StaticGaugeArrayList.addGauge(circle360);
+        } else if (gaugeType.equals("Bar")) {
+            Gauge bar = new BarGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(bar);
+            StaticGaugeArrayList.addGauge(bar);
         }
         resetRangeBooleans();
     }
@@ -262,6 +267,13 @@ public class GaugeCreator {
         yellowMaxRangeTextField.setEnabled(false);
         redMinRangeTextField.setEnabled(false);
         redMaxRangeTextField.setEnabled(false);
+    }
+
+    private void enableUnitsCheckbox() {
+        NumericDataField temp = (NumericDataField) selectedField;
+        if (temp.getUnit() != null)
+            unitsCheckBox.setEnabled(true);
+        else { disableUnitsCheckbox(); }
     }
 
     private void disableUnitsCheckbox() {
@@ -329,10 +341,18 @@ public class GaugeCreator {
     }
 
     private void setGaugeRanges(Gauge gauge) {
-        if (minBlueRangeSet && maxBlueRangeSet) { gauge.setBlueRange(minBlueRange, maxBlueRange); }
-        if (minGreenRangeSet && maxGreenRangeSet) { gauge.setGreenRange(minGreenRange, maxGreenRange); }
-        if (minYellowRangeSet && maxYellowRangeSet) { gauge.setYellowRange(minYellowRange, maxYellowRange); }
-        if (minRedRangeSet && maxRedRangeSet) { gauge.setRedRange(minRedRange, maxRedRange); }
+        if (minBlueRangeSet && maxBlueRangeSet) {
+            gauge.setBlueRange(minBlueRange, maxBlueRange);
+        }
+        if (minGreenRangeSet && maxGreenRangeSet) {
+            gauge.setGreenRange(minGreenRange, maxGreenRange);
+        }
+        if (minYellowRangeSet && maxYellowRangeSet) {
+            gauge.setYellowRange(minYellowRange, maxYellowRange);
+        }
+        if (minRedRangeSet && maxRedRangeSet) {
+            gauge.setRedRange(minRedRange, maxRedRange);
+        }
     }
 
     private void resetRangeBooleans() {
