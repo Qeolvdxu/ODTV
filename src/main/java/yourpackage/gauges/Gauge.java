@@ -20,14 +20,15 @@ public class Gauge {
     protected boolean greenRangeProvided = false;
     protected boolean yellowRangeProvided = false;
     protected boolean redRangeProvided = false;
-    JFXPanel jfxPanel;
-    String audioFile = "src/main/resources/criticalAlarm.wav";
-    MediaPlayer soundPlayer;
-    boolean soundPlaying = false;
+    protected JFXPanel jfxPanel;
+    protected String audioFile = "src/main/resources/criticalAlarm.wav";
+    protected MediaPlayer soundPlayer;
+    protected boolean soundPlaying = false;
+    protected boolean visible = true;
 
     public Gauge() {
         frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         frame.pack();
         frame.setMinimumSize(new Dimension(50, 50));
@@ -78,4 +79,8 @@ public class Gauge {
         minRedRange = min;
         maxRedRange = max;
     }
+
+    public boolean isVisible() { return visible; }
+
+    public void setInvisible() { visible = false; }
 }

@@ -84,17 +84,13 @@ public class CircleGauge extends Gauge {
                 }
                 double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
-
-                if (!soundPlaying)
+                if ((!soundPlaying) && (this.isVisible()))
                 {
                     soundPlaying = true;
                     Media sound = new Media(new File(audioFile).toURI().toString());
                     soundPlayer = new MediaPlayer(sound);
                     soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
                 }
-
-
-
 
                 if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
                     tile.setGradientStops(new Stop(0, Tile.RED));

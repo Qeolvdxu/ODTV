@@ -3,6 +3,7 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
@@ -29,9 +30,8 @@ public class FieldChooser {
     private ArrayList<DataField> visibleFoundFields; // Found fields currently visible to the user
     private ArrayList<DataField> selectedFields; // Fields selected by the user
     private ArrayList<DataField> timeStampField; // ArrayList to hold the timestamp field
-    double dataFrequency;
-
-    VideoPlayerSwingIntegration videoPlayer;
+    private double dataFrequency;
+    private VideoPlayerSwingIntegration videoPlayer;
 
     public FieldChooser(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();

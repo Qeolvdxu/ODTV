@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import yourpackage.gauges.CircleGauge;
 import yourpackage.gauges.Gauge;
+import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.parsing.TimeDataField;
@@ -37,30 +38,21 @@ public class GaugeCreator {
     private JTextField yellowMaxRangeTextField;
     private JTextField redMaxRangeTextField;
     private JComboBox unitComboBox;
-
     private final JFrame frame;
-
     private ArrayList<DataField> Fields;
-
     private double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
     private boolean minBlueRangeSet, maxBlueRangeSet, minGreenRangeSet, maxGreenRangeSet, minYellowRangeSet, maxYellowRangeSet, minRedRangeSet, maxRedRangeSet = false;
-
-    String gaugeName;
-    String gaugeType;
-    String unit;
-
-    DataField selectedField;
-
-    NumericDataField selectedNumericField;
-    NumericDataField convertedNumericField;
-
-    Boolean switchUnits;
-    double selectedNumericFieldMaxValue;
-    double maxValueMetric;
-
-    double frequency;
-
-    VideoPlayerSwingIntegration videoPlayer;
+    private String gaugeName;
+    private String gaugeType;
+    private String unit;
+    private DataField selectedField;
+    private NumericDataField selectedNumericField;
+    private NumericDataField convertedNumericField;
+    private Boolean switchUnits;
+    private double selectedNumericFieldMaxValue;
+    private double maxValueMetric;
+    private double frequency;
+    private VideoPlayerSwingIntegration videoPlayer;
 
     public GaugeCreator(ArrayList<DataField> inputFields, VideoPlayerSwingIntegration vp, double dataFrequency) {
         frame = new JFrame();
@@ -233,15 +225,19 @@ public class GaugeCreator {
         if (gaugeType.equals("Circle 90")) {
             Gauge circle90 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle90);
+            StaticGaugeArrayList.addGauge(circle90);
         } else if (gaugeType.equals("Circle 180")) {
             Gauge circle180 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle180);
+            StaticGaugeArrayList.addGauge(circle180);
         } else if (gaugeType.equals("Circle 270")) {
             Gauge circle270 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle270);
+            StaticGaugeArrayList.addGauge(circle270);
         } else if (gaugeType.equals("Circle 360")) {
             Gauge circle360 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle360);
+            StaticGaugeArrayList.addGauge(circle360);
         }
         resetRangeBooleans();
     }
