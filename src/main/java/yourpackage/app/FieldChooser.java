@@ -7,6 +7,7 @@ import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,7 @@ public class FieldChooser {
     private ArrayList<DataField> timeStampField; // ArrayList to hold the timestamp field
     private double dataFrequency;
     private VideoPlayerSwingIntegration videoPlayer;
+
 
     public FieldChooser(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();

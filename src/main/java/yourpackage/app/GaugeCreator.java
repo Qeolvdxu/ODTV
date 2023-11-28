@@ -11,6 +11,7 @@ import yourpackage.parsing.NumericDataField;
 import yourpackage.parsing.TimeDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.util.ArrayList;
 
 public class GaugeCreator {
@@ -27,6 +29,7 @@ public class GaugeCreator {
     private JTextField greenMinRangeTextField;
     private JTextField yellowMinRangeTextField;
     private JTextField redMinRangeTextField;
+
     private JTextField gaugeNameTextField;
     private JList fieldsJList;
     private JButton doneButton;
@@ -56,6 +59,7 @@ public class GaugeCreator {
     private VideoPlayerSwingIntegration videoPlayer;
 
     public GaugeCreator(ArrayList<DataField> inputFields, VideoPlayerSwingIntegration vp, double dataFrequency) {
+
         frame = new JFrame();
         $$$setupUI$$$();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
@@ -66,12 +70,14 @@ public class GaugeCreator {
         frame.setDefaultCloseOperation(0); // Window shouldn't be closeable, or else it will mess up the rest of the program's execution.
         frame.pack();
         frame.setResizable(true);
+
         frame.setTitle("Gauge Creator");
         frame.setVisible(true);
         Fields.addAll(inputFields);
         populateFieldsJList();
         videoPlayer = vp;
         frequency = dataFrequency;
+
 
         doneButton.addActionListener(new ActionListener() {
             @Override
@@ -203,6 +209,7 @@ public class GaugeCreator {
                 } else {
                     revertToMetric();
                 }
+
             }
         });
     }
@@ -474,5 +481,4 @@ public class GaugeCreator {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelGC;
     }
-
 }
