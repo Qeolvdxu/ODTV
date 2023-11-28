@@ -3,8 +3,10 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.parsing.DataField;
-import yourpackage.visualization.Gauge;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,14 +24,18 @@ public class FieldChooser {
     private JTextField searchTextField;
     private JButton searchButton;
     private JButton doneButton;
+    private JTextField dataFrequencyTextField;
     private static FieldChooser instance;
     private final JFrame frame;
     private static ArrayList<DataField> foundFields; // Fields found by the parser
     private ArrayList<DataField> visibleFoundFields; // Found fields currently visible to the user
     private ArrayList<DataField> selectedFields; // Fields selected by the user
     private ArrayList<DataField> timeStampField; // ArrayList to hold the timestamp field
+    private double dataFrequency;
+    private VideoPlayerSwingIntegration videoPlayer;
 
-    public FieldChooser() {
+
+    public FieldChooser(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();
         foundFields = new ArrayList<>();
         visibleFoundFields = new ArrayList<>();
@@ -44,6 +50,7 @@ public class FieldChooser {
         frame.setResizable(false);
         frame.setTitle("Choose Data Fields");
         frame.setVisible(true);
+        videoPlayer = vp;
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -72,8 +79,9 @@ public class FieldChooser {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 selectedFields.addAll(timeStampField); // Add the timestamp field before disposing.
+                dataFrequency = Double.parseDouble(dataFrequencyTextField.getText());
                 frame.dispose(); // Close the window when the user is done.
-                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields);
+                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields, videoPlayer, dataFrequency);
             }
         });
     }
@@ -164,7 +172,7 @@ public class FieldChooser {
      */
     private void $$$setupUI$$$() {
         mainPanelFC = new JPanel();
-        mainPanelFC.setLayout(new GridLayoutManager(8, 4, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanelFC.setLayout(new GridLayoutManager(9, 4, new Insets(0, 0, 0, 0), -1, -1));
         final Spacer spacer1 = new Spacer();
         mainPanelFC.add(spacer1, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
@@ -177,14 +185,16 @@ public class FieldChooser {
         mainPanelFC.add(label1, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         removeButton = new JButton();
         removeButton.setText("Remove");
-        mainPanelFC.add(removeButton, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelFC.add(removeButton, new GridConstraints(7, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         foundFieldsScrollPane = new JScrollPane();
         mainPanelFC.add(foundFieldsScrollPane, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         foundFieldsJList = new JList();
+        foundFieldsJList.setSelectionMode(0);
         foundFieldsScrollPane.setViewportView(foundFieldsJList);
         final JScrollPane scrollPane1 = new JScrollPane();
         mainPanelFC.add(scrollPane1, new GridConstraints(5, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         selectedFieldsJList = new JList();
+        selectedFieldsJList.setSelectionMode(0);
         scrollPane1.setViewportView(selectedFieldsJList);
         searchTextField = new JTextField();
         searchTextField.setText("");
@@ -197,7 +207,13 @@ public class FieldChooser {
         mainPanelFC.add(label2, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         doneButton = new JButton();
         doneButton.setText("Done");
-        mainPanelFC.add(doneButton, new GridConstraints(7, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanelFC.add(doneButton, new GridConstraints(8, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        dataFrequencyTextField = new JTextField();
+        dataFrequencyTextField.setText("0.1");
+        mainPanelFC.add(dataFrequencyTextField, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Data Frequency (s)");
+        mainPanelFC.add(label3, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

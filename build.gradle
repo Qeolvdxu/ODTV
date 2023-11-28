@@ -16,6 +16,10 @@ dependencies {
     // Add project dependencies here
     implementation'org.apache.commons:commons-csv:+'
 
+    //ffmpeg
+    implementation 'org.bytedeco:ffmpeg:6.0-1.5.9'
+
+
     //intellij forms
     implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
     implementation 'com.intellij:forms_rt:7.0.3'
@@ -25,7 +29,15 @@ dependencies {
     implementation 'org.knowm.xchart:xchart:3.8.0'
 
     // SteelSeries
-    implementation 'org.bidib.jbidib.eu.hansolo:SteelSeries:3.9.31.2'
+
+    implementation files('lib/SteelSeries-3.9.31.2.jar')   
+    implementation files('lib/trident-6.3.jar')   
+    implementation files('lib/toolbox-17.0.57.jar')
+    implementation files('lib/toolboxfx-17.0.47.jar')
+    implementation files('lib/tilesfx-17.1.31.jar')
+    implementation files('lib/hamcrest-core-1.1.jar')   
+    implementation files('lib/json-simple-1.1.1.jar')   
+    implementation files('lib/junit-4.10.jar')   
 
     // Apache Commons CSV
     implementation 'org.apache.commons:commons-csv:1.10.0'
@@ -49,6 +61,27 @@ dependencies {
     implementation 'org.jetbrains.intellij.plugins:structure-intellij:3.259'// Use the latest version available
 
 }
+
+// Define a custom task to run the project
+task runProject(type: JavaExec) {
+    main = 'yourpackage.app.Main' // Replace 'YourMainClass' with the actual name of your main class
+    classpath = sourceSets.main.runtimeClasspath
+
+    // Optionally, set JVM arguments if needed
+    // jvmArgs = ['-Xmx512m', '-Dproperty=value']
+
+    // Optionally, set the working directory for the task
+    // workingDir = project.projectDir
+
+    // Set command-line arguments if needed
+    // args = ['arg1', 'arg2']
+
+    // Set environment variables if needed
+    // environment 'KEY', 'VALUE'
+}
+
+// Define a task dependency to ensure the 'runProject' task is executed when running 'gradlew runProject'
+tasks.run.dependsOn(runProject)
 
 sourceSets {
     main {
