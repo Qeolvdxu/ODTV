@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.event.ChangeListener;
 
 
+import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 
@@ -53,7 +54,6 @@ public class Window {
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
-
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -70,7 +70,6 @@ public class Window {
         frame.setTitle("ODTV");
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
-
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
@@ -109,10 +108,15 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                ;
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
+                        if (StaticGaugeArrayList.getSize() > 0) {
+                            StaticGaugeArrayList.removeGauges();
+                        }
+
                         VideoPlayerSwingIntegration.changeVideo(videoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);

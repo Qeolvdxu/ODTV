@@ -36,11 +36,11 @@ public class DataFieldParser {
          * through each record at a given index to append data to the DataField's list of elements.
          * (Assumes that first row contains the name of each column).
          */
-    public ArrayList<DataField> getFoundFields() {
+    public void parseData() {
         int i = 0;
         int j = 0;
-        for (String s : this.foundRecords.get(1)) {
-            while (s.isEmpty()) {
+        for (String s : this.foundRecords.get(2)) {
+            while (s.isEmpty()){
                 for (CSVRecord r: this.foundRecords) {
                     if (r.getRecordNumber() > 0) {
                         s = r.get(i);
@@ -48,6 +48,7 @@ public class DataFieldParser {
                     if (r.getRecordNumber() == this.foundRecords.size())
                         s = " ";
                 }
+
                 i++;
             }
             DataField df = getDataFieldType(s, j);
@@ -62,7 +63,9 @@ public class DataFieldParser {
             this.foundFields.add(df);   // Add new data field to list of found fields
             j++;
         }
+    }
 
+    public ArrayList<DataField> getFoundFields() {
         return this.foundFields;
     }
 
@@ -77,7 +80,8 @@ public class DataFieldParser {
         DataField df;
         if (s.matches("\\d{4}[/]\\d{1,2}[/]\\d{1,2} \\d{1,2}[:]\\d{2}[:]\\d{2}[.]\\d{3}"))  // If the string matches the regex for yyyy/mm/dd 00:00:00.000
             df = new TimeDataField(this.foundRecords.get(0).get(j));
-        else if (s.matches("\\d+") || s.matches("[-]\\d+")) // Else if the string matches the regex for a positive or negative digit
+        //else if (s.matches("\\d+") || s.matches("[-]\\d+")) // Else if the string matches the regex for a positive or negative digit
+        else if ((s.matches("((\\+|-)?([0-9]+)(\\.[0-9]+)?)|((\\+|-)?\\.?[0-9]+)")) || (this.foundRecords.get(0).get(j).contains("[")))
             df = new NumericDataField(this.foundRecords.get(0).get(j));
         else
             df = new DataField(this.foundRecords.get(0).get(j));    // Else the field will be read as a string
