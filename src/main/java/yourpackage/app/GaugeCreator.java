@@ -228,15 +228,15 @@ public class GaugeCreator {
             setGaugeRanges(circle90);
             StaticGaugeArrayList.addGauge(circle90);
         } else if (gaugeType.equals("Circle 180")) {
-            Gauge circle180 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            Gauge circle180 = new CircleGauge(180, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle180);
             StaticGaugeArrayList.addGauge(circle180);
         } else if (gaugeType.equals("Circle 270")) {
-            Gauge circle270 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            Gauge circle270 = new CircleGauge(270, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle270);
             StaticGaugeArrayList.addGauge(circle270);
         } else if (gaugeType.equals("Circle 360")) {
-            Gauge circle360 = new CircleGauge(90, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            Gauge circle360 = new CircleGauge(360, gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(circle360);
             StaticGaugeArrayList.addGauge(circle360);
         } else if (gaugeType.equals("Bar")) {
