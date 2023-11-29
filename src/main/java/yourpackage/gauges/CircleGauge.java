@@ -43,16 +43,10 @@ public class CircleGauge extends Gauge {
                 .title(title)
                 .textVisible(true)
                 .value(0)
-                .gradientStops(new Stop(0, Tile.GRAY))
-                .strokeWithGradient(true)
                 .animated(true)
                 .angleRange(angle)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
                 .build();
-
-        if (dataField.getUnit() != null) {
-            tile.setUnit(gaugeData.getUnit());
-        } else { tile.setUnit(" "); }
 
         if (dataField.getMaximum() < 0)
         {
@@ -67,6 +61,8 @@ public class CircleGauge extends Gauge {
         tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
         NumericDataField gaugeData = dataField;
+
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
 
         if (tile != null) {
             // Create a JavaFX Scene
@@ -95,12 +91,12 @@ public class CircleGauge extends Gauge {
                 }
 
                 if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
-                    tile.setGradientStops(new Stop(0, Tile.RED));
+                    tile.setBarColor(Tile.RED);
                     soundPlayer.play();
-                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
-                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
-                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
-                else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setBarColor(Tile.YELLOW); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) {tile.setBarColor(Tile.GREEN); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setBarColor(Tile.BLUE); }
+                else { tile.setBarColor(Tile.GRAY); }
 
                 tile.setValue(currentFieldValue);
             }

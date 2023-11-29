@@ -13,8 +13,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class Gauge {
-    public Tile tile = null;
-    public JFrame frame;
+    protected Tile tile = null;
+    protected JFrame frame;
     protected double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
     protected boolean blueRangeProvided = false;
     protected boolean greenRangeProvided = false;
@@ -46,7 +46,6 @@ public class Gauge {
             }
         });
     }
-
 
     public void setGaugeTitle(String title)
     {

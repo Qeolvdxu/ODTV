@@ -40,26 +40,9 @@ public class BarGauge extends Gauge {
                 .prefSize(100, 100)
                 .minValue(0)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
-                .title("BarGauge Tile")
-                .gradientStops(new Stop(0, Tile.GRAY))
-                .strokeWithGradient(true)
+                .title(title)
                 .animated(true)
                 .build();
-
-        if (redRangeProvided)
-        {
-            tile.setThreshold(minRedRange);
-            tile.setThresholdVisible(true);
-        }
-
-        if (dataField.getUnit() != null) {
-            tile.setUnit(gaugeData.getUnit());
-        } else { tile.setUnit(" "); }
-
-        if (dataField.getMaximum() < 0)
-        {
-            tile.setMinValue(Math.floor(dataField.getMinimum()));
-        }
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
@@ -68,6 +51,14 @@ public class BarGauge extends Gauge {
         tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
         NumericDataField gaugeData = dataField;
+
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+
+        if (redRangeProvided)
+        {
+            tile.setThreshold(minRedRange);
+            tile.setThresholdVisible(true);
+        }
 
         if (tile != null) {
             Scene scene = new Scene(new Pane(tile));
@@ -94,22 +85,14 @@ public class BarGauge extends Gauge {
                     soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
                 }
 
-
-                // The way I am setting the color for the gauge here won't work with this gauge. I need to do something like this in the tile dec.
-                //.gradientStops(new Stop(0, Tile.GRAY),
-                //        new Stop(0.2, Tile.BLUE),
-                //        new Stop(0.4, Tile.GREEN),
-                //        new Stop(0.6, Tile.YELLOW),
-                //        new Stop(0.8, Tile.GREEN))
-
-
                 if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
-                    tile.setGradientStops(new Stop(0, Tile.RED));
+                    tile.setBarColor(Tile.RED);
+
                     soundPlayer.play();
-                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
-                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
-                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
-                else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setBarColor(Tile.YELLOW); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setBarColor(Tile.GREEN); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setBarColor(Tile.BLUE); }
+                else { tile.setBarColor(Tile.GRAY);}
 
                 tile.setValue(currentFieldValue);
             }
