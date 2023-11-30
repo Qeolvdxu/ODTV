@@ -3,7 +3,6 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import yourpackage.gauges.StaticGaugeArrayList;
 import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 

@@ -6,6 +6,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
+import yourpackage.parsing.DataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,33 +53,47 @@ public class Gauge {
         frame.setTitle(title);
     }
 
-    public void setBlueRange(double min, double max)
-    {
+    public void setBlueRange(double min, double max) {
         blueRangeProvided = true;
         minBlueRange = min;
         maxBlueRange = max;
     }
 
-    public void setGreenRange(double min, double max)
-    {
+    public void setGreenRange(double min, double max) {
         greenRangeProvided = true;
         minGreenRange = min;
         maxGreenRange = max;
     }
 
-    public void setYellowRange(double min, double max)
-    {
+    public void setYellowRange(double min, double max) {
         yellowRangeProvided = true;
         minYellowRange = min;
         maxYellowRange = max;
     }
 
-    public void setRedRange(double min, double max)
-    {
+    public void setRedRange(double min, double max) {
         redRangeProvided = true;
         minRedRange = min;
         maxRedRange = max;
     }
+
+    public double getminBlueRange() { return minBlueRange; }
+
+    public double getmaxBlueRange() { return maxBlueRange; }
+
+    public double getminGreenRange() { return minGreenRange; }
+
+    public double getmaxGreenRange() { return maxGreenRange; }
+
+    public double getminYellowRange() { return minYellowRange; }
+
+    public double getmaxYellowRange() { return maxYellowRange; }
+
+    public double getminRedRange() { return minRedRange; }
+
+    public double getmaxRedRange() { return maxRedRange; }
+
+    public double getDataFrequency() { return updateFrequency; }
 
     public boolean isVisible() { return visible; }
 

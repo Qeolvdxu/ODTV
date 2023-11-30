@@ -20,6 +20,8 @@ import java.io.File;
 
 public class BarGauge extends Gauge {
 
+    NumericDataField gaugeData;
+
     public BarGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
@@ -28,12 +30,11 @@ public class BarGauge extends Gauge {
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
-        // Create a JFXPanel for embedding JavaFX content
         jfxPanel = new JFXPanel();
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
+         gaugeData = dataField;
 
         tile = TileBuilder.create()
                 .skinType(Tile.SkinType.BAR_GAUGE)
@@ -102,6 +103,8 @@ public class BarGauge extends Gauge {
 
         timeline.setRate(rate);
     }
+
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
 
 

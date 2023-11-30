@@ -15,13 +15,18 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Stop;
 import javafx.util.Duration;
+import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 
 
 public class CircleGauge extends Gauge {
+    int circleAngle;
+    NumericDataField gaugeData;
+
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
@@ -29,12 +34,14 @@ public class CircleGauge extends Gauge {
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
+        circleAngle = angle;
+
         // Create a JFXPanel for embedding JavaFX content
         jfxPanel = new JFXPanel();
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
+        gaugeData = dataField;
 
         // Initialize the tile
         tile = TileBuilder.create()
@@ -44,14 +51,9 @@ public class CircleGauge extends Gauge {
                 .textVisible(true)
                 .value(0)
                 .animated(true)
-                .angleRange(angle)
+                .angleRange(circleAngle)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
                 .build();
-
-        if (dataField.getMaximum() < 0)
-        {
-            tile.setMinValue(Math.floor(dataField.getMinimum()));
-        }
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
@@ -106,4 +108,8 @@ public class CircleGauge extends Gauge {
 
         timeline.setRate(rate);
     }
+
+    public int getAngle() { return circleAngle; }
+
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
