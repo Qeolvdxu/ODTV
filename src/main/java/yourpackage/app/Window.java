@@ -108,16 +108,14 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ;
                 FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
-                    @Override
-                    public void onFilesSelected(String videoFilePath, String csvFilePath) {
+                    public void onFilesSelected(String videoFilePath, String csvFilePath, String reverseVideoFilePath) {
                         if (StaticGaugeArrayList.getSize() > 0) {
                             StaticGaugeArrayList.removeGauges();
                         }
 
-                        VideoPlayerSwingIntegration.changeVideo(videoFilePath);
+                        VideoPlayerSwingIntegration.changeVideo(videoFilePath, reverseVideoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
                         stopButton.setEnabled(true);
