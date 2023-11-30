@@ -119,6 +119,12 @@
                     <border type="none"/>
                     <children/>
                   </grid>
+                  <component id="924d3" class="javax.swing.JMenuItem" binding="viewStatisticsButton">
+                    <constraints/>
+                    <properties>
+                      <text value="Statistics"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="e15e3" class="javax.swing.JMenu" binding="helpButton" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
@@ -255,6 +261,12 @@
           </component>
         </children>
       </grid>
+      <tabbedpane id="459c1" binding="tabbedPane1" default-binding="true">
+        <constraints border-constraint="East"/>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </tabbedpane>
     </children>
   </grid>
   <buttonGroups>

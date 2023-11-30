@@ -1,12 +1,18 @@
 package yourpackage.app;
 
+import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import yourpackage.parsing.StaticSelectedFieldsArrayList;
 
 public class StatisticsWindow {
 
@@ -16,12 +22,11 @@ public class StatisticsWindow {
     private JList maximumValuesJList;
     private JList averageValuesJList;
     private JList stdDevValuesJList;
+    private JButton closeButton;
     private final JFrame frame;
-    private static ArrayList<DataField> selectedFields; // Fields found by the parser
 
     public StatisticsWindow() {
         frame = new JFrame();
-        selectedFields = new ArrayList<>();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
         frame.setIconImage(img.getImage()); // Get and set a custom icon for the GUI.
@@ -31,66 +36,79 @@ public class StatisticsWindow {
         frame.setResizable(false);
         frame.setTitle("Data Statistics");
         frame.setVisible(true);
+
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
     }
 
     private void populateSelectedFieldsJList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (DataField df : selectedFields) {
-            listModel.addElement(String.valueOf(df));
+        for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
+            listModel.addElement(String.valueOf(df.getFieldName()));
         }
         selectedFieldsJList.setModel(listModel);
     }
 
     private void populateMinimumValuesJList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (DataField df : selectedFields) {
-            if (df instanceof NumericDataField)
-            {
+        for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
+            if (df instanceof NumericDataField) {
                 listModel.addElement(String.valueOf(((NumericDataField) df).getMinimum()));
-            }
-            else
-                listModel.addElement(" ");
+            } else
+                listModel.addElement("0.0");
         }
         minimumValuesJList.setModel(listModel);
     }
 
     private void populateMaximumValuesJList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (DataField df : selectedFields) {
-            if (df instanceof NumericDataField)
-            {
+        for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
+            if (df instanceof NumericDataField) {
                 listModel.addElement(String.valueOf(((NumericDataField) df).getMaximum()));
-            }
-            else
-                listModel.addElement(" ");
+            } else
+                listModel.addElement("0.0");
         }
         maximumValuesJList.setModel(listModel);
     }
 
     private void populateAverageValuesJList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (DataField df : selectedFields) {
-            if (df instanceof NumericDataField)
-            {
-                listModel.addElement(String.valueOf(((NumericDataField) df).getAverage()));
-            }
-            else
-                listModel.addElement(" ");
+        for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
+            if (df instanceof NumericDataField) {
+                Double temp = ((NumericDataField) df).getAverage();
+                DecimalFormat d = new DecimalFormat("#.###");
+                d.setRoundingMode(RoundingMode.CEILING);
+                listModel.addElement((d.format(temp)));
+            } else
+                listModel.addElement("0.0");
         }
         averageValuesJList.setModel(listModel);
     }
 
     private void populateStdDevValuesJList() {
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (DataField df : selectedFields) {
-            if (df instanceof NumericDataField)
-            {
-                listModel.addElement(String.valueOf(((NumericDataField) df).getStdDev()));
-            }
-            else
-                listModel.addElement(" ");
+        for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
+            if (df instanceof NumericDataField) {
+                Double temp = ((NumericDataField) df).getStdDev();
+                DecimalFormat d = new DecimalFormat("#.###");
+                d.setRoundingMode(RoundingMode.CEILING);
+                listModel.addElement((d.format(temp)));
+            } else
+                listModel.addElement("0.0");
         }
         stdDevValuesJList.setModel(listModel);
+    }
+
+    public void populateStatistics() {
+        populateSelectedFieldsJList();
+        populateMinimumValuesJList();
+        populateMaximumValuesJList();
+        populateAverageValuesJList();
+        populateStdDevValuesJList();
     }
 
 
@@ -109,7 +127,56 @@ public class StatisticsWindow {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
+        mainPanelSW = new JPanel();
+        mainPanelSW.setLayout(new BorderLayout(0, 0));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(4, 7, new Insets(0, 0, 150, 0), -1, -1));
+        mainPanelSW.add(panel1, BorderLayout.CENTER);
+        final JLabel label1 = new JLabel();
+        label1.setText("Selected Field");
+        panel1.add(label1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Minimum");
+        panel1.add(label2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Maximum");
+        panel1.add(label3, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Average");
+        panel1.add(label4, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText("Standard Deviation");
+        panel1.add(label5, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        selectedFieldsJList = new JList();
+        panel1.add(selectedFieldsJList, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
+        minimumValuesJList = new JList();
+        panel1.add(minimumValuesJList, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(100, 25), null, 0, false));
+        maximumValuesJList = new JList();
+        panel1.add(maximumValuesJList, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(100, 25), null, 0, false));
+        averageValuesJList = new JList();
+        panel1.add(averageValuesJList, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
+        stdDevValuesJList = new JList();
+        panel1.add(stdDevValuesJList, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
+        closeButton = new JButton();
+        closeButton.setText("Close");
+        panel1.add(closeButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(2, 4, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel1.add(spacer2, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        panel1.add(spacer3, new GridConstraints(0, 6, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        panel1.add(spacer4, new GridConstraints(0, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer5 = new Spacer();
+        panel1.add(spacer5, new GridConstraints(3, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return mainPanelSW;
+    }
+
 }

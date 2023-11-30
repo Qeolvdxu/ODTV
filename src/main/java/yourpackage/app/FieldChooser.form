@@ -64,7 +64,9 @@
         <children>
           <component id="887af" class="javax.swing.JList" binding="selectedFieldsJList">
             <constraints/>
-            <properties/>
+            <properties>
+              <model/>
+            </properties>
           </component>
         </children>
       </scrollpane>

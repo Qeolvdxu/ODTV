@@ -13,9 +13,11 @@ import java.awt.event.ActionListener;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.event.ChangeListener;
 
 
+import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 import javafx.util.Duration;
@@ -46,10 +48,13 @@ public class Window {
     private JSlider slider1;
     private JMenuItem viewGaugesButton;
     private JMenuItem viewDataVisualization;
+    private JMenuItem viewStatisticsButton;
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
+    private JTabbedPane tabbedPane1;
+    private ArrayList<DataField> selectedFields;
 
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
@@ -96,14 +101,11 @@ public class Window {
                 };
                 if (speedMultiplier > 0) {
                     videoPlayer.setVideoSpeed(speedMultiplier);
-                }
-                else
-                {
+                } else {
                     videoPlayer.setPlayInReverse();
                 }
             }
         });
-
 
 
         openVideoAndDataButton.addActionListener(new ActionListener() {
@@ -215,7 +217,15 @@ public class Window {
             }
         });
 
-        videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
+        viewStatisticsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StatisticsWindow w = new StatisticsWindow();
+                w.populateStatistics();
+            }
+        });
+        //videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
+
 
     }
 
@@ -290,6 +300,9 @@ public class Window {
         viewDataVisualization.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         viewDataVisualization.setText("Data Visualization");
         viewButton.add(viewDataVisualization);
+        viewStatisticsButton = new JMenuItem();
+        viewStatisticsButton.setText("Statistics");
+        viewButton.add(viewStatisticsButton);
         helpButton = new JMenu();
         helpButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         helpButton.setText("Help");
@@ -299,7 +312,7 @@ public class Window {
         aboutButton.setText("About");
         helpButton.add(aboutButton);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(2, 10, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setLayout(new GridLayoutManager(2, 12, new Insets(0, 0, 0, 0), -1, -1));
         mainPanelW.add(panel2, BorderLayout.SOUTH);
         pauseButton = new JButton();
         pauseButton.setEnabled(false);
@@ -307,25 +320,22 @@ public class Window {
         pauseButton.setIcon(new ImageIcon(getClass().getResource("/pause.png")));
         pauseButton.setText("");
         pauseButton.setToolTipText("Pause");
-        panel2.add(pauseButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(pauseButton, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         stopButton = new JButton();
         stopButton.setEnabled(false);
         stopButton.setHorizontalTextPosition(0);
         stopButton.setIcon(new ImageIcon(getClass().getResource("/stop.png")));
         stopButton.setText("");
         stopButton.setToolTipText("Stop");
-        panel2.add(stopButton, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(stopButton, new GridConstraints(1, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel2.add(spacer1, new GridConstraints(1, 9, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        videoSpeedComboBox = new JComboBox<String>();
+        panel2.add(spacer1, new GridConstraints(1, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        videoSpeedComboBox = new JComboBox();
         videoSpeedComboBox.setEnabled(false);
-        panel2.add(videoSpeedComboBox, new GridConstraints(1, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(videoSpeedComboBox, new GridConstraints(1, 10, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         videoSpeedLabel = new JLabel();
         videoSpeedLabel.setText("Video Speed:");
-        panel2.add(videoSpeedLabel, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        videoTimeLabel = new JLabel();
-        videoTimeLabel.setText("0:00");
-        panel2.add(videoTimeLabel, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(videoSpeedLabel, new GridConstraints(1, 9, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         forwardButton = new JButton();
         forwardButton.setEnabled(false);
         forwardButton.setHideActionText(false);
@@ -333,27 +343,32 @@ public class Window {
         forwardButton.setIcon(new ImageIcon(getClass().getResource("/fastforward.png")));
         forwardButton.setText("");
         forwardButton.setToolTipText("Forward");
-        panel2.add(forwardButton, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(forwardButton, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         slider1 = new JSlider();
         slider1.setEnabled(false);
         slider1.setValue(0);
-        panel2.add(slider1, new GridConstraints(0, 0, 1, 10, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(slider1, new GridConstraints(0, 0, 1, 12, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         playButton = new JButton();
         playButton.setEnabled(false);
         playButton.setHorizontalTextPosition(0);
         playButton.setIcon(new ImageIcon(getClass().getResource("/play.png")));
         playButton.setText("");
         playButton.setToolTipText("Play");
-        panel2.add(playButton, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(playButton, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel2.add(spacer2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         backwardButton = new JButton();
         backwardButton.setEnabled(false);
         backwardButton.setHorizontalTextPosition(0);
         backwardButton.setIcon(new ImageIcon(getClass().getResource("/rewind.png")));
         backwardButton.setText("");
         backwardButton.setToolTipText("Rewind");
-        panel2.add(backwardButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        panel2.add(spacer2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel2.add(backwardButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        videoTimeLabel = new JLabel();
+        videoTimeLabel.setText("Label");
+        panel2.add(videoTimeLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        tabbedPane1 = new JTabbedPane();
+        mainPanelW.add(tabbedPane1, BorderLayout.EAST);
     }
 
     /**
@@ -362,6 +377,5 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
-
 
 }
