@@ -1,32 +1,93 @@
 package yourpackage.gauges;
 
-import yourpackage.parsing.DataField;
-import yourpackage.parsing.TimeField;
 import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import yourpackage.parsing.NumericDataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 
-public class StopwatchGauge extends Gauge{
+import java.io.File;
 
-    private TimeField field;
+public class StopwatchGauge extends Gauge {
 
-    public StopwatchGauge()
+    NumericDataField gaugeData;
+
+    public StopwatchGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
-        this.gauge = GaugeType.Stopwatch;
-        tile.setTitle("Clock Gauge");
-        tile.setSkinType(Tile.SkinType.CLOCK);
-        tile.setTime(System.currentTimeMillis() / 1000);
+
+        System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
+        setGaugeTitle(title);
+
+        jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        gaugeData = dataField;
+
+        tile = TileBuilder.create()
+                .skinType(Tile.SkinType.CLOCK)
+                .prefSize(100, 100)
+                .title(title)
+                .animated(true)
+                .build();
+
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
-    public void update() {
-        Long newValue = field.getNext();
-        if (newValue == null) {
-            return;
+
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+        tile = inputtile;
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        NumericDataField gaugeData = dataField;
+
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+
+        if (tile != null) {
+            Scene scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
         }
-        tile.setTime(newValue);
+
+        double rate = 1 / updateFrequency;
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if(videoPlayer.isPlaying()) {
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
+                int mapIndexToInt = (int) Math.round(mapIndex);
+                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
+                {
+                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
+                }
+                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+
+                if ((!soundPlaying) && (this.isVisible()))
+                {
+                    soundPlaying = true;
+                    Media sound = new Media(new File(audioFile).toURI().toString());
+                    soundPlayer = new MediaPlayer(sound);
+                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                }
+
+
+                    soundPlayer.play();
+
+                tile.setValue(currentFieldValue);
+            }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
+        timeline.setRate(rate);
     }
 
-    public void setField(TimeField field) {
-        this.field = field;
-    }
-
-    public DataField getField() { return field; }
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
