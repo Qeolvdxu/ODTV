@@ -17,15 +17,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
-
 import java.io.File;
-
-
 public class XPlotGauge extends Gauge {
 
     NumericDataField gaugeData;
-    public XPlotGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
-    {
+    public XPlotGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
         System.out.println(dataField.getMaximum());
@@ -46,6 +42,8 @@ public class XPlotGauge extends Gauge {
                 .smoothing(true)
                 .build();
 
+        setDefaultSeries();
+
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
@@ -54,10 +52,8 @@ public class XPlotGauge extends Gauge {
         VideoPlayerSwingIntegration videoPlayer = vp;
         NumericDataField gaugeData = dataField;
 
-        setDefaultSeries();
-
         if (tile != null) {
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
@@ -106,7 +102,7 @@ public class XPlotGauge extends Gauge {
                     else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.BLUE)); }
                     else { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.GRAY));}
                 }
-            } else {
+            } else if (tile != null) {
                 setDefaultSeries();
             }
         }));

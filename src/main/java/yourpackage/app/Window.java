@@ -3,29 +3,16 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
+import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.event.ChangeListener;
-
-
-import yourpackage.gauges.StaticGaugeArrayList;
-import yourpackage.visualization.VideoPlayerSwingIntegration;
-
-
-import yourpackage.gauges.Gauge;
-
-import javafx.util.Duration;
-import yourpackage.gauges.Gauge;
-
-
 public class Window {
     private JPanel mainPanelW;
     private JButton playButton;

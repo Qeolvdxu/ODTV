@@ -166,6 +166,7 @@ public class NumericDataField extends DataField {
                 this.unit = "[m]";
             }
         }
+        this.setFieldName(getNameWithoutUnit() + getUnit());
     }
 
     /**
@@ -205,10 +206,29 @@ public class NumericDataField extends DataField {
             return this.getFieldName();
         }
 
+        public String getNameWithoutUnit() {
+            String pattern = "\\[([^\\]]+)\\]";
+            String name = getFieldName();
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(pattern).matcher(name);
+            StringBuffer result = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(result, "");
+            }
+            matcher.appendTail(result);
+
+            name = result.toString();
+
+            return name;
+        }
+
         public int getDataRowsLength() { return this.dataRows.size(); }
 
         public double getIndexOfDouble(int index) {
             return this.dataRows.get(index);
         }
 
+        public boolean hasUnit()
+        {
+            return unit != null;
+        }
 }
