@@ -115,8 +115,6 @@ public class VideoPlayerSwingIntegration {
         });
     }
 
-
-
     public static void shutdownThreadPool() {
         executorService.shutdown();
     }
@@ -188,8 +186,6 @@ public class VideoPlayerSwingIntegration {
         }
         return 0;
     }
-
-
 
     public void setVideoSpeed(double speedMultiplier) {
         if (player != null) {

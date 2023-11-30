@@ -2,10 +2,7 @@ package yourpackage.app;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import yourpackage.gauges.BarGauge;
-import yourpackage.gauges.CircleGauge;
-import yourpackage.gauges.Gauge;
-import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.gauges.*;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.parsing.TimeDataField;
@@ -250,6 +247,10 @@ public class GaugeCreator {
             Gauge bar = new BarGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
             setGaugeRanges(bar);
             StaticGaugeArrayList.addGauge(bar);
+        } else if (gaugeType.equals("x-plot")) {
+            Gauge xplot = new XPlotGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(xplot);
+            StaticGaugeArrayList.addGauge(xplot);
         }
         resetRangeBooleans();
     }

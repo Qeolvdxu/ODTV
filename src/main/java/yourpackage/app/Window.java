@@ -212,13 +212,6 @@ public class Window {
             }
         });
 
-        createGauge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new Gauge();
-                System.out.println("New gauge created!");
-            }
-        });
-
         videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
 
     }
