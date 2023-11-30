@@ -35,6 +35,7 @@ public class NumericDataField extends DataField {
         this.dataRows = new ArrayList<>();
         this.minimum = 0.0;
         this.maximum = 0.0;
+        this.average = 0.0;
         this.stdDev = 0.0;
         this.isMetric = true;
         if (name.contains(" ")) {
@@ -96,16 +97,6 @@ public class NumericDataField extends DataField {
             return this.average = (sum) / (this.dataRows.size());
         }
     }
-
-
-
-    /**
-     * Method to append a value of type double to the ArrayList of dataRows.
-     */
-    public void addDataRow(String dataRow){
-        this.dataRows.add(Double.valueOf(dataRow));
-    }
-
 
     /**
      * Compute the standard deviation of the numerical values within the dataRows of this field
@@ -187,6 +178,7 @@ public class NumericDataField extends DataField {
             this.dataRows.add(0.0);
         else
             this.dataRows.add(Double.valueOf(dataRow));
+    }
 
     public NumericDataField copyDataField()
     {
@@ -198,26 +190,26 @@ public class NumericDataField extends DataField {
         return newField;
     }
 
-        public ArrayList<String> getDataRows() {
-            ArrayList<String> data = new ArrayList<>();
-            for (double d : this.dataRows) {
-                data.add(Double.toString(d));
-            }
-            return data;
+    public ArrayList<String> getDataRows() {
+        ArrayList<String> data = new ArrayList<>();
+        for (double d : this.dataRows) {
+            data.add(Double.toString(d));
         }
+        return data;
+    }
 
-        /**
-         * @return the name of this field plus its unit
-         */
-        @Override
-        public String toString() {
-            return this.getFieldName() + this.getUnit();
-        }
+    /**
+     * @return the name of this field plus its unit
+     */
+    @Override
+    public String toString() {
+        return this.getFieldName();
+    }
 
-        public int getDataRowsLength() { return this.dataRows.size(); }
+    public int getDataRowsLength() { return this.dataRows.size(); }
 
-        public double getIndexOfDouble(int index) {
-            return this.dataRows.get(index);
-        }
+    public double getIndexOfDouble(int index) {
+        return this.dataRows.get(index);
+    }
 
 }
