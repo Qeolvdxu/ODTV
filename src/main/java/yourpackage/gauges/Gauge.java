@@ -98,4 +98,7 @@ public class Gauge {
     public boolean isVisible() { return visible; }
 
     public void setInvisible() { visible = false; }
+
+    public void setUpdateFrequency(double v) {
+    }
 }
