@@ -424,12 +424,18 @@ public class VideoPlayerSwingIntegration {
 
                     // Update the video time in the JLabel (videoTimeLabel)
                     videoTimeLabel.setText(String.format("%.2f seconds", currentTime)); // Display time in seconds with two decimal places
+
+                    // Check if the current time has reached the total duration
+                    if (currentTime >= totalDuration) {
+                        stop(); // Stop the player when the max time is reached
+                    }
                 }
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
+
 
 
 }
