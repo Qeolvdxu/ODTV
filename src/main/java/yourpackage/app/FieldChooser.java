@@ -80,7 +80,8 @@ public class FieldChooser {
                 frame.dispose(); // Close the window when the user is done.
                 GaugeCreator gaugeCreator = new GaugeCreator(selectedFields, videoPlayer);
                 for (DataField d : selectedFields) {
-                    StaticSelectedFieldsArrayList.addField(d);
+                    if (!d.getFieldName().equals("DETAILS.timestamp"))
+                        StaticSelectedFieldsArrayList.addField(d);
                 }
             }
         });
@@ -196,8 +197,6 @@ public class FieldChooser {
         mainPanelFC.add(scrollPane1, new GridConstraints(5, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         selectedFieldsJList = new JList();
         selectedFieldsJList.setSelectionMode(0);
-        final DefaultListModel defaultListModel1 = new DefaultListModel();
-        selectedFieldsJList.setModel(defaultListModel1);
         scrollPane1.setViewportView(selectedFieldsJList);
         searchTextField = new JTextField();
         searchTextField.setText("");

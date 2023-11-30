@@ -23,6 +23,7 @@ public class StatisticsWindow {
     private JList averageValuesJList;
     private JList stdDevValuesJList;
     private JButton closeButton;
+    private JLabel emptyFieldsLabel;
     private final JFrame frame;
 
     public StatisticsWindow() {
@@ -37,6 +38,13 @@ public class StatisticsWindow {
         frame.setTitle("Data Statistics");
         frame.setVisible(true);
 
+        selectedFieldsJList.setVisible(false);
+        minimumValuesJList.setVisible(false);
+        maximumValuesJList.setVisible(false);
+        averageValuesJList.setVisible(false);
+        stdDevValuesJList.setVisible(false);
+
+
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -46,14 +54,18 @@ public class StatisticsWindow {
     }
 
     private void populateSelectedFieldsJList() {
+        selectedFieldsJList.setVisible(true);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
-            listModel.addElement(String.valueOf(df.getFieldName()));
+            if (df instanceof NumericDataField) {
+                listModel.addElement(String.valueOf(df.getFieldName()));
+            }
         }
         selectedFieldsJList.setModel(listModel);
     }
 
     private void populateMinimumValuesJList() {
+        minimumValuesJList.setVisible(true);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
             if (df instanceof NumericDataField) {
@@ -65,6 +77,7 @@ public class StatisticsWindow {
     }
 
     private void populateMaximumValuesJList() {
+        maximumValuesJList.setVisible(true);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
             if (df instanceof NumericDataField) {
@@ -76,6 +89,7 @@ public class StatisticsWindow {
     }
 
     private void populateAverageValuesJList() {
+        averageValuesJList.setVisible(true);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
             if (df instanceof NumericDataField) {
@@ -90,6 +104,7 @@ public class StatisticsWindow {
     }
 
     private void populateStdDevValuesJList() {
+        stdDevValuesJList.setVisible(true);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (DataField df : StaticSelectedFieldsArrayList.getFields()) {
             if (df instanceof NumericDataField) {
@@ -104,11 +119,14 @@ public class StatisticsWindow {
     }
 
     public void populateStatistics() {
-        populateSelectedFieldsJList();
-        populateMinimumValuesJList();
-        populateMaximumValuesJList();
-        populateAverageValuesJList();
-        populateStdDevValuesJList();
+        if (!StaticSelectedFieldsArrayList.getFields().isEmpty()) {
+            emptyFieldsLabel.setVisible(false);
+            populateSelectedFieldsJList();
+            populateMinimumValuesJList();
+            populateMaximumValuesJList();
+            populateAverageValuesJList();
+            populateStdDevValuesJList();
+        }
     }
 
 
@@ -130,7 +148,7 @@ public class StatisticsWindow {
         mainPanelSW = new JPanel();
         mainPanelSW.setLayout(new BorderLayout(0, 0));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(4, 7, new Insets(0, 0, 150, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(6, 7, new Insets(0, 50, 150, 375), -1, -1));
         mainPanelSW.add(panel1, BorderLayout.CENTER);
         final JLabel label1 = new JLabel();
         label1.setText("Selected Field");
@@ -148,14 +166,19 @@ public class StatisticsWindow {
         label5.setText("Standard Deviation");
         panel1.add(label5, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         selectedFieldsJList = new JList();
+        selectedFieldsJList.setVisible(false);
         panel1.add(selectedFieldsJList, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
         minimumValuesJList = new JList();
+        minimumValuesJList.setVisible(false);
         panel1.add(minimumValuesJList, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(100, 25), null, 0, false));
         maximumValuesJList = new JList();
+        maximumValuesJList.setVisible(false);
         panel1.add(maximumValuesJList, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(100, 25), null, 0, false));
         averageValuesJList = new JList();
+        averageValuesJList.setVisible(false);
         panel1.add(averageValuesJList, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
         stdDevValuesJList = new JList();
+        stdDevValuesJList.setVisible(false);
         panel1.add(stdDevValuesJList, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 25), null, 0, false));
         closeButton = new JButton();
         closeButton.setText("Close");
@@ -165,11 +188,21 @@ public class StatisticsWindow {
         final Spacer spacer2 = new Spacer();
         panel1.add(spacer2, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        panel1.add(spacer3, new GridConstraints(0, 6, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel1.add(spacer3, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         panel1.add(spacer4, new GridConstraints(0, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
         panel1.add(spacer5, new GridConstraints(3, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        emptyFieldsLabel = new JLabel();
+        emptyFieldsLabel.setForeground(new Color(-1744795));
+        emptyFieldsLabel.setText("No statistics to display - no fields selected.");
+        panel1.add(emptyFieldsLabel, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        panel1.add(spacer6, new GridConstraints(4, 4, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer7 = new Spacer();
+        panel1.add(spacer7, new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer8 = new Spacer();
+        panel1.add(spacer8, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
