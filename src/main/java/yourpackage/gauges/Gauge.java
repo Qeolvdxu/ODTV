@@ -6,6 +6,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
+import yourpackage.parsing.DataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class Gauge {
-    public Tile tile = null;
-    public JFrame frame;
+    protected Tile tile = null;
+    protected JFrame frame;
     protected double minBlueRange, maxBlueRange, minGreenRange, maxGreenRange, minYellowRange, maxYellowRange, minRedRange, maxRedRange;
     protected boolean blueRangeProvided = false;
     protected boolean greenRangeProvided = false;
@@ -47,39 +48,52 @@ public class Gauge {
         });
     }
 
-
     public void setGaugeTitle(String title)
     {
         frame.setTitle(title);
     }
 
-    public void setBlueRange(double min, double max)
-    {
+    public void setBlueRange(double min, double max) {
         blueRangeProvided = true;
         minBlueRange = min;
         maxBlueRange = max;
     }
 
-    public void setGreenRange(double min, double max)
-    {
+    public void setGreenRange(double min, double max) {
         greenRangeProvided = true;
         minGreenRange = min;
         maxGreenRange = max;
     }
 
-    public void setYellowRange(double min, double max)
-    {
+    public void setYellowRange(double min, double max) {
         yellowRangeProvided = true;
         minYellowRange = min;
         maxYellowRange = max;
     }
 
-    public void setRedRange(double min, double max)
-    {
+    public void setRedRange(double min, double max) {
         redRangeProvided = true;
         minRedRange = min;
         maxRedRange = max;
     }
+
+    public double getminBlueRange() { return minBlueRange; }
+
+    public double getmaxBlueRange() { return maxBlueRange; }
+
+    public double getminGreenRange() { return minGreenRange; }
+
+    public double getmaxGreenRange() { return maxGreenRange; }
+
+    public double getminYellowRange() { return minYellowRange; }
+
+    public double getmaxYellowRange() { return maxYellowRange; }
+
+    public double getminRedRange() { return minRedRange; }
+
+    public double getmaxRedRange() { return maxRedRange; }
+
+    public double getDataFrequency() { return updateFrequency; }
 
     public boolean isVisible() { return visible; }
 

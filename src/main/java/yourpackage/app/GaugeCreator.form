@@ -4,7 +4,6 @@
     <margin top="0" left="0" bottom="0" right="60"/>
     <constraints>
       <xy x="20" y="20" width="895" height="400"/>
-
     </constraints>
     <properties/>
     <border type="none" title=""/>
@@ -23,7 +22,6 @@
         </constraints>
         <properties>
           <text value="Green Min Range"/>
-
         </properties>
       </component>
       <component id="b74c0" class="javax.swing.JLabel">
@@ -32,7 +30,6 @@
         </constraints>
         <properties>
           <text value="Blue Min Range"/>
-
         </properties>
       </component>
       <component id="683cf" class="javax.swing.JLabel">
@@ -41,13 +38,11 @@
         </constraints>
         <properties>
           <text value="Red Min Range"/>
-
         </properties>
       </component>
       <component id="310cf" class="javax.swing.JLabel">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-
         </constraints>
         <properties>
           <text value="Name (Optional)"/>
@@ -56,7 +51,6 @@
       <component id="1e965" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-
         </constraints>
         <properties>
           <text value="Gauge Type"/>
@@ -65,7 +59,6 @@
       <component id="9e1fc" class="javax.swing.JLabel">
         <constraints>
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-
         </constraints>
         <properties>
           <text value="Data Fields"/>
@@ -266,7 +259,6 @@
         <properties>
           <text value="You MUST enter a min and max for the color ranges."/>
         </properties>
-
       </component>
     </children>
   </grid>
