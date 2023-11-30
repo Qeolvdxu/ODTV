@@ -20,6 +20,9 @@ import javax.swing.event.ChangeListener;
 import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
+
+import yourpackage.gauges.Gauge;
+
 import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
 
@@ -73,7 +76,6 @@ public class Window {
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
 
-
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
         comboBoxModel.addElement("5X");
@@ -111,7 +113,7 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {

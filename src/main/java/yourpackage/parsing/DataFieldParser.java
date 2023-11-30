@@ -36,7 +36,7 @@ public class DataFieldParser {
          * through each record at a given index to append data to the DataField's list of elements.
          * (Assumes that first row contains the name of each column).
          */
-    public ArrayList<DataField> getFoundFields() {
+    public void parseData() {
         int i = 0;
         int j = 0;
         for (String s : this.foundRecords.get(2)) {
@@ -63,7 +63,9 @@ public class DataFieldParser {
             this.foundFields.add(df);   // Add new data field to list of found fields
             j++;
         }
+    }
 
+    public ArrayList<DataField> getFoundFields() {
         return this.foundFields;
     }
 
