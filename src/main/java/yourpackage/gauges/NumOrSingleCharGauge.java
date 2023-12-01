@@ -17,7 +17,6 @@ import yourpackage.parsing.BooleanDataField;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
-
 import java.io.File;
 
 public class NumOrSingleCharGauge extends Gauge {
@@ -60,12 +59,9 @@ public class NumOrSingleCharGauge extends Gauge {
                 double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
 
-                // Sorry for this hacky code, getDataRowsLength was returning 0 for the booleans and I could not figure out why.
-                // I am just using this a solution since I need to work on other parts of the program - James.
                 if (gaugeData instanceof BooleanDataField && mapIndexToInt > ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1) {
-                    mapIndexToInt = ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1;
+                    mapIndexToInt = ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1; // Had to do this since getDataRowsLength was always returning 0 for Booleans.
                 } else if (!(gaugeData instanceof BooleanDataField) && mapIndexToInt > gaugeData.getDataRowsLength() - 1) { mapIndexToInt = gaugeData.getDataRowsLength() - 1; }
-
 
                 if(gaugeData instanceof NumericDataField) {
                     NumericDataField toNumeric = (NumericDataField) dataField;
@@ -89,14 +85,12 @@ public class NumOrSingleCharGauge extends Gauge {
                     tile.setDescription(String.valueOf(currentNumericFieldValue));
                 } else if (gaugeData instanceof BooleanDataField) {
                     BooleanDataField toBool = (BooleanDataField) dataField;
-                    System.out.println("Index in BooleanDataField: " + mapIndexToInt);
                     boolean currentBooleanFieldValue = toBool.getIndexOfBool(mapIndexToInt);
 
                     if (currentBooleanFieldValue) { tile.setDescription("T"); }
                     else { tile.setDescription("F"); }
                 } else {
                     String currentFieldValue = dataField.getIndexOfString(mapIndexToInt);
-                    System.out.println("Index in StringDataField: " + mapIndexToInt);
                     tile.setDescription(currentFieldValue);
                 }
             }

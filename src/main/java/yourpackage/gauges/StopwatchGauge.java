@@ -13,19 +13,19 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
+import yourpackage.parsing.TimeDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 import java.io.File;
 
 public class StopwatchGauge extends Gauge {
 
-    NumericDataField gaugeData;
+    TimeDataField gaugeData;
 
-    public StopwatchGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
+    public StopwatchGauge(String title, TimeDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
 
-        System.out.println(dataField.getMaximum());
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
@@ -45,12 +45,10 @@ public class StopwatchGauge extends Gauge {
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, TimeDataField dataField, Tile inputtile) {
         tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
-
-        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+        TimeDataField gaugeData = dataField;
 
         if (tile != null) {
             Scene scene = new Scene(new Pane(tile));
@@ -67,7 +65,7 @@ public class StopwatchGauge extends Gauge {
                 {
                     mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
-                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+                double currentFieldValue = 1;
 
                 if ((!soundPlaying) && (this.isVisible()))
                 {

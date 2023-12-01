@@ -7,12 +7,16 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Stop;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import yourpackage.parsing.BooleanDataField;
+import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
@@ -20,13 +24,12 @@ import java.io.File;
 
 public class TextDisplayGauge extends Gauge {
 
-    NumericDataField gaugeData;
+    DataField gaugeData;
 
-    public TextDisplayGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
+    public TextDisplayGauge(String title, DataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
 
-        System.out.println(dataField.getMaximum());
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
@@ -40,22 +43,22 @@ public class TextDisplayGauge extends Gauge {
                 .skinType(Tile.SkinType.TEXT)
                 .prefSize(100, 100)
                 .title(title)
-                .animated(true)
+                .titleAlignment(TextAlignment.CENTER)
+                .descriptionAlignment(Pos.CENTER)
+                .textVisible(true)
+                .descriptionColor(Tile.GRAY)
                 .build();
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, DataField dataField, Tile inputtile) {
         tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
-
-        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
-
+        DataField gaugeData = dataField;
 
         if (tile != null) {
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
@@ -65,23 +68,42 @@ public class TextDisplayGauge extends Gauge {
             if(videoPlayer.isPlaying()) {
                 double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
-                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
-                {
-                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
+
+                if (gaugeData instanceof BooleanDataField && mapIndexToInt > ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1) {
+                    mapIndexToInt = ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1; // Had to do this since getDataRowsLength was always returning 0 for Booleans.
+                } else if (!(gaugeData instanceof BooleanDataField) && mapIndexToInt > gaugeData.getDataRowsLength() - 1) { mapIndexToInt = gaugeData.getDataRowsLength() - 1; }
+
+                if(gaugeData instanceof NumericDataField) {
+                    NumericDataField toNumeric = (NumericDataField) dataField;
+                    double currentNumericFieldValue = toNumeric.getIndexOfDouble(mapIndexToInt);
+
+                    if ((!soundPlaying) && (this.isVisible()))
+                    {
+                        soundPlaying = true;
+                        Media sound = new Media(new File(audioFile).toURI().toString());
+                        soundPlayer = new MediaPlayer(sound);
+                        soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                    }
+
+                    if (redRangeProvided && (currentNumericFieldValue >= minRedRange && currentNumericFieldValue <= maxRedRange)) {
+                        tile.setTextColor(Tile.RED);
+                        soundPlayer.play();
+                    } else if (yellowRangeProvided && (currentNumericFieldValue >= minYellowRange && currentNumericFieldValue <= maxYellowRange)) { tile.setTextColor(Tile.YELLOW); }
+                    else if (greenRangeProvided && (currentNumericFieldValue >= minGreenRange && currentNumericFieldValue <= maxGreenRange)) { tile.setTextColor(Tile.GREEN); }
+                    else if (blueRangeProvided && (currentNumericFieldValue >= minBlueRange && currentNumericFieldValue <= maxBlueRange)) { tile.setTextColor(Tile.BLUE); }
+                    else { tile.setTextColor(Tile.GRAY); }
+                    tile.setDescription(String.valueOf(currentNumericFieldValue));
+                } else if (gaugeData instanceof BooleanDataField) {
+                    BooleanDataField toBool = (BooleanDataField) dataField;
+                    boolean currentBooleanFieldValue = toBool.getIndexOfBool(mapIndexToInt);
+
+                    if (currentBooleanFieldValue) { tile.setDescription("True"); }
+                    else { tile.setDescription("False"); }
+                } else {
+                    String currentFieldValue = dataField.getIndexOfString(mapIndexToInt);
+                    tile.setDescription(currentFieldValue);
                 }
-                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
-                if ((!soundPlaying) && (this.isVisible()))
-                {
-                    soundPlaying = true;
-                    Media sound = new Media(new File(audioFile).toURI().toString());
-                    soundPlayer = new MediaPlayer(sound);
-                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
-                }
-
-                    soundPlayer.play();
-
-                tile.setValue(currentFieldValue);
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

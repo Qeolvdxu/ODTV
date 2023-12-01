@@ -326,6 +326,21 @@ public class GaugeCreator {
                 setGaugeRanges(numOrChar);
             }
             StaticGaugeArrayList.addGauge(numOrChar);
+        } else if (gaugeType.equals("On/off light")) {
+            Gauge OnOffLight = new OnOffLightGauge(gaugeName, (BooleanDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(OnOffLight);
+            StaticGaugeArrayList.addGauge(OnOffLight);
+        } else if (gaugeType.equals("Text display")) {
+            Gauge TextDisplay = new TextDisplayGauge(gaugeName, inputField, videoPlayer, frequency);
+            setGaugeRanges(TextDisplay);
+            StaticGaugeArrayList.addGauge(TextDisplay);
+            if (inputField instanceof NumericDataField) {
+                setGaugeRanges(TextDisplay);
+            }
+        } else if (gaugeType.equals("Stopwatch")) {
+            Gauge Stopwatch = new StopwatchGauge(gaugeName, (TimeDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(Stopwatch);
+            StaticGaugeArrayList.addGauge(Stopwatch);
         }
         resetRangeBooleans();
     }

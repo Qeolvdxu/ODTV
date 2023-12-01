@@ -13,6 +13,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Stop;
 import javafx.util.Duration;
+import yourpackage.parsing.BooleanDataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
@@ -20,13 +21,12 @@ import java.io.File;
 
 public class OnOffLightGauge extends Gauge {
 
-    NumericDataField gaugeData;
+    BooleanDataField gaugeData;
 
-    public OnOffLightGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
+    public OnOffLightGauge(String title, BooleanDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
 
-        System.out.println(dataField.getMaximum());
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
@@ -46,12 +46,10 @@ public class OnOffLightGauge extends Gauge {
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, BooleanDataField dataField, Tile inputtile) {
         tile = inputtile;
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
-
-        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+        BooleanDataField gaugeData = dataField;
 
         if (tile != null) {
             Scene scene = new Scene(new Pane(tile));
@@ -68,7 +66,6 @@ public class OnOffLightGauge extends Gauge {
                 {
                     mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
-                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
                 if ((!soundPlaying) && (this.isVisible()))
                 {
@@ -80,7 +77,7 @@ public class OnOffLightGauge extends Gauge {
 
                     soundPlayer.play();
 
-                tile.setValue(currentFieldValue);
+                tile.setValue(0); // temporary
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
