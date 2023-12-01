@@ -17,10 +17,10 @@ import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 
 public class NumOrSingleCharGauge extends Gauge {
+    DataField gaugeData;
     public NumOrSingleCharGauge(String title, DataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         updateFrequency = dataFrequency;
@@ -30,7 +30,7 @@ public class NumOrSingleCharGauge extends Gauge {
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
-        DataField gaugeData = dataField;
+        gaugeData = dataField;
 
         tile = TileBuilder.create().skinType(Tile.SkinType.CHARACTER)
                 .prefSize(100, 100)
