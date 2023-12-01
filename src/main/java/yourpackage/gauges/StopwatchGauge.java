@@ -7,10 +7,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.parsing.TimeDataField;
@@ -36,11 +38,16 @@ public class StopwatchGauge extends Gauge {
         gaugeData = dataField;
 
         tile = TileBuilder.create()
-                .skinType(Tile.SkinType.CLOCK)
+                .skinType(Tile.SkinType.TEXT)
                 .prefSize(100, 100)
                 .title(title)
-                .animated(true)
+                .titleAlignment(TextAlignment.CENTER)
+                .descriptionAlignment(Pos.CENTER)
+                .descriptionColor(Tile.GRAY)
+                .textVisible(true)
+                .textAlignment(TextAlignment.CENTER)
                 .build();
+
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
@@ -51,11 +58,14 @@ public class StopwatchGauge extends Gauge {
         TimeDataField gaugeData = dataField;
 
         if (tile != null) {
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
         double rate = 1 / updateFrequency;
+
+        tile.setDescription(dataField.getTime(0));
+        tile.setText(dataField.getDate(0));
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             if(videoPlayer.isPlaying()) {
@@ -65,20 +75,11 @@ public class StopwatchGauge extends Gauge {
                 {
                     mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
-                double currentFieldValue = 1;
+                String currentTime = dataField.getTime(mapIndexToInt);
+                String currentDate =  dataField.getDate(mapIndexToInt);
 
-                if ((!soundPlaying) && (this.isVisible()))
-                {
-                    soundPlaying = true;
-                    Media sound = new Media(new File(audioFile).toURI().toString());
-                    soundPlayer = new MediaPlayer(sound);
-                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
-                }
-
-
-                    soundPlayer.play();
-
-                tile.setValue(currentFieldValue);
+                tile.setDescription(currentTime);
+                tile.setText(currentDate);
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
