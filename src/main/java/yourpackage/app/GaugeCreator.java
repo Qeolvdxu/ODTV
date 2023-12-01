@@ -304,6 +304,18 @@ public class GaugeCreator {
             Gauge xByYPlot = new XByYPlotGauge(gaugeName, (NumericDataField) inputField, yInputField, videoPlayer, frequency);
             setGaugeRanges(xByYPlot);
             StaticGaugeArrayList.addGauge(xByYPlot);
+        } else if (gaugeType.equals("OnOffLight")){
+            Gauge OnOffLight = new OnOffLightGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(OnOffLight);
+            StaticGaugeArrayList.addGauge(OnOffLight);
+        } else if (gaugeType.equals("TextDisplay")){
+            Gauge TextDisplay = new TextDisplayGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(TextDisplay);
+            StaticGaugeArrayList.addGauge(TextDisplay);
+        } else if (gaugeType.equals("Stopwatch")){
+            Gauge Stopwatch = new StopwatchGauge(gaugeName, (NumericDataField) inputField, videoPlayer, frequency);
+            setGaugeRanges(Stopwatch);
+            StaticGaugeArrayList.addGauge(Stopwatch);
         }
         resetRangeBooleans();
     }

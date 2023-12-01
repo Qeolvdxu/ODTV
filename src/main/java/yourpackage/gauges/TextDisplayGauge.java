@@ -40,6 +40,7 @@ public class TextDisplayGauge extends Gauge {
                 .skinType(Tile.SkinType.TEXT)
                 .prefSize(100, 100)
                 .title(title)
+                .textVisible(true)
                 .animated(true)
                 .build();
 
