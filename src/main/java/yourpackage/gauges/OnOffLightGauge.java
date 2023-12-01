@@ -1,6 +1,7 @@
 package yourpackage.gauges;
 
 import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -9,12 +10,8 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 import yourpackage.parsing.BooleanDataField;
-import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 import java.io.File;
@@ -37,10 +34,9 @@ public class OnOffLightGauge extends Gauge {
         gaugeData = dataField;
 
         tile = TileBuilder.create()
-                .skinType(Tile.SkinType.LED)
+                .skinType(SkinType.LED)
                 .prefSize(100, 100)
                 .title(title)
-                .animated(true)
                 .build();
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
@@ -52,7 +48,7 @@ public class OnOffLightGauge extends Gauge {
         BooleanDataField gaugeData = dataField;
 
         if (tile != null) {
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
@@ -62,22 +58,16 @@ public class OnOffLightGauge extends Gauge {
             if(videoPlayer.isPlaying()) {
                 double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
-                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
-                {
-                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
+
+                if (mapIndexToInt > gaugeData.getBooleanDataRowsLength() - 1) {
+                    mapIndexToInt = gaugeData.getBooleanDataRowsLength() - 1;
                 }
 
-                if ((!soundPlaying) && (this.isVisible()))
-                {
-                    soundPlaying = true;
-                    Media sound = new Media(new File(audioFile).toURI().toString());
-                    soundPlayer = new MediaPlayer(sound);
-                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
-                }
+                boolean currentBooleanFieldValue = gaugeData.getIndexOfBool(mapIndexToInt);
 
-                    soundPlayer.play();
-
-                tile.setValue(0); // temporary
+                tile.setActive(currentBooleanFieldValue);
+            } else {
+                tile.setActive(false);
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -85,6 +75,5 @@ public class OnOffLightGauge extends Gauge {
 
         timeline.setRate(rate);
     }
-
     public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
