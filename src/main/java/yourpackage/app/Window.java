@@ -3,28 +3,16 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
+import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.event.ChangeListener;
-
-
-import yourpackage.visualization.VideoPlayerSwingIntegration;
-
-
-import yourpackage.gauges.Gauge;
-
-import javafx.util.Duration;
-import yourpackage.gauges.Gauge;
-
-
 public class Window {
     private JPanel mainPanelW;
     private JButton playButton;
@@ -53,7 +41,6 @@ public class Window {
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
-
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -70,7 +57,6 @@ public class Window {
         frame.setTitle("ODTV");
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
-
 
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
@@ -109,10 +95,15 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                ;
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
+                        if (StaticGaugeArrayList.getSize() > 0) {
+                            StaticGaugeArrayList.removeGauges();
+                        }
+
                         VideoPlayerSwingIntegration.changeVideo(videoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
@@ -205,13 +196,6 @@ public class Window {
             @Override
             public void actionPerformed(ActionEvent e) {
                 videoPlayer.rewind();
-            }
-        });
-
-        createGauge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new Gauge();
-                System.out.println("New gauge created!");
             }
         });
 

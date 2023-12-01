@@ -92,6 +92,3 @@ public class TextDisplayGauge extends Gauge {
 
     public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
-
-
-

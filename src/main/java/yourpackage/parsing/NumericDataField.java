@@ -97,16 +97,6 @@ public class NumericDataField extends DataField {
         }
     }
 
-
-
-    /**
-     * Method to append a value of type double to the ArrayList of dataRows.
-     */
-    public void addDataRow(String dataRow){
-        this.dataRows.add(Double.valueOf(dataRow));
-    }
-
-
     /**
      * Compute the standard deviation of the numerical values within the dataRows of this field
      *
@@ -141,33 +131,63 @@ public class NumericDataField extends DataField {
     public void changeUnit() {
         if (this.isMetric) {
             if (this.unit.equals("[m/s]")) {
-                for (double d : this.dataRows) {
-                    //compute to mph
-                    d = (d * 3600) / 1609.3;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 3600) / 1609.3; //compute to mph
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[mph]";
             } else if (this.unit.equals("[m]")) {
-                for (double d : this.dataRows) {
-                    //compute to ft
-                    d = d * 3.28084;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d * 3.28084; //compute to ft
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[ft]";
             }
         } else {
             if (this.unit.equals("[mph]")) {
-                for (double d : this.dataRows) {
-                    //compute to m/s
-                    d = (d * 1609.3) / 3600;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = (d * 1609.3) / 3600; //compute to m/s
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m/s]";
             } else if (this.unit.equals("[ft]")) {
-                for (double d : this.dataRows) {
-                    //compute to m
-                    d = d / 3.28084;
+                for (int i = 0; i < this.dataRows.size(); i++) {
+                    double d = this.dataRows.get(i);
+                    d = d / 3.28084; //compute to m
+                    this.dataRows.remove(i);
+                    this.dataRows.add(i,d);
                 }
                 this.unit = "[m]";
             }
         }
+        this.setFieldName(getNameWithoutUnit() + getUnit());
+    }
+
+    /**
+     * Method to append a value of type double to the ArrayList of dataRows.
+     */
+    @Override
+    public void addDataRow(String dataRow) {
+        if (dataRow.isEmpty() || dataRow.isBlank())
+            this.dataRows.add(0.0);
+        else
+            this.dataRows.add(Double.valueOf(dataRow));
+    }
+
+    public NumericDataField copyDataField()
+    {
+        NumericDataField newField = new NumericDataField(this.getFieldName());
+        for (int i = 0; i < this.dataRows.size(); i++) {
+            double d = this.dataRows.get(i);
+            newField.dataRows.add(d);
+        }
+        return newField;
     }
 
         public ArrayList<String> getDataRows() {
@@ -183,7 +203,32 @@ public class NumericDataField extends DataField {
          */
         @Override
         public String toString() {
-            return this.getFieldName() + this.getUnit();
+            return this.getFieldName();
         }
 
+        public String getNameWithoutUnit() {
+            String pattern = "\\[([^\\]]+)\\]";
+            String name = getFieldName();
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(pattern).matcher(name);
+            StringBuffer result = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(result, "");
+            }
+            matcher.appendTail(result);
+
+            name = result.toString();
+
+            return name;
+        }
+
+        public int getDataRowsLength() { return this.dataRows.size(); }
+
+        public double getIndexOfDouble(int index) {
+            return this.dataRows.get(index);
+        }
+
+        public boolean hasUnit()
+        {
+            return unit != null;
+        }
 }

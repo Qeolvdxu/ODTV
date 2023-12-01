@@ -1,143 +1,111 @@
 package yourpackage.gauges;
-import eu.hansolo.tilesfx.tools.GradientLookup;
+
 import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.colors.Bright;
-import yourpackage.parsing.DataField;
-import yourpackage.parsing.NumericDataField;
+import eu.hansolo.tilesfx.Tile.SkinType;
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
+import javafx.util.Duration;
+import yourpackage.parsing.NumericDataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 import java.io.File;
-import java.util.Arrays;
+
 
 public class CircleGauge extends Gauge {
+    int circleAngle;
+    NumericDataField gaugeData;
 
-    private NumericDataField field;
-    private transient int alarmIndex;
-    private transient GradientLookup gradient;
-    private transient Media alarm;
-    private double redError;
-    public static MediaPlayer mediaPlayer = null;
-
-    public static Tile tile = null;
-
-
-
-    public CircleGauge(int angle) {
+    public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
-        if (angle == 90) {
-            this.gauge = GaugeType.Circle90;
-        } else if (angle == 180) {
-            this.gauge = GaugeType.Circle180;
-        } else if (angle == 270) {
-            this.gauge = GaugeType.Circle270;
-        } else if (angle == 360) {
-            this.gauge = GaugeType.Circle360;
+
+        System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
+        setGaugeTitle(title);
+
+        circleAngle = angle;
+
+        // Create a JFXPanel for embedding JavaFX content
+        jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        gaugeData = dataField;
+
+        // Initialize the tile
+        tile = TileBuilder.create()
+                .skinType(SkinType.GAUGE2)
+                .prefSize(100, 100)
+                .title(title)
+                .textVisible(true)
+                .value(0)
+                .animated(true)
+                .angleRange(circleAngle)
+                .maxValue(Math.ceil(gaugeData.getMaximum()))
+                .build();
+
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
+    }
+
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+        // Create JavaFX content (TilesFX tile in this case)
+        tile = inputtile;
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        NumericDataField gaugeData = dataField;
+
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+
+        if (tile != null) {
+            // Create a JavaFX Scene
+            scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
         }
 
+        double rate = 1 / updateFrequency;
 
-        field = null;
-
-        tile.setSkinType(Tile.SkinType.GAUGE);
-        tile.setUnit("d");
-        tile.setAngleRange(angle);
-        tile.setMinValue(0);
-        tile.setMaxValue(angle);
-        tile.setValue(angle);
-        tile.setUnit("MPH");
-        tile.setAnimated(true);
-
-        gradient = new GradientLookup(Arrays.asList(new Stop(0.25, Bright.BLUE),
-                new Stop(0.50, Bright.GREEN),
-                new Stop(0.75, Bright.YELLOW),
-                new Stop(1, Bright.RED)));
-
-        tile.setGradientStops(gradient.getStops());
-        tile.setStrokeWithGradient(true);
-
-
-        alarm = null;
-    }
-
-    public GradientLookup getGradient()
-    {
-        return gradient;
-    }
-
-    public void setGradient(GradientLookup g)
-    {
-        gradient = g;
-        tile.setGradientStops(gradient.getStops());
-        redError = g.getStops().get(3).getOffset() * tile.getRange();
-    }
-
-
-    public void update(){
-        Double value = field.getNext();
-
-        if (value == null) {
-            return;
-        }
-
-        double newValue = value.doubleValue();
-
-        double valueInRange = tile.getMinValue() + (tile.getMaxValue() - tile.getMinValue()) * ((newValue)/ (tile.getRange()));
-        tile.setValue(valueInRange);
-
-        tile.setBarColor(gradient.getColorAt(newValue / tile.getRange()));
-
-        if (mediaPlayer != null)
-        {
-            if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING && tile.getValue() < redError)
-            {
-                mediaPlayer.stop();
-                tile.setBackgroundColor(Tile.BACKGROUND);
-            }
-            else
-            {
-                if (tile.getValue() >= redError)
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if(videoPlayer.isPlaying()) {
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
+                int mapIndexToInt = (int) Math.round(mapIndex);
+                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
                 {
-                    mediaPlayer.play();
-                    tile.setBackgroundColor(Color.DARKRED);
+                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
+                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+
+                if ((!soundPlaying) && (this.isVisible()))
+                {
+                    soundPlaying = true;
+                    Media sound = new Media(new File(audioFile).toURI().toString());
+                    soundPlayer = new MediaPlayer(sound);
+                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                }
+
+                if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+                    tile.setBarColor(Tile.RED);
+                    soundPlayer.play();
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setBarColor(Tile.YELLOW); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) {tile.setBarColor(Tile.GREEN); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setBarColor(Tile.BLUE); }
+                else { tile.setBarColor(Tile.GRAY); }
+
+                tile.setValue(currentFieldValue);
             }
-        }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
+        timeline.setRate(rate);
     }
 
-    public static double map (double fValue, double start, double stop, double fStart, double fStop)
-    {
-        return fStart + (fStop - fStart) * ((fValue - start) / (stop - start));
-    }
+    public int getAngle() { return circleAngle; }
 
-    public void setAlarm(int i){
-        String soundFile;
-        redError = map(gradient.getStops().get(3).getOffset(), 0, 1, tile.getMinValue(),tile.getMaxValue());
-        alarmIndex = i;
-        switch(i)
-        {
-            case 1, 2: //criticalAlarm
-                soundFile = "src/main/resources/criticalAlarm.wav";
-                alarm = new Media(new File(soundFile).toURI().toString());
-                mediaPlayer = new MediaPlayer(alarm);
-                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                break;
-            default:
-                //no alarm
-                break;
-        }
-    }
-
-    public DataField getField() {
-        return field;
-    }
-
-    public void setField(NumericDataField field) {
-        this.field = field;
-    }
-
-    public int getAlarmIndex() {
-        return alarmIndex;
-    }
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }

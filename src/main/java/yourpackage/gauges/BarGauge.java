@@ -1,120 +1,107 @@
 package yourpackage.gauges;
 
-import yourpackage.parsing.DataField;
-import yourpackage.parsing.NumericDataField;
-//import dronetelemetrytool.skins.SingleBarTileSkin;
 import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.chart.ChartData;
-import eu.hansolo.tilesfx.colors.Bright;
-import eu.hansolo.toolboxfx.GradientLookup;
+import eu.hansolo.tilesfx.TileBuilder;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
-
+import javafx.util.Duration;
+import yourpackage.parsing.NumericDataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import java.io.File;
-import java.util.Arrays;
+public class BarGauge extends Gauge {
 
-public class BarGauge extends Gauge{
+    NumericDataField gaugeData;
 
-    private NumericDataField field;
-
-    private ChartData data;
-    //private GradientLookup gradient;
-    private transient int alarmIndex;
-    private Media alarm;
-    private double redError;
-    public static MediaPlayer mediaPlayer = null;
-
-    public BarGauge(String title, double min, double max, double green, double yellow, double red, String unit)
+    public BarGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency)
     {
         super();
-        this.gauge = GaugeType.Bar;
-        field = null;
-        //tile.setPrefSize(TILE_SIZE*2, TILE_SIZE);
-        tile.setTitle(title);
-        tile.setMaxValue(max);
-        tile.setMinValue(min);
-        tile.setFillWithGradient(true);
 
-        data = new ChartData("");
-        //data.setFormatString("%.1f " + unit);
-        //data.setMinValue(min);
-        //data.setMaxValue(max);
-        //data.setGradientLookup(new GradientLookup((Arrays.asList(
-        //        new Stop(0, Bright.BLUE),
-        //        new Stop(map(green,min,max,0,1), Bright.GREEN),
-        //        new Stop(map(yellow,min,max,0,1), Bright.YELLOW),
-        //        new Stop(map(red,min,max,0,1), Bright.RED),
-        //        new Stop(1, Bright.RED)))));
-        tile.addChartData(data);
+        System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
+        setGaugeTitle(title);
 
-        redError = 0.9 * tile.getMaxValue();
-        alarm = null;
-        mediaPlayer = null;
+        jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
+
+        VideoPlayerSwingIntegration videoPlayer = vp;
+         gaugeData = dataField;
+
+        tile = TileBuilder.create()
+                .skinType(Tile.SkinType.BAR_GAUGE)
+                .prefSize(100, 100)
+                .minValue(0)
+                .maxValue(Math.ceil(gaugeData.getMaximum()))
+                .title(title)
+                .animated(true)
+                .build();
+
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    public static double map (double fValue, double start, double stop, double fStart, double fStop)
-    {
-        return fStart + (fStop - fStart) * ((fValue - start) / (stop - start));
-    }
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+        tile = inputtile;
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        NumericDataField gaugeData = dataField;
 
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
 
-
-    public void update() {
-        Double newValue = field.getNext();
-
-        if (newValue == null) {
-            return;
+        if (redRangeProvided)
+        {
+            tile.setThreshold(minRedRange);
+            tile.setThresholdVisible(true);
         }
 
-        data.setValue(newValue.doubleValue());
+        if (tile != null) {
+            scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
 
-        if (mediaPlayer != null)
-        {
-            if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING && data.getValue() < redError)
-            {
-                mediaPlayer.stop();
-                tile.setBackgroundColor(Tile.BACKGROUND);
-            }
-            else
-            {
-                if (data.getValue() >= redError)
+        double rate = 1 / updateFrequency;
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if(videoPlayer.isPlaying()) {
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
+                int mapIndexToInt = (int) Math.round(mapIndex);
+                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
                 {
-                    mediaPlayer.play();
-                    tile.setBackgroundColor(Color.DARKRED);
+                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
                 }
+                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+
+                if ((!soundPlaying) && (this.isVisible()))
+                {
+                    soundPlaying = true;
+                    Media sound = new Media(new File(audioFile).toURI().toString());
+                    soundPlayer = new MediaPlayer(sound);
+                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                }
+
+                if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+                    tile.setBarColor(Tile.RED);
+
+                    soundPlayer.play();
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setBarColor(Tile.YELLOW); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setBarColor(Tile.GREEN); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setBarColor(Tile.BLUE); }
+                else { tile.setBarColor(Tile.GRAY);}
+
+                tile.setValue(currentFieldValue);
             }
-        }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
+        timeline.setRate(rate);
     }
 
-
-    public void setAlarm(int i) {
-        String soundFile;
-        //redError = map(data.getGradientLookup().getStops().get(3).getOffset(), 0, 1, tile.getMinValue(),tile.getMaxValue());
-        alarmIndex = i;
-        switch(i)
-        {
-            case 1,2: //criticalAlarm
-                soundFile = "src/main/resources/criticalAlarm.wav";
-                alarm = new Media(new File(soundFile).toURI().toString());
-                mediaPlayer = new MediaPlayer(alarm);
-                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                break;
-            default:
-                //no alarm
-                break;
-        }
-    }
-
-    public DataField getField() { return field; }
-
-    public void setField(NumericDataField field) {
-        this.field = field;
-    }
-
-    public int getAlarmIndex() {
-        return alarmIndex;
-    }
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
+
 

@@ -1,110 +1,132 @@
 package yourpackage.gauges;
 
-import yourpackage.parsing.DataField;
-import yourpackage.parsing.NumericDataField;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.Tile.ChartType;
+import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.chart.TilesFXSeries;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
-
-import javax.swing.text.Element;
-import java.util.ArrayList;
-import java.util.List;
-
-
+import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import yourpackage.parsing.NumericDataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
+import java.io.File;
 public class XPlotGauge extends Gauge {
 
-    private NumericDataField field;
-
-    private XYChart.Series<Number, Number> series;
-    public NumberAxis primaryAxis;
-    public NumberAxis subAxis;
-    private ScatterChart<Number,Number> scatterChart;
-    public GaugeOrientation orient;
-
-    public XPlotGauge(GaugeOrientation orient, double lowerBound, double upperBound, double tickUnit)
-    {
+    NumericDataField gaugeData;
+    public XPlotGauge(String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
-        this.gauge = GaugeType.XPlot;
 
-        series = new XYChart.Series();
+        System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
+        setGaugeTitle(title);
 
-        tile.setTitle("Line Plot Gauge");
+        jfxPanel = new JFXPanel();
+        frame.add(jfxPanel);
 
-        tile.setAnimated(true);
-        tile.setRunning(true);
-        tile.setActive(true);
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        gaugeData = dataField;
 
-        tile.setMaxValue(upperBound);
-        tile.setMinValue(lowerBound);
+        tile = TileBuilder.create()
+                .skinType(Tile.SkinType.SMOOTHED_CHART)
+                .prefSize(100, 100)
+                .title(title)
+                .chartType(ChartType.LINE)
+                .smoothing(true)
+                .build();
 
-        primaryAxis = new NumberAxis(lowerBound, upperBound, tickUnit);
-        subAxis = new NumberAxis(0, 2, 0);
+        setDefaultSeries();
 
-        switch (orient)
-        {
-            case VERTICAL:
-                scatterChart = new ScatterChart<Number, Number>(subAxis, primaryAxis);
-                this.orient = GaugeOrientation.VERTICAL;
-                break;
-            default:
-                scatterChart = new ScatterChart<Number, Number>(primaryAxis,subAxis);
-                this.orient = GaugeOrientation.HORIZONTAL;
-                break;
-        }
-
-        scatterChart.setVerticalZeroLineVisible(false);
-        scatterChart.setVerticalGridLinesVisible(false);
-        scatterChart.setHorizontalZeroLineVisible(false);
-        scatterChart.setHorizontalGridLinesVisible(false);
-
-        primaryAxis.setLabel("X Axis Label");
-        subAxis.setTickLabelsVisible(false);
-
-        scatterChart.getData().addAll(series);
-
-        tile.setGraphic(scatterChart);
-
+        Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
 
-    public static double map (double fValue, double start, double stop, double fStart, double fStop)
+    private void initFX(JFXPanel jfxPanel, VideoPlayerSwingIntegration vp, NumericDataField dataField, Tile inputtile) {
+        tile = inputtile;
+        VideoPlayerSwingIntegration videoPlayer = vp;
+        NumericDataField gaugeData = dataField;
+
+        if (tile != null) {
+            scene = new Scene(new Pane(tile));
+            jfxPanel.setScene(scene);
+        }
+
+        double rate = 1 / updateFrequency;
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if(videoPlayer.isPlaying()) {
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
+                int mapIndexToInt = (int) Math.round(mapIndex);
+                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
+                {
+                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
+                }
+                double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
+                double fieldDataRowsLength =  gaugeData.getDataRowsLength() - 1;
+
+                if ((!soundPlaying) && (this.isVisible()))
+                {
+                    soundPlaying = true;
+                    Media sound = new Media(new File(audioFile).toURI().toString());
+                    soundPlayer = new MediaPlayer(sound);
+                    soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
+                }
+
+                if(mapIndexToInt + 10 <= fieldDataRowsLength)
+                {
+                    XYChart.Series<String, Number> series = new XYChart.Series();
+                    series.setName(dataField.getFieldName());
+                    series.getData().add(new XYChart.Data("1", dataField.getIndexOfDouble(mapIndexToInt)));
+                    series.getData().add(new XYChart.Data("2", dataField.getIndexOfDouble(mapIndexToInt+1)));
+                    series.getData().add(new XYChart.Data("3", dataField.getIndexOfDouble(mapIndexToInt+2)));
+                    series.getData().add(new XYChart.Data("4", dataField.getIndexOfDouble(mapIndexToInt+3)));
+                    series.getData().add(new XYChart.Data("5", dataField.getIndexOfDouble(mapIndexToInt+4)));
+                    series.getData().add(new XYChart.Data("6", dataField.getIndexOfDouble(mapIndexToInt+5)));
+                    series.getData().add(new XYChart.Data("7", dataField.getIndexOfDouble(mapIndexToInt+6)));
+                    series.getData().add(new XYChart.Data("8", dataField.getIndexOfDouble(mapIndexToInt+7)));
+                    series.getData().add(new XYChart.Data("9", dataField.getIndexOfDouble(mapIndexToInt+8)));
+                    series.getData().add(new XYChart.Data("10", dataField.getIndexOfDouble(mapIndexToInt+9)));
+
+
+                    if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+                        tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.RED));
+                        soundPlayer.play();
+                    } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.YELLOW)); }
+                    else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.GREEN)); }
+                    else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.BLUE)); }
+                    else { tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.GRAY));}
+                }
+            } else if (tile != null) {
+                setDefaultSeries();
+            }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
+        timeline.setRate(rate);
+    }
+
+    private void setDefaultSeries()
     {
-        return fStart + (fStop - fStart) * ((fValue - start) / (stop - start));
-    }
-
-    public void update() {
-        Double newVal_o = field.getNext();
-
-        if (newVal_o == null) {
-            return;
-        }
-
-        double newValue = newVal_o.doubleValue();
-        double newValueInRange = map(newValue, 0, tile.getRange(), tile.getMinValue(), tile.getMaxValue());
-        switch (orient)
-        {
-            case VERTICAL:
-                series.getData().add(new XYChart.Data(1, newValueInRange));
-                break;
-            default:
-                series.getData().add(new XYChart.Data(newValueInRange, 1));
-                break;
-        }
-        if(series.getData().size() > 5)
-        {
-            series.getData().remove(0);
-        }
-    }
-
-    public void setLabel(String label)
-    {
-        primaryAxis.setLabel(label);
-    }
-
-
-    public DataField getField() { return field; }
-
-    public void setField(NumericDataField field) {
-        this.field = field;
+        XYChart.Series<String, Number> series = new XYChart.Series();
+        series.setName(gaugeData.getFieldName());
+        series.getData().add(new XYChart.Data("1", 0));
+        series.getData().add(new XYChart.Data("2", 0));
+        series.getData().add(new XYChart.Data("3", 0));
+        series.getData().add(new XYChart.Data("4", 0));
+        series.getData().add(new XYChart.Data("5", 0));
+        series.getData().add(new XYChart.Data("6", 0));
+        series.getData().add(new XYChart.Data("7", 0));
+        series.getData().add(new XYChart.Data("8", 0));
+        series.getData().add(new XYChart.Data("9", 0));
+        series.getData().add(new XYChart.Data("10", 0));
+        tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.GRAY));
     }
 }
 

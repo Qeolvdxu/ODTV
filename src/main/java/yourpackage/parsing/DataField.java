@@ -53,6 +53,12 @@ public class DataField implements Serializable {
             this.dataRows = list;
     }
 
+    public String getIndexOfString(int index) {
+        return this.dataRows.get(index);
+    }
+
+    public int getDataRowsLength() { return this.dataRows.size(); }
+
     public String toString() {
         return this.fieldName;
     }
