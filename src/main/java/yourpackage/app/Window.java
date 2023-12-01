@@ -3,14 +3,14 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
+import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import yourpackage.gauges.Gauge;
 
 import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
+
 
 
 public class Window {
@@ -58,7 +59,6 @@ public class Window {
     private JLabel videoTimeLabel;
     private JTabbedPane tabbedPane1;
     private ArrayList<DataField> selectedFields;
-
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -113,10 +113,15 @@ public class Window {
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ;
                 FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
                     @Override
                     public void onFilesSelected(String videoFilePath, String csvFilePath) {
+                        if (StaticGaugeArrayList.getSize() > 0) {
+                            StaticGaugeArrayList.removeGauges();
+                        }
+
                         VideoPlayerSwingIntegration.changeVideo(videoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
@@ -226,9 +231,7 @@ public class Window {
                 w.populateStatistics();
             }
         });
-        //videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
-
-
+        videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
     }
 
 

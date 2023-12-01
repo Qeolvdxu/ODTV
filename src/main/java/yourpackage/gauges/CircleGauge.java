@@ -4,7 +4,6 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -13,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
@@ -22,38 +20,35 @@ import java.io.File;
 
 
 public class CircleGauge extends Gauge {
-    private AnimationTimer timer;
-    VideoPlayerSwingIntegration videoPlayer;
-    public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp) {
+    int circleAngle;
+    NumericDataField gaugeData;
+
+    public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
-        System.out.println(dataField.getMaximum());
+        updateFrequency = dataFrequency;
         setGaugeTitle(title);
+
+        circleAngle = angle;
 
         // Create a JFXPanel for embedding JavaFX content
         jfxPanel = new JFXPanel();
         frame.add(jfxPanel);
 
         VideoPlayerSwingIntegration videoPlayer = vp;
-        NumericDataField gaugeData = dataField;
+        gaugeData = dataField;
 
         // Initialize the tile
         tile = TileBuilder.create()
                 .skinType(SkinType.GAUGE2)
-                .prefSize(50, 50)
-                .unit("Unit")
+                .prefSize(100, 100)
                 .title(title)
                 .textVisible(true)
                 .value(0)
-                .gradientStops(new Stop(0, Tile.GRAY))
-                .strokeWithGradient(true)
                 .animated(true)
-                .angleRange(angle)
+                .angleRange(circleAngle)
                 .maxValue(Math.ceil(gaugeData.getMaximum()))
-                .unit(gaugeData.getUnit())
                 .build();
-
-
 
         Platform.runLater(() -> initFX(jfxPanel, videoPlayer, gaugeData, tile));
     }
@@ -64,20 +59,19 @@ public class CircleGauge extends Gauge {
         VideoPlayerSwingIntegration videoPlayer = vp;
         NumericDataField gaugeData = dataField;
 
+        if (dataField.getUnit() != null) { tile.setUnit(gaugeData.getUnit()); }
+
         if (tile != null) {
             // Create a JavaFX Scene
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
-
-
-        double interval = 0.1; // temporary, user will later be able to provide own value.
-        double rate = 1 / interval;
+        double rate = 1 / updateFrequency;
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             if(videoPlayer.isPlaying()) {
-                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/interval);
+                double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
                 if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
                 {
@@ -85,8 +79,7 @@ public class CircleGauge extends Gauge {
                 }
                 double currentFieldValue = dataField.getIndexOfDouble(mapIndexToInt);
 
-
-                if (!soundPlaying)
+                if ((!soundPlaying) && (this.isVisible()))
                 {
                     soundPlaying = true;
                     Media sound = new Media(new File(audioFile).toURI().toString());
@@ -94,14 +87,13 @@ public class CircleGauge extends Gauge {
                     soundPlayer.setOnEndOfMedia(() -> soundPlaying = false);
                 }
 
-                if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setGradientStops(new Stop(0, Tile.BLUE)); }
-                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) { tile.setGradientStops(new Stop(0, Tile.GREEN)); }
-                else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setGradientStops(new Stop(0, Tile.YELLOW)); }
-                else if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
-                    tile.setGradientStops(new Stop(0, Tile.RED));
+                if (redRangeProvided && (currentFieldValue >= minRedRange && currentFieldValue <= maxRedRange)) {
+                    tile.setBarColor(Tile.RED);
                     soundPlayer.play();
-                }
-                else { tile.setGradientStops(new Stop(0, Tile.GRAY)); }
+                } else if (yellowRangeProvided && (currentFieldValue >= minYellowRange && currentFieldValue <= maxYellowRange)) { tile.setBarColor(Tile.YELLOW); }
+                else if (greenRangeProvided && (currentFieldValue >= minGreenRange && currentFieldValue <= maxGreenRange)) {tile.setBarColor(Tile.GREEN); }
+                else if (blueRangeProvided && (currentFieldValue >= minBlueRange && currentFieldValue <= maxBlueRange)) { tile.setBarColor(Tile.BLUE); }
+                else { tile.setBarColor(Tile.GRAY); }
 
                 tile.setValue(currentFieldValue);
             }
@@ -111,4 +103,8 @@ public class CircleGauge extends Gauge {
 
         timeline.setRate(rate);
     }
+
+    public int getAngle() { return circleAngle; }
+
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
