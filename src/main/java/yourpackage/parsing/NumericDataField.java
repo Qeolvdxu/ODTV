@@ -212,4 +212,16 @@ public class NumericDataField extends DataField {
         return this.dataRows.get(index);
     }
 
+    // Not sure if this is needed, but the functionality is there
+    public ArrayList<Boolean> getAsBoolean() {
+        ArrayList<Boolean> convertedValues = new ArrayList<>();
+        for (Double d : dataRows) {
+            if (d > 0)
+                convertedValues.add(false);
+            else
+                convertedValues.add(true);
+        }
+        return convertedValues;
+    }
+
 }
