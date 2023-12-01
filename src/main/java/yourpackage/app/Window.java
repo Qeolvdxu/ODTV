@@ -13,6 +13,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import javax.swing.event.ChangeListener;
+
+
+import yourpackage.parsing.DataField;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
+
+
+import yourpackage.gauges.Gauge;
+
+import javafx.util.Duration;
+import yourpackage.gauges.Gauge;
+
+
+
 public class Window {
     private JPanel mainPanelW;
     private JButton playButton;
@@ -37,10 +52,13 @@ public class Window {
     private JSlider slider1;
     private JMenuItem viewGaugesButton;
     private JMenuItem viewDataVisualization;
+    private JMenuItem viewStatisticsButton;
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
+    private JTabbedPane tabbedPane1;
+    private ArrayList<DataField> selectedFields;
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -199,8 +217,21 @@ public class Window {
             }
         });
 
-        videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
+        createGauge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Gauge();
+                System.out.println("New gauge created!");
+            }
+        });
 
+        viewStatisticsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StatisticsWindow w = new StatisticsWindow();
+                w.populateStatistics();
+            }
+        });
+        videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
     }
 
 
@@ -274,6 +305,9 @@ public class Window {
         viewDataVisualization.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         viewDataVisualization.setText("Data Visualization");
         viewButton.add(viewDataVisualization);
+        viewStatisticsButton = new JMenuItem();
+        viewStatisticsButton.setText("Statistics");
+        viewButton.add(viewStatisticsButton);
         helpButton = new JMenu();
         helpButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         helpButton.setText("Help");
@@ -338,6 +372,8 @@ public class Window {
         videoTimeLabel = new JLabel();
         videoTimeLabel.setText("Label");
         panel2.add(videoTimeLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        tabbedPane1 = new JTabbedPane();
+        mainPanelW.add(tabbedPane1, BorderLayout.EAST);
     }
 
     /**
@@ -346,6 +382,5 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
-
 
 }
