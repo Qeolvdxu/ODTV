@@ -3,6 +3,7 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import yourpackage.gauges.*;
+import yourpackage.parsing.BooleanDataField;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.parsing.TimeDataField;
@@ -208,6 +209,15 @@ public class GaugeCreator {
                     selectedNumericField = null;
                     maxValueJLabel.setText("Max Value of Field: NumericField not selected.");
                     fieldType = "Time";
+                } else if (selectedField instanceof BooleanDataField) {
+                    System.out.println("Boolean Field.");
+                    disableRangeTextFields();
+                    disableUnitsCheckbox();
+                    setBooleanListModel();
+                    disableYFieldComboBox();
+                    selectedNumericField = null;
+                    maxValueJLabel.setText("Max Value of Field: NumericField not selected.");
+                    fieldType = "Boolean";
                 } else {
                     System.out.println("String Field.");
                     disableRangeTextFields();
@@ -400,7 +410,6 @@ public class GaugeCreator {
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("Number/character display");
         comboBoxModel.addElement("Text display");
-        comboBoxModel.addElement("On/off light");
         gaugeTypeComboBox.setModel(comboBoxModel);
     }
 
@@ -409,6 +418,14 @@ public class GaugeCreator {
         comboBoxModel.addElement("Number/character display");
         comboBoxModel.addElement("Text display");
         comboBoxModel.addElement("Stopwatch");
+        gaugeTypeComboBox.setModel(comboBoxModel);
+    }
+
+    private void setBooleanListModel() {
+        DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+        comboBoxModel.addElement("Number/character display");
+        comboBoxModel.addElement("Text display");
+        comboBoxModel.addElement("On/off light");
         gaugeTypeComboBox.setModel(comboBoxModel);
     }
 

@@ -3,7 +3,7 @@ package yourpackage.parsing;
 import java.util.ArrayList;
 import java.lang.Boolean;
 
-public class BooleanDataField extends DataField{
+public class BooleanDataField extends DataField {
     private ArrayList<Boolean> dataRows;
 
     public BooleanDataField(String name) {
@@ -13,7 +13,7 @@ public class BooleanDataField extends DataField{
 
     @Override
     public void addDataRow(String dataRow) {
-        if ((dataRow).equalsIgnoreCase("true") || dataRow.equals("1")) {
+        if ((dataRow).equalsIgnoreCase("True") || dataRow.equals("1")) {
             this.dataRows.add(true);
         }
         else
@@ -36,4 +36,6 @@ public class BooleanDataField extends DataField{
          return convertedValues;
     }
 
+    public Boolean getIndexOfBool(int index) { return this.dataRows.get(index); }
+    public int getBooleanDataRowsLength() { return this.dataRows.size(); }
 }

@@ -82,7 +82,7 @@ public class FieldChooser {
                 selectedFields.addAll(timeStampField); // Add the timestamp field before disposing.
                 dataFrequency = Double.parseDouble(dataFrequencyTextField.getText());
                 frame.dispose(); // Close the window when the user is done.
-                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields, videoPlayer);
+                GaugeCreator gaugeCreator = new GaugeCreator(selectedFields, videoPlayer, dataFrequency);
                 for (DataField d : selectedFields) {
                     if (!d.getFieldName().equals("DETAILS.timestamp"))
                         StaticSelectedFieldsArrayList.addField(d);

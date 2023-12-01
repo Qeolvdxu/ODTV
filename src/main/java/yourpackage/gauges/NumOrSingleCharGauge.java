@@ -13,6 +13,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import yourpackage.parsing.BooleanDataField;
 import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
@@ -58,10 +59,12 @@ public class NumOrSingleCharGauge extends Gauge {
             if(videoPlayer.isPlaying()) {
                 double mapIndex = videoPlayer.getCurrentTimeInSeconds() * (1/updateFrequency);
                 int mapIndexToInt = (int) Math.round(mapIndex);
-                if (mapIndexToInt > gaugeData.getDataRowsLength() - 1)
-                {
-                    mapIndexToInt = gaugeData.getDataRowsLength() - 1;
-                }
+
+                // Sorry for this hacky code, getDataRowsLength was returning 0 for the booleans and I could not figure out why.
+                // I am just using this a solution since I need to work on other parts of the program - James.
+                if (gaugeData instanceof BooleanDataField && mapIndexToInt > ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1) {
+                    mapIndexToInt = ((BooleanDataField) gaugeData).getBooleanDataRowsLength() - 1;
+                } else if (!(gaugeData instanceof BooleanDataField) && mapIndexToInt > gaugeData.getDataRowsLength() - 1) { mapIndexToInt = gaugeData.getDataRowsLength() - 1; }
 
 
                 if(gaugeData instanceof NumericDataField) {
@@ -84,8 +87,16 @@ public class NumOrSingleCharGauge extends Gauge {
                     else if (blueRangeProvided && (currentNumericFieldValue >= minBlueRange && currentNumericFieldValue <= maxBlueRange)) { tile.setDescriptionColor(Tile.BLUE); }
                     else { tile.setDescriptionColor(Tile.GRAY); }
                     tile.setDescription(String.valueOf(currentNumericFieldValue));
+                } else if (gaugeData instanceof BooleanDataField) {
+                    BooleanDataField toBool = (BooleanDataField) dataField;
+                    System.out.println("Index in BooleanDataField: " + mapIndexToInt);
+                    boolean currentBooleanFieldValue = toBool.getIndexOfBool(mapIndexToInt);
+
+                    if (currentBooleanFieldValue) { tile.setDescription("T"); }
+                    else { tile.setDescription("F"); }
                 } else {
                     String currentFieldValue = dataField.getIndexOfString(mapIndexToInt);
+                    System.out.println("Index in StringDataField: " + mapIndexToInt);
                     tile.setDescription(currentFieldValue);
                 }
             }
