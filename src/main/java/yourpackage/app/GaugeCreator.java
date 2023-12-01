@@ -51,6 +51,7 @@ public class GaugeCreator {
     private double maxValueMetric;
     private double frequency;
     private VideoPlayerSwingIntegration videoPlayer;
+    private String fieldType;
 
     public GaugeCreator(ArrayList<DataField> inputFields, VideoPlayerSwingIntegration vp, double dataFrequency) {
 
@@ -171,7 +172,7 @@ public class GaugeCreator {
 
                 gaugeType = gaugeTypeComboBox.getSelectedItem().toString();
 
-                createGauge();
+                createGauge(fieldType);
             }
         });
         fieldsJList.addMouseListener(new MouseAdapter() {
@@ -197,6 +198,7 @@ public class GaugeCreator {
                     selectedNumericField = (NumericDataField) selectedField;
                     selectedNumericFieldMaxValue = selectedNumericField.getMaximum();
                     maxValueJLabel.setText("Max Value of Field: " + selectedNumericFieldMaxValue);
+                    fieldType = "Numeric";
                 } else if (selectedField instanceof TimeDataField) {
                     System.out.println("Time Field.");
                     disableRangeTextFields();
@@ -205,6 +207,7 @@ public class GaugeCreator {
                     disableYFieldComboBox();
                     selectedNumericField = null;
                     maxValueJLabel.setText("Max Value of Field: NumericField not selected.");
+                    fieldType = "Time";
                 } else {
                     System.out.println("String Field.");
                     disableRangeTextFields();
@@ -213,6 +216,7 @@ public class GaugeCreator {
                     disableYFieldComboBox();
                     selectedNumericField = null;
                     maxValueJLabel.setText("Max Value of Field: NumericField not selected.");
+                    fieldType = "String";
                 }
             }
         });
@@ -261,13 +265,15 @@ public class GaugeCreator {
         fieldsJList.setModel(listModel);
     }
 
-    private void createGauge() {
+    private void createGauge(String type) {
         DataField inputField;
         NumericDataField yInputField;
-        if (switchUnits == true) {
+        if (switchUnits == true && type == "Numeric") {
             inputField = convertedNumericField;
-        } else {
+        } else if (type == "Numeric") {
             inputField = selectedNumericField;
+        } else {
+            inputField = selectedField;
         }
 
         if (switchUnits == true && gaugeType.equals("x by y plot")) {
@@ -304,6 +310,12 @@ public class GaugeCreator {
             Gauge xByYPlot = new XByYPlotGauge(gaugeName, (NumericDataField) inputField, yInputField, videoPlayer, frequency);
             setGaugeRanges(xByYPlot);
             StaticGaugeArrayList.addGauge(xByYPlot);
+        } else if (gaugeType.equals("Number/character display")) {
+            Gauge numOrChar = new NumOrSingleCharGauge(gaugeName, inputField, videoPlayer, frequency);
+            if (inputField instanceof NumericDataField) {
+                setGaugeRanges(numOrChar);
+            }
+            StaticGaugeArrayList.addGauge(numOrChar);
         }
         resetRangeBooleans();
     }
@@ -549,6 +561,9 @@ public class GaugeCreator {
         yFieldComboBox = new JComboBox();
         yFieldComboBox.setEnabled(false);
         mainPanelGC.add(yFieldComboBox, new GridConstraints(8, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label15 = new JLabel();
+        label15.setText("Represented by the white line");
+        mainPanelGC.add(label15, new GridConstraints(7, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

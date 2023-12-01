@@ -26,7 +26,6 @@ public class CircleGauge extends Gauge {
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
-        System.out.println(dataField.getMaximum());
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
