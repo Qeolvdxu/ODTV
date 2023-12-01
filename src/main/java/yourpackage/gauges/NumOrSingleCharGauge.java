@@ -95,4 +95,6 @@ public class NumOrSingleCharGauge extends Gauge {
 
         timeline.setRate(rate);
     }
+
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
