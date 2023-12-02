@@ -91,7 +91,7 @@ public class DataFieldParser {
                     uniqueValues.add(r.get(j).toLowerCase());
                 }
             }
-            if (uniqueValues.contains("True") || uniqueValues.contains("False") || name.contains(".is")) {
+            if (uniqueValues.contains("true") || uniqueValues.contains("false") || name.contains(".is")) {
                 df = new BooleanDataField(name);
             }
             else {
