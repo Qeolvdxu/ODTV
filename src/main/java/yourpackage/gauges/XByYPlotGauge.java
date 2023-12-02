@@ -154,4 +154,8 @@ public class XByYPlotGauge extends Gauge {
         seriesy.getData().add(new XYChart.Data("10", 0));
         tile.setTilesFXSeries(new TilesFXSeries<>(seriesx, Tile.GRAY), new TilesFXSeries<>(seriesy, Color.WHITE));
     }
+
+
+    public String getDataFieldX() { return xGaugeData.getFieldName(); }
+    public String getDataFieldY() { return yGaugeData.getFieldName(); }
 }

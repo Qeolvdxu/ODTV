@@ -128,5 +128,7 @@ public class XPlotGauge extends Gauge {
         series.getData().add(new XYChart.Data("10", 0));
         tile.setTilesFXSeries(new TilesFXSeries<>(series, Tile.GRAY));
     }
+
+    public String getDataFieldName() { return gaugeData.getFieldName(); }
 }
 
