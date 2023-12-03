@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class DataFieldParser {
@@ -53,11 +54,12 @@ public class DataFieldParser {
             }
             DataField df = getDataFieldType(s, j);
             for (CSVRecord r: this.foundRecords) {
+                String row = r.get(j);
                 if (r.getRecordNumber() > 1) {
-                    if (r.get(j).isEmpty())
+                    if (row.isEmpty())
                         df.addDataRow(" ");
                     else
-                        df.addDataRow(r.get(j));
+                        df.addDataRow(row);
                 }
             }
             this.foundFields.add(df);   // Add new data field to list of found fields
@@ -78,13 +80,29 @@ public class DataFieldParser {
      */
     private DataField getDataFieldType(String s,int j){
         DataField df;
+        String name = this.foundRecords.get(0).get(j);
         if (s.matches("\\d{4}[/]\\d{1,2}[/]\\d{1,2} \\d{1,2}[:]\\d{2}[:]\\d{2}[.]\\d{3}"))  // If the string matches the regex for yyyy/mm/dd 00:00:00.000
-            df = new TimeDataField(this.foundRecords.get(0).get(j));
-        //else if (s.matches("\\d+") || s.matches("[-]\\d+")) // Else if the string matches the regex for a positive or negative digit
-        else if ((s.matches("((\\+|-)?([0-9]+)(\\.[0-9]+)?)|((\\+|-)?\\.?[0-9]+)")) || (this.foundRecords.get(0).get(j).contains("[")))
-            df = new NumericDataField(this.foundRecords.get(0).get(j));
-        else
-            df = new DataField(this.foundRecords.get(0).get(j));    // Else the field will be read as a string
+            df = new TimeDataField(name);
+        else {
+            HashSet<String> uniqueValues = new HashSet<>();
+            for (CSVRecord r: this.foundRecords) {
+                String row = r.get(j);
+                if (r.getRecordNumber() > 1 && ((!(row.isEmpty() || row.isBlank())))) {
+                    uniqueValues.add(r.get(j).toLowerCase());
+                }
+            }
+            if (uniqueValues.contains("true") || uniqueValues.contains("false") || name.contains(".is")) {
+                df = new BooleanDataField(name);
+            }
+            else {
+                if ((s.matches("((\\+|-)?([0-9]+)(\\.[0-9]+)?)|((\\+|-)?\\.?[0-9]+)")) || (this.foundRecords.get(0).get(j).contains("[")))
+                    df = new NumericDataField(name);
+
+                else
+                    df = new DataField(name);    // Else the field will be read as a string
+            }
+        }
+
         return df;
     }
 

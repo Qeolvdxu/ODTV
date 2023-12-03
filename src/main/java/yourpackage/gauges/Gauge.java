@@ -6,7 +6,6 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
-import yourpackage.parsing.DataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +26,7 @@ public class Gauge {
     protected boolean soundPlaying = false;
     protected boolean visible = true;
     protected double updateFrequency;
+    protected Scene scene;
 
     public Gauge() {
         frame = new JFrame();
@@ -40,10 +40,13 @@ public class Gauge {
 
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent componentEvent) {
-                tile.setPrefSize(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
-                jfxPanel.setScene(null);
-                Scene scene = new Scene(new Pane(tile));
-                jfxPanel.setScene(scene);
+                if(tile != null && scene != null)
+                {
+                    tile.setPrefSize(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
+                    jfxPanel.setScene(null);
+                    scene = new Scene(new Pane(tile));
+                    jfxPanel.setScene(scene);
+                }
             }
         });
     }

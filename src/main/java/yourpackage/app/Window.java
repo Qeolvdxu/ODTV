@@ -3,23 +3,24 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
+import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+
 import javax.swing.event.ChangeListener;
 
 
-import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 
@@ -28,6 +29,7 @@ import yourpackage.config.*;
 
 import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
+
 
 
 public class Window {
@@ -58,10 +60,13 @@ public class Window {
     private JSlider slider1;
     private JMenuItem viewGaugesButton;
     private JMenuItem viewDataVisualization;
+    private JMenuItem viewStatisticsButton;
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
+    private JTabbedPane tabbedPane1;
+    private ArrayList<DataField> selectedFields;
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -243,8 +248,14 @@ public class Window {
             }
         });
 
+        viewStatisticsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StatisticsWindow w = new StatisticsWindow();
+                w.populateStatistics();
+            }
+        });
         videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
-
     }
 
     private void saveAllGauges() {
@@ -333,6 +344,9 @@ public class Window {
         viewDataVisualization.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         viewDataVisualization.setText("Data Visualization");
         viewButton.add(viewDataVisualization);
+        viewStatisticsButton = new JMenuItem();
+        viewStatisticsButton.setText("Statistics");
+        viewButton.add(viewStatisticsButton);
         helpButton = new JMenu();
         helpButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         helpButton.setText("Help");
@@ -397,6 +411,8 @@ public class Window {
         videoTimeLabel = new JLabel();
         videoTimeLabel.setText("Label");
         panel2.add(videoTimeLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        tabbedPane1 = new JTabbedPane();
+        mainPanelW.add(tabbedPane1, BorderLayout.EAST);
         saveAllGaugesButton = new JMenuItem();
         saveAllGaugesButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         saveAllGaugesButton.setText("Save Configuration");
@@ -420,8 +436,6 @@ public class Window {
                 // You can then use the loadedGauges as needed
             }
         });
-
-
     }
 
     /**
@@ -430,6 +444,5 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
-
 
 }

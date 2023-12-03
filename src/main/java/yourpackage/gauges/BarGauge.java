@@ -11,13 +11,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Stop;
 import javafx.util.Duration;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
-
 import java.io.File;
-
 public class BarGauge extends Gauge {
 
     NumericDataField gaugeData;
@@ -62,7 +59,7 @@ public class BarGauge extends Gauge {
         }
 
         if (tile != null) {
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 

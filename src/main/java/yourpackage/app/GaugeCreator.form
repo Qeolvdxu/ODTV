@@ -260,6 +260,30 @@
           <text value="You MUST enter a min and max for the color ranges."/>
         </properties>
       </component>
+      <component id="b643f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Y Field (For XY Plot)"/>
+        </properties>
+      </component>
+      <component id="eeaa5" class="javax.swing.JComboBox" binding="yFieldComboBox">
+        <constraints>
+          <grid row="8" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+        </properties>
+      </component>
+      <component id="9fa55" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Represented by the white line"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

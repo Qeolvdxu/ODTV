@@ -35,6 +35,7 @@ public class NumericDataField extends DataField {
         this.dataRows = new ArrayList<>();
         this.minimum = 0.0;
         this.maximum = 0.0;
+        this.average = 0.0;
         this.stdDev = 0.0;
         this.isMetric = true;
         if (name.contains(" ")) {
@@ -166,6 +167,7 @@ public class NumericDataField extends DataField {
                 this.unit = "[m]";
             }
         }
+        this.setFieldName(getNameWithoutUnit() + getUnit());
     }
 
     /**
@@ -189,13 +191,13 @@ public class NumericDataField extends DataField {
         return newField;
     }
 
-        public ArrayList<String> getDataRows() {
-            ArrayList<String> data = new ArrayList<>();
-            for (double d : this.dataRows) {
-                data.add(Double.toString(d));
-            }
-            return data;
+    public ArrayList<String> getDataRows() {
+        ArrayList<String> data = new ArrayList<>();
+        for (double d : this.dataRows) {
+            data.add(Double.toString(d));
         }
+        return data;
+    }
 
         /**
          * @return the name of this field plus its unit
@@ -205,10 +207,42 @@ public class NumericDataField extends DataField {
             return this.getFieldName();
         }
 
-        public int getDataRowsLength() { return this.dataRows.size(); }
+        public String getNameWithoutUnit() {
+            String pattern = "\\[([^\\]]+)\\]";
+            String name = getFieldName();
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(pattern).matcher(name);
+            StringBuffer result = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(result, "");
+            }
+            matcher.appendTail(result);
 
-        public double getIndexOfDouble(int index) {
-            return this.dataRows.get(index);
+            name = result.toString();
+
+            return name;
         }
+  
 
+    public int getDataRowsLength() { return this.dataRows.size(); }
+
+    public double getIndexOfDouble(int index) {
+        return this.dataRows.get(index);
+    }
+
+    // Not sure if this is needed, but the functionality is there
+    public ArrayList<Boolean> getAsBoolean() {
+        ArrayList<Boolean> convertedValues = new ArrayList<>();
+        for (Double d : dataRows) {
+            if (d > 0)
+                convertedValues.add(false);
+            else
+                convertedValues.add(true);
+        }
+        return convertedValues;
+    }
+
+        public boolean hasUnit()
+        {
+            return unit != null;
+        }
 }

@@ -238,6 +238,7 @@ public class VideoPlayerSwingIntegration {
         }
     }
 
+
     private static void waitForProcessCompletion(Process process, String operation) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
@@ -327,8 +328,6 @@ public class VideoPlayerSwingIntegration {
         }
         return 0;
     }
-
-
 
     public void setVideoSpeed(double speedMultiplier) {
 

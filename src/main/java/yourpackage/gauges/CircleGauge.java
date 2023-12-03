@@ -4,7 +4,6 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -13,13 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Stop;
 import javafx.util.Duration;
-import yourpackage.parsing.DataField;
 import yourpackage.parsing.NumericDataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 
 
@@ -30,7 +26,6 @@ public class CircleGauge extends Gauge {
     public CircleGauge(int angle, String title, NumericDataField dataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
-        System.out.println(dataField.getMaximum());
         updateFrequency = dataFrequency;
         setGaugeTitle(title);
 
@@ -68,7 +63,7 @@ public class CircleGauge extends Gauge {
 
         if (tile != null) {
             // Create a JavaFX Scene
-            Scene scene = new Scene(new Pane(tile));
+            scene = new Scene(new Pane(tile));
             jfxPanel.setScene(scene);
         }
 
