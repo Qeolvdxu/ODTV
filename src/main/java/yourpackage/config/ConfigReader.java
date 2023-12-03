@@ -1,17 +1,15 @@
 package yourpackage.config;
 
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 import yourpackage.gauges.Gauge;
-
+import yourpackage.gauges.StaticGaugeArrayList;
 
 public class ConfigReader {
 
-    public static Gauge[] readGaugesFromConfig(String filePath) {
+    public static void readGaugesFromConfig(String filePath) {
         Properties properties = new Properties();
-        Gauge[] gauges = null;
 
         try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
             properties.load(fileInputStream);
@@ -22,8 +20,6 @@ public class ConfigReader {
                     .distinct()
                     .filter(name -> name.startsWith("Gauge"))
                     .count();
-
-            gauges = new Gauge[(int) gaugeCount];
 
             for (int i = 0; i < gaugeCount; i++) {
                 Gauge gauge = new Gauge();
@@ -50,12 +46,11 @@ public class ConfigReader {
                 gauge.setUpdateFrequency(Double.parseDouble(properties.getProperty("Gauge" + (i + 1) + ".updateFrequency")));
                 gauge.setGaugeTitle(properties.getProperty("Gauge" + (i + 1) + ".title", "Untitled Gauge"));
 
-                gauges[i] = gauge;
+                // Add the newly created gauge directly to the StaticGaugeArrayList
+                StaticGaugeArrayList.addGauge(gauge);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return gauges;
     }
 }

@@ -254,15 +254,13 @@ public class Window {
             String gaugeName = "Gauge" + (i + 1);
             ConfigWriter.saveConfigToFile(CONFIG_FILE_PATH, gaugeName, gauge);
         }
-        System.out.println("All gauges saved successfully.");
+        System.out.println("All gauges saved.");
     }
 
     private void loadConfig() {
-        Gauge[] gauges = ConfigReader.readGaugesFromConfig(CONFIG_FILE_PATH);
-        if (gauges != null) {
-            StaticGaugeArrayList.setGauges(new ArrayList<>(Arrays.asList(gauges)));
-            System.out.println("Configuration loaded successfully.");
-        }
+        ConfigReader.readGaugesFromConfig(CONFIG_FILE_PATH);
+        System.out.println("All gauges loaded.");
+
     }
 
     {
