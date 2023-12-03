@@ -3,29 +3,37 @@ package yourpackage.app;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
+import yourpackage.gauges.StaticGaugeArrayList;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import javax.swing.event.ChangeListener;
 
 
+import yourpackage.parsing.DataField;
 import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 
 import yourpackage.gauges.Gauge;
+import yourpackage.config.*;
 
 import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
 
 
+
 public class Window {
+    private static final String CONFIG_FILE_PATH = "tmp/test.config";
     private JPanel mainPanelW;
     private JButton playButton;
     private JButton pauseButton;
@@ -44,16 +52,21 @@ public class Window {
     private JMenu helpButton;
     private boolean userInitiated;
     private JMenuItem aboutButton;
+
+    private JMenuItem loadAllGaugesButton;
+    private JMenuItem saveAllGaugesButton;
     private JMenuItem loadConfiguration;
     private JMenuItem saveConfiguration;
     private JSlider slider1;
     private JMenuItem viewGaugesButton;
     private JMenuItem viewDataVisualization;
+    private JMenuItem viewStatisticsButton;
     private JMenuItem visualizerSetup;
     private JMenuItem gaugeSetup;
     private JMenuItem createGauge;
     private JLabel videoTimeLabel;
-
+    private JTabbedPane tabbedPane1;
+    private ArrayList<DataField> selectedFields;
     private final VideoPlayerSwingIntegration videoPlayer = new VideoPlayerSwingIntegration();
 
     public Window() {
@@ -71,12 +84,12 @@ public class Window {
         frame.setVisible(true);
         VideoPlayerSwingIntegration.embedVideoIntoJFrame(frame);
 
-
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
         comboBoxModel.addElement("1X");
         comboBoxModel.addElement("5X");
         comboBoxModel.addElement("10X");
         comboBoxModel.addElement("1X Reverse");
+
 
         videoSpeedComboBox.setModel(comboBoxModel);
         exitButton.addActionListener(new ActionListener() {
@@ -103,17 +116,36 @@ public class Window {
                     videoPlayer.setPlayInReverse();
                 }
             }
+
+
+        });
+
+        saveAllGaugesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAllGauges();
+            }
+        });
+
+        loadAllGaugesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadConfig();
+            }
         });
 
 
         openVideoAndDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow();
+                FileSelectionWindow fileSelectionWindow = new FileSelectionWindow(videoPlayer);
                 fileSelectionWindow.show(new FileSelectionWindow.FileSelectionListener() {
-                    @Override
-                    public void onFilesSelected(String videoFilePath, String csvFilePath) {
-                        VideoPlayerSwingIntegration.changeVideo(videoFilePath);
+                    public void onFilesSelected(String videoFilePath, String csvFilePath, String reverseVideoFilePath) {
+                        if (StaticGaugeArrayList.getSize() > 0) {
+                            StaticGaugeArrayList.removeGauges();
+                        }
+
+                        VideoPlayerSwingIntegration.changeVideo(videoFilePath, reverseVideoFilePath);
                         playButton.setEnabled(true);
                         pauseButton.setEnabled(true);
                         stopButton.setEnabled(true);
@@ -162,6 +194,7 @@ public class Window {
                 }
             }
         });
+
 
 
         aboutButton.addActionListener(new ActionListener() {
@@ -215,10 +248,31 @@ public class Window {
             }
         });
 
+        viewStatisticsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StatisticsWindow w = new StatisticsWindow();
+                w.populateStatistics();
+            }
+        });
         videoPlayer.startUpdatingUIEverySecond(videoTimeLabel, slider1);
-
     }
 
+    private void saveAllGauges() {
+        ArrayList<Gauge> gauges = StaticGaugeArrayList.getGauges();
+        for (int i = 0; i < gauges.size(); i++) {
+            Gauge gauge = gauges.get(i);
+            String gaugeName = "Gauge" + (i + 1);
+            ConfigWriter.saveConfigToFile(CONFIG_FILE_PATH, gaugeName, gauge);
+        }
+        System.out.println("All gauges saved.");
+    }
+
+    private void loadConfig() {
+        ConfigReader.readGaugesFromConfig(CONFIG_FILE_PATH);
+        System.out.println("All gauges loaded.");
+
+    }
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -290,6 +344,9 @@ public class Window {
         viewDataVisualization.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         viewDataVisualization.setText("Data Visualization");
         viewButton.add(viewDataVisualization);
+        viewStatisticsButton = new JMenuItem();
+        viewStatisticsButton.setText("Statistics");
+        viewButton.add(viewStatisticsButton);
         helpButton = new JMenu();
         helpButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         helpButton.setText("Help");
@@ -354,6 +411,31 @@ public class Window {
         videoTimeLabel = new JLabel();
         videoTimeLabel.setText("Label");
         panel2.add(videoTimeLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        tabbedPane1 = new JTabbedPane();
+        mainPanelW.add(tabbedPane1, BorderLayout.EAST);
+        saveAllGaugesButton = new JMenuItem();
+        saveAllGaugesButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        saveAllGaugesButton.setText("Save Configuration");
+        editButton.add(saveAllGaugesButton);
+        loadAllGaugesButton = new JMenuItem();
+        loadAllGaugesButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        loadAllGaugesButton.setText("Load Configuration");
+        editButton.add(loadAllGaugesButton);
+        saveAllGaugesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the method to save configurations here
+                // Example: ConfigWriter.saveConfigToFile("yourFilePath", "yourGaugeName", yourGaugeInstance);
+            }
+        });
+        loadAllGaugesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the method to load configurations here
+                // Example: Gauge[] loadedGauges = ConfigReader.readGaugesFromConfig("yourFilePath");
+                // You can then use the loadedGauges as needed
+            }
+        });
     }
 
     /**
@@ -362,6 +444,5 @@ public class Window {
     public JComponent $$$getRootComponent$$$() {
         return mainPanelW;
     }
-
 
 }

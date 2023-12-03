@@ -1,4 +1,3 @@
-
 package yourpackage.app;
 
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -13,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import yourpackage.parsing.DataFieldParser;
+import yourpackage.visualization.VideoPlayerSwingIntegration;
 
 public class FileSelectionWindow {
     private JFormattedTextField videoFileTextfield;
@@ -21,16 +21,20 @@ public class FileSelectionWindow {
     private JButton selectCSVButton;
     private JButton OKButton;
     private JPanel mainPanelFS;
+    private JButton selectReverseVideoButton;
+    private JFormattedTextField reverseVideoFileTextField;
     private final JFrame frame;
     private DataFieldParser parser;
 
     private String selectedVideoFilePath;
-
+    private String selectedReverseVideoFilePath;
     private String selectedCSVFilePath;
 
     private FieldChooser Fc;
 
-    public FileSelectionWindow() {
+    VideoPlayerSwingIntegration videoPlayer;
+
+    public FileSelectionWindow(VideoPlayerSwingIntegration vp) {
         frame = new JFrame();
         String iconPath = System.getProperty("user.dir") + "/src/main/resources/drone.png";
         ImageIcon img = new ImageIcon(iconPath);
@@ -40,10 +44,12 @@ public class FileSelectionWindow {
         frame.pack();
         frame.setTitle("File Selection");
         frame.setResizable(false);
+        videoPlayer = vp;
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 selectedVideoFilePath = videoFileTextfield.getText();
                 selectedCSVFilePath = csvTextField.getText();
+                selectedReverseVideoFilePath = reverseVideoFileTextField.getText();
                 frame.setVisible(false);
                 frame.dispose(); // Close the JFrame associated with the FileSelectionWindow
             }
@@ -78,8 +84,8 @@ public class FileSelectionWindow {
                     File selectedFile = fileChooser.getSelectedFile(); // Get the selected file
                     csvTextField.setText(selectedFile.getAbsolutePath()); // Handle the selected file, e.g., display its path
 
-                    DataFieldParser parser = new DataFieldParser(selectedFile);
-                    parser.getFoundFields();
+                    parser = new DataFieldParser(selectedFile);
+                    parser.parseData();
                 }
             }
 
@@ -89,6 +95,27 @@ public class FileSelectionWindow {
 
             public String getSelectedCSVFilePath() {
                 return selectedCSVFilePath;
+            }
+
+            public String getReverseVideoFilePath() {
+                return selectedReverseVideoFilePath;
+            }
+
+        });
+        selectReverseVideoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.showOpenDialog(frame);
+
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Video Files", "mp4", "avi", "mov");
+                fileChooser.setFileFilter(filter);
+
+                int returnValue = fileChooser.showOpenDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    reverseVideoFileTextField.setText(selectedFile.getAbsolutePath());
+                }
             }
         });
     }
@@ -151,6 +178,11 @@ public class FileSelectionWindow {
         videoFileTextfield = new JFormattedTextField();
         videoFileTextfield.setEditable(false);
         mainPanelFS.add(videoFileTextfield, new GridConstraints(2, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        selectReverseVideoButton = new JButton();
+        selectReverseVideoButton.setText("Select Reverse Video");
+        mainPanelFS.add(selectReverseVideoButton, new GridConstraints(/* specify grid constraints here */));
+        reverseVideoFileTextField = new JFormattedTextField();
+        mainPanelFS.add(reverseVideoFileTextField, new GridConstraints(/* specify grid constraints here */));
     }
 
     /**
@@ -161,7 +193,7 @@ public class FileSelectionWindow {
     }
 
     public interface FileSelectionListener {
-        void onFilesSelected(String videoFilePath, String csvFilePath);
+        void onFilesSelected(String videoFilePath, String csvFilePath, String reverseVideoFilePath);
     }
 
     public void show(FileSelectionListener listener) {
@@ -171,10 +203,12 @@ public class FileSelectionWindow {
             public void actionPerformed(ActionEvent e) {
                 selectedVideoFilePath = videoFileTextfield.getText();
                 selectedCSVFilePath = csvTextField.getText();
+                selectedReverseVideoFilePath = reverseVideoFileTextField.getText();
+
                 frame.setVisible(false);
                 frame.dispose();
-                listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath);
-                FieldChooser Fc = new FieldChooser();
+                listener.onFilesSelected(selectedVideoFilePath, selectedCSVFilePath, selectedReverseVideoFilePath);
+                FieldChooser Fc = new FieldChooser(videoPlayer);
                 Fc.setFoundFields(parser.getFoundFields());
                 parser.clearFields(); // Clear the fields in the parser in case if another file gets opened.
             }
@@ -182,13 +216,3 @@ public class FileSelectionWindow {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
