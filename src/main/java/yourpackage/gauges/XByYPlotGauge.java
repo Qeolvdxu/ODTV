@@ -21,7 +21,6 @@ import yourpackage.visualization.VideoPlayerSwingIntegration;
 import java.io.File;
 
 public class XByYPlotGauge extends Gauge {
-    NumericDataField xGaugeData, yGaugeData;
     public XByYPlotGauge(String title, NumericDataField xDataField, NumericDataField yDataField, VideoPlayerSwingIntegration vp, double dataFrequency) {
         super();
 
@@ -154,8 +153,4 @@ public class XByYPlotGauge extends Gauge {
         seriesy.getData().add(new XYChart.Data("10", 0));
         tile.setTilesFXSeries(new TilesFXSeries<>(seriesx, Tile.GRAY), new TilesFXSeries<>(seriesy, Color.WHITE));
     }
-
-
-    public String getDataFieldX() { return xGaugeData.getFieldName(); }
-    public String getDataFieldY() { return yGaugeData.getFieldName(); }
 }

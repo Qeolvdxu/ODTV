@@ -6,6 +6,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
+import yourpackage.parsing.NumericDataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class Gauge {
     protected boolean visible = true;
     protected double updateFrequency;
     protected Scene scene;
+    protected NumericDataField xGaugeData, yGaugeData;
 
     public Gauge() {
         frame = new JFrame();
@@ -97,6 +99,10 @@ public class Gauge {
     public double getmaxRedRange() { return maxRedRange; }
 
     public double getDataFrequency() { return updateFrequency; }
+
+    public String getDataFieldX() { return xGaugeData.getFieldName(); }
+
+    public String getDataFieldY() { return yGaugeData.getFieldName(); }
 
     public boolean isVisible() { return visible; }
 
