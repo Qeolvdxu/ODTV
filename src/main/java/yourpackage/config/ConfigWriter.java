@@ -1,5 +1,6 @@
 package yourpackage.config;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -23,8 +24,17 @@ public class ConfigWriter {
         // Save other properties
         properties.setProperty(gaugeName + ".updateFrequency", String.valueOf(gauge.getDataFrequency()));
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(filePath)) {
-            properties.store(fileOutputStream, "Gauge Configurations");
+        try {
+            File configFile = new File(filePath);
+
+            // Create the file if it doesn't exist
+            if (!configFile.exists()) {
+                configFile.createNewFile();
+            }
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(configFile)) {
+                properties.store(fileOutputStream, "Gauge Configurations");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
