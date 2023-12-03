@@ -9,7 +9,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -17,27 +16,27 @@ import javafx.event.EventHandler;
 
 import javax.swing.*;
 import java.io.*;
-import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
 import static java.lang.Math.abs;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class VideoPlayerSwingIntegration {
 
-    public static MediaPlayer player;
+    private static final String TEMP_FOLDER_PATH = "temp";
+    private static final String BACKWARD_VIDEO_FILENAME = "backward_temp.mp4";
 
+    private static MediaPlayer player;
     private ReadOnlyObjectProperty<Duration> currentTimeProperty;
-
     private static JFXPanel fxPanel;
 
     private boolean reversed;
+    File tempFolder = new File("temp");
 
-    private boolean playInReverse = false;
-
+    private static JFrame processingDialog;
     private boolean playing = false;
 
     public static void embedVideoIntoJFrame(JFrame frame) {
@@ -51,7 +50,6 @@ public class VideoPlayerSwingIntegration {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(800, 600);
 
-            // Provide the path to the video file as a command-line argument
             if (args.length > 0) {
                 String videoFilePath = args[0];
                 embedVideoIntoJFrame(frame);
@@ -63,10 +61,66 @@ public class VideoPlayerSwingIntegration {
         });
     }
 
-
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public static void changeVideo(String newVideoFilePath) {
+    public static void changeVideo(String originalVideoFilePath, String reverseVideoFilePath) {
+        File originalVideoFile = new File(originalVideoFilePath);
+        File reverseVideoFile = new File(reverseVideoFilePath);
+
+        if (!originalVideoFile.exists() || !reverseVideoFile.exists()) {
+            System.out.println("File not found: " + (originalVideoFile.exists() ? reverseVideoFilePath : originalVideoFilePath));
+            return;
+        }
+
+        File tempFolder = new File(TEMP_FOLDER_PATH);
+        if (!tempFolder.exists()) {
+            tempFolder.mkdir();
+        }
+
+        // Clear existing temp files
+        clearTempFiles(tempFolder);
+
+        // Copy original video to temp folder
+        File copiedOriginalVideo = new File(tempFolder, "original_temp.mp4");
+        try {
+            Files.copy(originalVideoFile.toPath(), copiedOriginalVideo.toPath());
+        } catch (IOException e) {
+            System.out.println("Error occurred while copying the original video: " + e.getMessage());
+            return;
+        }
+
+        // Copy reverse video to temp folder
+        File copiedReverseVideo = new File(tempFolder, BACKWARD_VIDEO_FILENAME);
+        try {
+            Files.copy(reverseVideoFile.toPath(), copiedReverseVideo.toPath());
+        } catch (IOException e) {
+            System.out.println("Error occurred while copying the reverse video: " + e.getMessage());
+            return;
+        }
+
+        closeProcessingDialog();
+
+        Platform.runLater(() -> {
+            Media originalMedia = new Media(copiedOriginalVideo.toURI().toString());
+            Media reverseMedia = new Media(copiedReverseVideo.toURI().toString());
+
+            if (player != null) {
+                player.stop();
+            }
+
+            player = new MediaPlayer(originalMedia);
+            MediaView viewer = new MediaView(player);
+            viewer.setPreserveRatio(true);
+
+            StackPane root = new StackPane();
+            root.getChildren().add(viewer);
+
+            Scene scene = new Scene(root, 800, 600);
+            fxPanel.setScene(scene);
+        });
+    }
+
+   /* public static void changeVideo(String newVideoFilePath) {
         File newVideoFile = new File(newVideoFilePath);
 
         if (!newVideoFile.exists()) {
@@ -74,33 +128,50 @@ public class VideoPlayerSwingIntegration {
             return;
         }
 
-        File tempFolder = new File("temp");
+        File tempFolder = new File(TEMP_FOLDER_PATH);
         if (!tempFolder.exists()) {
             tempFolder.mkdir();
         }
 
-        // Delete existing temp video files if they exist
-        File[] existingTempFiles = tempFolder.listFiles();
-        if (existingTempFiles != null) {
-            for (File file : existingTempFiles) {
-                file.delete();
-            }
-        }
+        // Clear existing temp files
+        clearTempFiles(tempFolder);
 
-        // Rename the new video file to temp.mp4 inside the temp folder
-        File tempVideoFile = new File(tempFolder, "temp.mp4");
-        try {
-            Files.copy(newVideoFile.toPath(), tempVideoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            System.out.println("Error occurred while copying video file: " + e.getMessage());
+        // Create and show a processing dialog
+        SwingUtilities.invokeLater(() -> {
+            processingDialog = new JFrame("Processing Video");
+            processingDialog.setSize(300, 100);
+            processingDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            JLabel processingLabel = new JLabel("Processing video, please wait...");
+            processingDialog.add(processingLabel);
+
+            processingDialog.setLocationRelativeTo(null);
+            processingDialog.setVisible(true);
+        });
+
+        // Compress the original video to MP4
+        File compressedVideoFile = compressToMP4(newVideoFile, tempFolder);
+        if (compressedVideoFile == null) {
+            System.out.println("Error occurred during video compression.");
+            closeProcessingDialog();
             return;
         }
 
-       Platform.runLater(() -> {
-            Media newMedia = new Media(new File(tempFolder, "temp.mp4").toURI().toString());
+        // Generate backward version of the compressed video
+        String outputReverseFilePath = tempFolder.getAbsolutePath() + File.separator + BACKWARD_VIDEO_FILENAME;
+        generateBackwardVideo(compressedVideoFile, outputReverseFilePath);
+
+        // Clean up: delete compressed video file
+        compressedVideoFile.delete();
+
+        closeProcessingDialog();
+        System.out.println("Backward video generation completed.");
+
+        Platform.runLater(() -> {
+            Media newMedia = new Media(new File(tempFolder, newVideoFilePath).toURI().toString());
 
             if (player != null) {
-                player.stop(); // Stop the existing player if there is one
+                player.stop();
             }
 
             player = new MediaPlayer(newMedia);
@@ -113,7 +184,78 @@ public class VideoPlayerSwingIntegration {
             Scene scene = new Scene(root, 800, 600);
             fxPanel.setScene(scene);
         });
+    }*/
+
+    private static void closeProcessingDialog() {
+        SwingUtilities.invokeLater(() -> {
+            if (processingDialog != null && processingDialog.isVisible()) {
+                processingDialog.dispose();
+            }
+        });
     }
+
+    private static void clearTempFiles(File tempFolder) {
+        File[] existingTempFiles = tempFolder.listFiles();
+        if (existingTempFiles != null) {
+            for (File file : existingTempFiles) {
+                if (!file.delete()) {
+                    System.out.println("Failed to delete file: " + file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    private static File compressToMP4(File originalVideo, File tempFolder) {
+        File compressedVideoFile = new File(originalVideo.getAbsolutePath());
+        String compressCommand = "ffmpeg -i " + originalVideo.getAbsolutePath() + " -c:v libx264 -preset slow -crf 22 -c:a aac -strict experimental -b:a 192k " + compressedVideoFile.getAbsolutePath();
+
+        try {
+            ProcessBuilder compressProcessBuilder = new ProcessBuilder(String.valueOf(Collections.singletonList(compressCommand)));
+            compressProcessBuilder.redirectErrorStream(true);
+            Process compressProcess = compressProcessBuilder.start();
+            waitForProcessCompletion(compressProcess, "Video compression");
+
+            // Rename the compressed file to temp.mp4
+            Files.move(compressedVideoFile.toPath(), tempFolder.toPath().resolve("original_temp.mp4"), REPLACE_EXISTING);
+
+            return new File(tempFolder, "original_temp.mp4");
+        } catch (IOException e) {
+            System.out.println("Error occurred during video compression: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static void generateBackwardVideo(File inputVideo, String outputReverseFilePath) {
+        String reverseCommand = "ffmpeg -i " + inputVideo.getAbsolutePath() + " -vf reverse " + outputReverseFilePath;
+
+        try {
+            ProcessBuilder reverseProcessBuilder = new ProcessBuilder(reverseCommand.split(" "));
+            reverseProcessBuilder.redirectErrorStream(true);
+            Process reverseProcess = reverseProcessBuilder.start();
+            waitForProcessCompletion(reverseProcess, "Reverse video generation");
+        } catch (IOException e) {
+            System.out.println("Error occurred during reverse video generation: " + e.getMessage());
+        }
+    }
+
+
+    private static void waitForProcessCompletion(Process process, String operation) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                System.out.println("Error occurred during " + operation + ".");
+            }
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error occurred during " + operation + ": " + e.getMessage());
+        }
+    }
+
 
     public static void shutdownThreadPool() {
         executorService.shutdown();
@@ -188,6 +330,29 @@ public class VideoPlayerSwingIntegration {
     }
 
     public void setVideoSpeed(double speedMultiplier) {
+
+        if (reversed == true) {
+            double oldTime = getCurrentTimeInSeconds();
+            double totalDuration = getTotalDurationInSeconds();
+            double newTime = totalDuration - oldTime;
+            Media newMedia;
+            newMedia = new Media(new File(tempFolder, "original_temp.mp4").toURI().toString());
+            reversed = false;
+            player = new MediaPlayer(newMedia);
+            MediaView viewer = new MediaView(player);
+            viewer.setPreserveRatio(true);
+
+            StackPane root = new StackPane();
+            root.getChildren().add(viewer);
+
+            Scene scene = new Scene(root, 800, 600);
+            fxPanel.setScene(scene);
+
+            player.setOnReady(() -> {
+                player.seek(Duration.seconds(newTime));
+                player.play();
+            });
+        }
         if (player != null) {
             player.setRate(speedMultiplier);
         }
@@ -201,12 +366,10 @@ public class VideoPlayerSwingIntegration {
         // Calculate the new time in the reversed video
         double newTime = totalDuration - oldTime;
 
-        File tempFolder = new File("temp");
         Platform.runLater(() -> {
             Media newMedia;
             if (reversed == true) {
-                newMedia = new Media(new File(tempFolder, "temp.mp4").toURI().toString());
-                reversed = false;
+                return;
             }
             else
             {
@@ -260,12 +423,18 @@ public class VideoPlayerSwingIntegration {
 
                     // Update the video time in the JLabel (videoTimeLabel)
                     videoTimeLabel.setText(String.format("%.2f seconds", currentTime)); // Display time in seconds with two decimal places
+
+                    // Check if the current time has reached the total duration
+                    if (currentTime >= totalDuration) {
+                        stop(); // Stop the player when the max time is reached
+                    }
                 }
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
+
 
 
 }
