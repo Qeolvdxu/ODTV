@@ -438,7 +438,7 @@ public class VideoPlayerSwingIntegration {
 
                     // Check if the current time has reached the total duration
                     if (currentTime >= totalDuration) {
-                        stop(); // Stop the player when the max time is reached
+                        pause(); // Stop the player when the max time is reached
                     }
                 }
             }
