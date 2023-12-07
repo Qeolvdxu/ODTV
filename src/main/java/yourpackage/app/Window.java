@@ -31,7 +31,6 @@ import javafx.util.Duration;
 import yourpackage.gauges.Gauge;
 
 
-
 public class Window {
     private static final String CONFIG_FILE_PATH = "tmp/test.config";
     private JPanel mainPanelW;
@@ -120,14 +119,14 @@ public class Window {
 
         });
 
-        saveAllGaugesButton.addActionListener(new ActionListener() {
+        saveConfiguration.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveAllGauges();
             }
         });
 
-        loadAllGaugesButton.addActionListener(new ActionListener() {
+        loadConfiguration.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadConfig();
@@ -194,7 +193,6 @@ public class Window {
                 }
             }
         });
-
 
 
         aboutButton.addActionListener(new ActionListener() {
@@ -413,29 +411,6 @@ public class Window {
         panel2.add(videoTimeLabel, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tabbedPane1 = new JTabbedPane();
         mainPanelW.add(tabbedPane1, BorderLayout.EAST);
-        saveAllGaugesButton = new JMenuItem();
-        saveAllGaugesButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        saveAllGaugesButton.setText("Save Configuration");
-        editButton.add(saveAllGaugesButton);
-        loadAllGaugesButton = new JMenuItem();
-        loadAllGaugesButton.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        loadAllGaugesButton.setText("Load Configuration");
-        editButton.add(loadAllGaugesButton);
-        saveAllGaugesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call the method to save configurations here
-                // Example: ConfigWriter.saveConfigToFile("yourFilePath", "yourGaugeName", yourGaugeInstance);
-            }
-        });
-        loadAllGaugesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call the method to load configurations here
-                // Example: Gauge[] loadedGauges = ConfigReader.readGaugesFromConfig("yourFilePath");
-                // You can then use the loadedGauges as needed
-            }
-        });
     }
 
     /**
