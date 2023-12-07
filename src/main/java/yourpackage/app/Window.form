@@ -251,14 +251,6 @@
               <toolTipText value="Rewind"/>
             </properties>
           </component>
-          <component id="3384f" class="javax.swing.JLabel" binding="videoTimeLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Label"/>
-            </properties>
-          </component>
         </children>
       </grid>
       <tabbedpane id="459c1" binding="tabbedPane1" default-binding="true">
