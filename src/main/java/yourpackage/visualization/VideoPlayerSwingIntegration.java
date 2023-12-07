@@ -361,9 +361,8 @@ public class VideoPlayerSwingIntegration {
         }
         if (player != null) {
             System.out.println("Speed multiplier: ");
-            this.player.rateProperty().set(speedMultiplier);
+            player.rateProperty().set(speedMultiplier);
             System.out.println(player.getCurrentRate());
-            System.out.println(player.getTotalDuration());
         }
     }
 
