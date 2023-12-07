@@ -300,6 +300,12 @@ public class VideoPlayerSwingIntegration {
     public double getCurrentTimeInSeconds() {
         if (player != null) {
             Duration currentTime = player.getCurrentTime();
+            double totalDuration = player.getTotalDuration().toSeconds();
+
+            if(reversed)
+            {
+                return totalDuration - currentTime.toSeconds();
+            } else
             return currentTime.toSeconds();
         }
         return 0.0;
@@ -332,9 +338,9 @@ public class VideoPlayerSwingIntegration {
     public void setVideoSpeed(double speedMultiplier) {
 
         if (reversed == true) {
-            double oldTime = getCurrentTimeInSeconds();
+            double newTime = getCurrentTimeInSeconds();
             double totalDuration = getTotalDurationInSeconds();
-            double newTime = totalDuration - oldTime;
+
             Media newMedia;
             newMedia = new Media(new File(tempFolder, "original_temp.mp4").toURI().toString());
             reversed = false;
@@ -354,7 +360,10 @@ public class VideoPlayerSwingIntegration {
             });
         }
         if (player != null) {
-            player.setRate(speedMultiplier);
+            System.out.println("Speed multiplier: ");
+            this.player.rateProperty().set(speedMultiplier);
+            System.out.println(player.getCurrentRate());
+            System.out.println(player.getTotalDuration());
         }
     }
 
@@ -414,6 +423,10 @@ public class VideoPlayerSwingIntegration {
                 if (player != null && player.getStatus() == MediaPlayer.Status.PLAYING) {
                     double totalDuration = player.getTotalDuration().toSeconds();
                     double currentTime = player.getCurrentTime().toSeconds();
+                    if (reversed == true)
+                    {
+                        currentTime = (totalDuration - player.getCurrentTime().toSeconds());
+                    }
 
                     // Calculate the slider position as a percentage of the total duration
                     double sliderPosition = (currentTime / totalDuration) * 100;
